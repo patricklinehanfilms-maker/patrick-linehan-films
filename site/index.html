@@ -1287,11 +1287,12 @@ class Component extends DCLogic {
       // the game owns its own canvas loop, so it stays sandboxed in an iframe
       playPanelStyle: {
         background: RED, overflow: 'hidden',
-        height: s.playOpen ? (mob ? '380px' : '480px') : '0px',
+        // the game's HUD sits proportional to its width, so the box has to grow with it
+        height: s.playOpen ? (mob ? '300px' : 'clamp(480px, 34vw, 760px)') : '0px',
         borderTop: s.playOpen ? '2px solid rgba(255,255,255,0.35)' : '0px solid transparent',
         transition: 'height 460ms cubic-bezier(.2,.8,.2,1)'
       },
-      playFrameStyle: { display: 'block', width: '100%', height: mob ? '380px' : '480px', border: 0 },
+      playFrameStyle: { display: 'block', width: '100%', height: mob ? '300px' : 'clamp(480px, 34vw, 760px)', border: 0 },
       marksStyle: { background: RED, padding: '30px 40px 34px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '44px' },
       pageBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 40px', borderBottom: '2px solid ' + INK, fontFamily: MONO, fontSize: '13px', letterSpacing: '0.12em', textTransform: 'uppercase' },
       pageBarNavStyle: { display: 'flex', alignItems: 'center', gap: '28px', whiteSpace: 'nowrap' },
