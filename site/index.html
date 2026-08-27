@@ -503,7 +503,7 @@ class TilePreview extends React.Component {
           position: 'absolute', top: '50%', left: '50%',
           width: 'auto', height: 'auto', minWidth: '100%', minHeight: '100%',
           aspectRatio: '16 / 9', border: '0', display: 'block', pointerEvents: 'none',
-          transform: 'translate(-50%, -50%) scale(' + Math.max(z, 1.08) + ')',
+          transform: 'translate(-50%, -50%)' + (z > 1 ? ' scale(' + z + ')' : ''),
           transformOrigin: 'center center'
         }
       }));
@@ -538,7 +538,7 @@ class HoverPlayer extends React.Component {
           // never paints its play/pause, captions or title chrome — the wrapper
           // div takes the click and swaps in the real player
           pointerEvents: st.live ? 'auto' : 'none',
-          transform: 'translate(-50%, -50%)' + (st.live ? '' : ' scale(' + Math.max(z, 1.08) + ')'),
+          transform: 'translate(-50%, -50%)' + (!st.live && z > 1 ? ' scale(' + z + ')' : ''),
           transformOrigin: 'center center'
         }
       }));
@@ -714,6 +714,9 @@ class Component extends DCLogic {
     this.syncData();
     // don't let the page scroll behind the fixed menu overlay
     document.body.style.overflow = (this.state.mob && this.state.menu) ? 'hidden' : '';
+    // iOS ignores the autoplay attribute often enough to need a nudge
+    const cv = this.contactVidRef.current;
+    if (cv && cv.paused) { cv.muted = true; const p = cv.play(); if (p && p.catch) p.catch(() => {}); }
   }
 
   syncData() {
@@ -1036,8 +1039,10 @@ class Component extends DCLogic {
       enterVideo: () => this.hoverVideo(true), leaveVideo: () => this.hoverVideo(false),
       heroAutoPlay: mob,
       contactVidRef: this.contactVidRef,
-      pauseContactVid: () => { const v = this.contactVidRef.current; if (v) v.pause(); },
-      playContactVid: () => { const v = this.contactVidRef.current; if (v) { v.muted = true; v.play().catch(() => {}); } },
+      // hover-pause is desktop only: touch fires mouseenter with no matching
+      // mouseleave, which would leave the video stuck paused
+      pauseContactVid: () => { if (this.state.mob) return; const v = this.contactVidRef.current; if (v) v.pause(); },
+      playContactVid: () => { if (this.state.mob) return; const v = this.contactVidRef.current; if (v) { v.muted = true; v.play().catch(() => {}); } },
       countLabel: DATA.length + ' films',
       statRow: React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '2px' } }, [
         React.createElement(CountStat, { key: 's1', to: 200, suffix: '+', label: 'Projects' }),
