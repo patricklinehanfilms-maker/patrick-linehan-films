@@ -57,7 +57,7 @@
                 </div>
                 <sc-if value="{{ showNavB }}" hint-placeholder-val="{{ true }}">
                 <div style="{{ barNavStyle }}">
-                  <span onClick="{{ goWorkB }}" style-hover="animation: rolodex 560ms ease;" style="cursor: pointer; display: inline-block; transformOrigin: center center;">Work</span><span onClick="{{ goAboutB }}" style-hover="animation: rolodex 560ms ease;" style="cursor: pointer; display: inline-block; transformOrigin: center center;">About</span><span onClick="{{ goContactB }}" style-hover="animation: rolodex 560ms ease;" style="cursor: pointer; display: inline-block; transformOrigin: center center; color: #ec3013; background: #f3f2f2; padding: 5px 10px; margin: -5px 0;">Contact</span>
+                  <span onClick="{{ goWorkB }}" style-hover="opacity: 0.55;" style="cursor: pointer; display: inline-block; transformOrigin: center center;">Work</span><span onClick="{{ goAboutB }}" style-hover="opacity: 0.55;" style="cursor: pointer; display: inline-block; transformOrigin: center center;">About</span><span onClick="{{ goContactB }}" style-hover="opacity: 0.55;" style="cursor: pointer; display: inline-block; transformOrigin: center center; color: #ec3013; background: #f3f2f2; padding: 5px 10px; margin: -5px 0;">Contact</span>
                 </div>
                 </sc-if>
                 <sc-if value="{{ showBurgerB }}" hint-placeholder-val="{{ false }}">
@@ -76,7 +76,7 @@
                   <a href="https://www.instagram.com/patrickjlinehan/" target="_blank" rel="noopener" style="{{ menuMetaStyle }}">Instagram ↗</a>
                 </div>
                 </sc-if>
-            <div style="{{ barLabelStyle }}">Director · Music video &amp; documentary · Brooklyn</div>
+            <div style="{{ barLabelStyle }}">Director · Music | Narrative | Commercial · Brooklyn</div>
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANAAAADXCAYAAABrod/MAAAACXBIWXMAAAsSAAALEgHS3X78AAAH2klEQVR4nO3d31XbSBiG8RcO90kB44M7gK0gbAXJVkCoINkKku0gW8GSCpYS3MFCB+RIBYQK2AtLCQ4yljT/vtE8v3NyA8T+LniOrMGeOXp8fBSQS+PcetW297nnmOs49wCoV+PcuaTbxrnr3LPMdcQVCDk0zr2WdC/pVfelq1XbXmcbaCauQEiui2ejn/FI0j+NcxdZBvLAFQhJPYnnbODbD5LOS7on4gqEZA7EI22vSDfdzxWBgJDEiHh6Z5KuY88TCgEhugnx9N42zn2JN1E4BIQUbjQ+nt6Hxrn3EWYJikUERNX9jefS4yF+W7XtbaBxguMKhGgCxCNJm8a5tf80cRAQoggUj2R8ZY6AEFzAeHpmV+YICEFFiKf3tnHuc4TH9cIiAoLplp4/RH4aU++ZIyAE0S05/5PgqR4kXVhZmSMgeEsYT+9B0nrVtt8TPucg7oHgJUM80nZlbmNhZY6AMFumeHpnkrK/3YeAMEvmeHqXuVfmuAfCZI1z7yT9m3uOJ7KtzBEQJun2Mdho99OkuWVbmSMgjGY0nt43bT/NmnRljnsgjGI8Hkk61Xa+pAgIBxUQT+8s9RZZBIQXFRRP77Jx7mOqJ+MeCHsVGM9Tf6za9ib2kxAQBs3Yx8CaJCtzBIRnFhBPL/rKHPdA2LGgeKQEK3MEhB8WFk8v6socAUHSYuPpXcbaIot7ICw9nqd+X7XtJuQDcgWCtP1YwNLjkba7+5yHfEACqlzETUAseiXpOuQH8QioYpXF0zvTdqvhIAioUpXG03sTamWOgCpUeTy9ICtzrMJVhnie8VqZI6CKGNnHwBqvYyV5CVcJ4tnLa/N6AqoA8Rw0e/N6Alo44hlt1rGS1QTUOHfeOHeRe46UiGeyycdKHj0+PqpxbhNnnh3nMvDJxlXbHuWeIQXi8TL6WMk+oGqW4moIqHu/13+55yjY6JW5al7C1eLJPgaYb/TKHAEtSOGbgFgzamWOgBaCeKI4eKwkAS0A8UT16aWVOQIqHPEk8WXfB/EIqGDdTe6NiCe2vSfiEVChnuxjcJp5lFoMRkRABapoExBrnh0rSUCFIZ7sdo6VJKCCEI8ZP1bmCKgQxGPOl8a5cwIqx42Ix5JXktYEVIBuH4M3uefAjqtV294QkHFsAmLS1aptryXugUwjHpN+xCMRkFnEY9JOPBIBmUQ8Jj2LRyIgc7o/0hGPLX8OxSNVGFDj3Dr3DPt0f5z7lHsO7Pi6atu9u/VUF5Ckde4BhrAJiElfV237/qUfqDEgc4jHpIPxSASUHfGYNCoeiYCyIh6TRscjEVA2jXPvRDzWTIpHIqAsus/XX+eeAzsmxyMRUHJsAmLSrHgkAkqKeEyaHY9EQMkQj0le8UgElATxmOQdj0RA0XVvHdqIeCwJEo8kHVt+b1jp2PjQpDtJH0M92LGMvjesdGwCYtKdpItV234P9YC8hIuAeEwKHo9EQMERj0lR4pEIKCjiMSlaPBIBhbYR8VgSNR6JgILp9jEgHjuixyMRUBBsAmJOkngkAvJGPOYki0ciIC/EY07SeCQCmo14zEkej1RnQIOHxU5BPOZkiUeqM6BnB8VO0e1jQDx2PEh6nyMeqc6AZmMTEHMetL3y3OYagIBGIh5zsscjEdAoxGOOiXgkAjqIeMwxE49EQC8iHnNMxSMR0F7dPgZ7d+VHcubikQhoEJuAmGMyHomAniEec8zGIxHQDuIxx3Q8EgH9QDzmmI9HIiBJxGNQEfFIBMTebTZ9LCEeqfKAnmwCcpp5FPw0eJy8VdUGxA46JhUVj1RpQMRjUnHxSHUGRDz2FBmPJJ3kHiCDD7kHwI5i45HqvALBjqLjkQgI+RQfj0RAyGMR8UgEhPQWE49EQEhrUfFIBIR0FhePREBI4+8lxiMREOL7umrbYIf6WkNAiCnYcfJWERBiWXw8EgEhjirikbYBrXMPgUWpJh6JgBBWVfFIvIRDONXFIxEQwqgyHomA4K/aeCQCgp+q45EICPNVH49EQJjnjni2CAhT3Um6yD2EFQSEKbIdJ28VAWEs4hlAQBiDePYgIBxCPC8gILyEeA4gIOxDPCMQEIYQz0gEhF8RzwQEhKeIZyICQo94ZiAgSD8P9SWeiQgIxOOBgOpWzHHyVhFQvYgnAAKqE/EEQkD1IZ6ACKguxBMYAdWDeCIgoDoQTyQEtHzEExEBLRvxREZAy0U8CRDQcr0jnvgIaJmuVm27yT1EDQhoeRZ5nLxVBLQsxJMYAS0H8WRAQMtAPJkQUPmIJyMCKhvxZEZA5SIeAwioTMRjxLGkde4hMAnxGHIiAipJ9nga584lvZ743y4m/vxrSee/fnHVtlMfJ7qT3ANgtDtJ68a5z3u+P/hLd8Ba0qnHTNUjoHKcdf9gCIsIgAcCAjwQEOCBgAAPBAR4ICDAAwEBHggI8EBAgAcCQim+5R5gCAGhFPe5BxhCQIAHAgI8EBDggYAADwQEeCAgwAMBAR4ICPBAQIAHAgI8EBDggYAADwQEeCAgwAMBAR4ICPBAQIAHAgI8EBDggYAADwQEeCAglOI29wBDCAil+J57gCEEBHggIMADAQEejrU9Hh3ADMfi6HRgNl7CAR4ICPBAQIAHAgI8EBDggYAADwQEeCAgwAMBAR4ICPBAQIAHAgI8EBDg4UTSX7mHQBYXuQeY6D73AEP+B2Sx95btbMyPAAAAAElFTkSuQmCC" alt="Expand the hero" onClick="{{ toggleHeroFull }}" style-hover="filter: brightness(0) invert(1);" style="{{ barArrowStyle }}">
           </div>
           <div ref="{{ heroRef }}" onMouseEnter="{{ enterVideo }}" onMouseLeave="{{ leaveVideo }}" style="{{ heroBoxStyle }}">
@@ -87,7 +87,7 @@
             <div ref="{{ marqRef }}" style="display: flex; gap: 70px; width: max-content; alignItems: center; willChange: transform;">{{ logoMarquee }}</div>
           </div>
 
-          <div style="{{ sheetBarStyle }}">
+          <div data-grid style="{{ sheetBarStyle }}">
             <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase;">{{ countLabel }}</div>
             <sc-if value="{{ showTools }}" hint-placeholder-val="{{ true }}">
             <div style="display: flex; alignItems: center; gap: 14px;">
@@ -125,11 +125,15 @@
           </div>
 
           <div style="{{ ctaStyle }}">
-            <div style="{{ ctaTitleStyle }}">Let's make<br>something loud</div>
+            <div onClick="{{ goContactB }}" style-hover="opacity: 0.7;" style="{{ ctaTitleStyle }}">Let's make<br>something loud</div>
             <div style="{{ ctaMetaWrapStyle }}">
               <div style="{{ ctaMetaStyle }}"><a href="mailto:patrick.linehan.films@gmail.com" style="color: inherit;" style-hover="color: #201e1d;">patrick.linehan.films@gmail.com</a><br><a href="https://www.instagram.com/patrickjlinehan/" target="_blank" rel="noopener" style="color: inherit;" style-hover="color: #201e1d;">Instagram</a><br>Brooklyn, NY</div>
-              <img src="data:image/png;base64,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" alt="" style="width: 80px; aspectRatio: 208 / 215; display: block; flexShrink: 0; transform: scaleX(-1); filter: brightness(0) invert(1);">
+              <img src="data:image/png;base64,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" alt="Play Asterisk Run" onClick="{{ togglePlay }}" style-hover="opacity: 0.55;" style="{{ ctaArrowStyle }}">
             </div>
+          </div>
+
+          <div data-play style="{{ playPanelStyle }}">
+            <iframe src="play/index.html" title="Asterisk Run" loading="lazy" style="{{ playFrameStyle }}"></iframe>
           </div>
           <div style="{{ marksHomeStyle }}">
             <img src="assets/mark-nyc.png" alt="NYC" style="height: 24px; display: block;">
@@ -142,17 +146,21 @@
         <sc-if value="{{ isContactB }}" hint-placeholder-val="{{ false }}">
         <div>
           <div style="{{ pageBarStyle }}">
-            <span style="cursor: pointer; color: #ec3013;" onClick="{{ goHomeB }}">← Back to the work</span>
-            <span>Contact</span>
+            <span style="{{ backLinkStyle }}" onClick="{{ goHomeB }}">{{ backLabel }}</span>
+            <div style="{{ pageBarNavStyle }}">
+              <span onClick="{{ goWorkB }}" style="cursor: pointer; whiteSpace: nowrap;" style-hover="opacity: 0.55;">Work</span>
+              <span onClick="{{ goAboutB }}" style="cursor: pointer; whiteSpace: nowrap;" style-hover="opacity: 0.55;">About</span>
+              <span style="color: #6d6867; whiteSpace: nowrap;">Contact</span>
+            </div>
           </div>
 
           <div style="{{ contactHeadStyle }}" onMouseEnter="{{ pauseContactVid }}" onMouseLeave="{{ playContactVid }}">
             <video src="assets/contact-bg.mp4" ref="{{ contactVidRef }}" autoPlay="{{ true }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" style="position: absolute; inset: 0; width: 100%; height: 100%; objectFit: cover; zIndex: 0; filter: grayscale(1) contrast(1.2); mixBlendMode: multiply; opacity: 0.55; pointerEvents: none;"></video>
             <div style="flex: 1 1 auto; minWidth: 0; position: relative; zIndex: 1;">
-              <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; opacity: 0.85; marginBottom: 22px;">Available for commissions worldwide</div>
+              <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; opacity: 0.85; marginBottom: 22px;">Available for work worldwide</div>
               <div style="{{ contactTitleStyle }}">Tell me what<br>you're making</div>
             </div>
-            <img src="assets/arrow.png" alt="" style="{{ contactArrowStyle }}">
+            <img src="assets/arrow.png" alt="Expand" onClick="{{ toggleContactFull }}" style-hover="opacity: 0.55;" style="{{ contactArrowStyle }}">
           </div>
 
           <div style="{{ contactGridStyle }}">
@@ -169,7 +177,7 @@
                 <a href="https://www.instagram.com/patrickjlinehan/" target="_blank" rel="noopener" style="background: #201e1d; color: #f3f2f2; padding: 20px 26px; fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.14em; textTransform: uppercase; flex: 1 1 auto; textAlign: left;" style-hover="background: #ec3013; color: #fff;">Instagram ↗</a>
                 <a href="mailto:patrick.linehan.films@gmail.com?cc=luis@back2backmusic.com&amp;subject=Project%20enquiry" style="background: #201e1d; color: #f3f2f2; padding: 20px 26px; fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.14em; textTransform: uppercase; flex: 1 1 auto; textAlign: left;" style-hover="background: #ec3013; color: #fff;">Send a brief ↗</a>
               </div>
-              <div style="fontSize: 20px; lineHeight: 1.5; maxWidth: 54ch; textWrap: pretty;">Fastest way in is an email with the artist or brand, the song or the product, the date range and the number. Treatments turn around in a week. Based in Brooklyn, on a plane most months.</div>
+              <div style="fontSize: 20px; lineHeight: 1.5; maxWidth: 54ch; textWrap: pretty;">Please reach out to both of us with as much project information as possible. Based in Brooklyn.</div>
             </div>
 
             <div style="{{ contactRightStyle }}">
@@ -203,8 +211,13 @@
         <sc-if value="{{ isCaseB }}" hint-placeholder-val="{{ false }}">
         <div>
           <div style="{{ pageBarStyle }}">
-            <span style="cursor: pointer; color: #ec3013;" onClick="{{ goHomeB }}">← Back to the work</span>
-            <span>{{ caseB.num }} / {{ total }}</span>
+            <span style="{{ backLinkStyle }}" onClick="{{ goHomeB }}">{{ backLabel }}</span>
+            <div style="{{ pageBarNavStyle }}">
+              <span onClick="{{ goWorkB }}" style="cursor: pointer; whiteSpace: nowrap;" style-hover="opacity: 0.55;">Work</span>
+              <span onClick="{{ goAboutB }}" style="cursor: pointer; whiteSpace: nowrap;" style-hover="opacity: 0.55;">About</span>
+              <span onClick="{{ goContactB }}" style="cursor: pointer; whiteSpace: nowrap;" style-hover="opacity: 0.55;">Contact</span>
+              <span style="{{ caseCountStyle }}">{{ caseB.num }} / {{ total }}</span>
+            </div>
           </div>
           <div style="position: relative; borderBottom: 2px solid #201e1d; overflow: hidden;">
             {{ caseHeroB }}
@@ -249,7 +262,7 @@
 const RED = '#ec3013', INK = '#201e1d', BG = '#f3f2f2', MONO = "'IBM Plex Mono', monospace";
 const STRIPE = 'repeating-linear-gradient(135deg, #dcdad9 0 9px, #f3f2f2 9px 18px)';
 
-const VIDEO_IDS = ["5NsMIXv0gRs","JhwyMiCH-Mc","w_6r2iEur3g","wl7VscNbwAw","V_OSd1Al7Bc","mq-5QnSmwLo","rIgKZS8-HuY","e4WFFY8JzgI","SizhMPbjEk8","L-9QwatubPo","wxLGzYsTBhg","DmpCKe1DYqo","zhkoGDcNnc0","7E9ZXITzgcc","9KSpDXgmARw","nG3rHSOug5c"];
+const VIDEO_IDS = ["5NsMIXv0gRs","JhwyMiCH-Mc","w_6r2iEur3g","wl7VscNbwAw","V_OSd1Al7Bc","mq-5QnSmwLo","rIgKZS8-HuY","e4WFFY8JzgI","SizhMPbjEk8","L-9QwatubPo","wxLGzYsTBhg","DmpCKe1DYqo","zhkoGDcNnc0","7E9ZXITzgcc","59EJ_paMewk","nG3rHSOug5c"];
 
 // Per-film overrides. Any of: title, kind, year, dp, edit, color, producer.
 // Anything omitted falls back to YouTube's data / P. Linehan.
@@ -257,6 +270,7 @@ const OVERRIDES = {
   "5NsMIXv0gRs": {
     "title": "but they were kissing",
     "kind": "Short Film",
+    "clip": "assets/clip-kissing.mp4",
     "year": 2025,
     "dp": "P. Linehan",
     "edit": "P. Linehan",
@@ -265,6 +279,7 @@ const OVERRIDES = {
   "JhwyMiCH-Mc": {
     "title": "Jackson August (Short)",
     "kind": "Short Film",
+    "clip": "assets/clip-jackson.mp4",
     "year": 2025,
     "dir": "P. Linehan + J. August",
     "dp": "P. Linehan",
@@ -273,6 +288,7 @@ const OVERRIDES = {
   "w_6r2iEur3g": {
     "title": "Yoshi T. (Short)",
     "kind": "Short Film",
+    "clip": "assets/clip-yoshi.mp4",
     "year": 2025,
     "dir": "P. Linehan, J. August + Yoshi T.",
     "dp": "P. Linehan",
@@ -294,6 +310,7 @@ const OVERRIDES = {
     "title": "Reclusive",
     "kind": "Music Video",
     "thumb": "assets/thumb-reclusive.jpg",
+    "clip": "assets/clip-reclusive.mp4",
     "year": 2026,
     "dp": "Kai Blamey",
     "producer": "Mathias Gilay",
@@ -303,6 +320,7 @@ const OVERRIDES = {
   "mq-5QnSmwLo": {
     "title": "Last Call",
     "kind": "Music Video",
+    "clip": "assets/clip-lastcall.mp4",
     "year": 2026,
     "dp": "Ethan Wen",
     "producer": "Andrew Zapata",
@@ -314,6 +332,7 @@ const OVERRIDES = {
     "kind": "Music Video",
     "year": 2025,
     "thumb": "assets/thumb-aperol.jpg",
+    "clip": "assets/clip-aperol.mp4",
     "dp": "P. Linehan",
     "edit": "P. Linehan + Jude Lipkin",
     "producer": "Henry Pearl",
@@ -324,6 +343,7 @@ const OVERRIDES = {
     "title": "Cry Against The Wind",
     "kind": "Music Video",
     "thumb": "assets/thumb-cry.jpg",
+    "clip": "assets/clip-cry.mp4",
     "year": 2025,
     "dp": "Ujjwal Chande",
     "edit": "P. Linehan",
@@ -334,6 +354,7 @@ const OVERRIDES = {
   "SizhMPbjEk8": {
     "title": "Know You",
     "kind": "Short Film",
+    "clip": "assets/clip-knowyou.mp4",
     "year": 2025,
     "dp": "P. Linehan",
     "edit": "P. Linehan",
@@ -342,6 +363,7 @@ const OVERRIDES = {
   "L-9QwatubPo": {
     "title": "jackie chan",
     "kind": "Music Video",
+    "clip": "assets/clip-jackiechan.mp4",
     "year": 2025,
     "dir": "J. August + P. Linehan",
     "producer": "Ethan Grossman",
@@ -351,6 +373,7 @@ const OVERRIDES = {
   "wxLGzYsTBhg": {
     "title": "WHATMORE Album Trailer",
     "kind": "Short Film",
+    "clip": "assets/clip-albumtrailer.mp4",
     "year": 2025,
     "dp": "P. Linehan",
     "desc": "A trailer for the debut WHATMORE record, played as a scene instead of a montage. The whole band sits in a red booth in an old New York restaurant getting talked at by a man in a grey suit and a red tie. Comedy first, record second. I shot it."
@@ -358,6 +381,7 @@ const OVERRIDES = {
   "DmpCKe1DYqo": {
     "title": "Meet Me After Practice (Short)",
     "kind": "Short Film",
+    "clip": "assets/clip-meetme.mp4",
     "year": 2025,
     "dp": "P. Linehan",
     "edit": "P. Linehan",
@@ -366,6 +390,7 @@ const OVERRIDES = {
   "zhkoGDcNnc0": {
     "title": "I See Myself In You",
     "kind": "Music Video",
+    "clip": "assets/clip-ismiy.mp4",
     "year": 2026,
     "dp": "Jeremy Herron",
     "producer": "Lianne Rose Richards",
@@ -374,17 +399,17 @@ const OVERRIDES = {
   "7E9ZXITzgcc": {
     "title": "Comets + Gold",
     "kind": "Music Video",
+    "clip": "assets/clip-comets.mp4",
+    "thumb": "assets/thumb-comets.jpg",
     "year": 2026,
     "dp": "Scott Siracusano",
     "edit": "Ryan McKenna",
     "color": "Ryan Urzi",
     "desc": "Elmiene and Fujii Kaze on a black stage with a single rectangle of light standing in it. He walks toward it, Kaze plays a grand piano, and fog rolls across the floor until the two of them are out there in it together. Gold and black and almost nothing else. Untold Studios, VFX by S4."
   },
-  "9KSpDXgmARw": {
-    "title": "THRIFTED",
+  "59EJ_paMewk": {
     "kind": "Music Video",
-    "year": 2025,
-    "desc": "Ayumu Imazu moving through a thrift store and a laundromat, changing outfits as he goes, and ending up on top of a mountain of clothes. We shot at RGR Thrift, on the subway platform, and out on the waterfront at golden hour. Kat built the pile."
+    "clip": "assets/clip-aside.mp4"
   },
   "nG3rHSOug5c": {
     "title": "If Our Love Is Dead (Live)",
@@ -411,7 +436,7 @@ function buildData(ids) {
     // ov.thumb: a project asset path, or a YouTube frame grab — '1.jpg' | '2.jpg' | '3.jpg'
     const t = ov.thumb ? (/^https?:|^assets\//.test(ov.thumb) ? ov.thumb : 'https://i.ytimg.com/vi/' + id + '/' + ov.thumb) : null;
     return {
-      id: id, title: '', kind: '', year: '',
+      id: id, title: '', kind: '', year: '', clip: ov.clip || null,
       media: t || 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg',
       // YouTube frame grabs are only 480x360 — too soft for the case-study hero, so
       // they stay on the grid tile; a local asset is full-res and can carry both.
@@ -585,25 +610,11 @@ class Thumb extends React.Component {
       return;
     }
     this.done = true;
-    try {
-      const SW = 64, SH = 36;
-      const c = document.createElement('canvas');
-      c.width = SW; c.height = SH;
-      const ctx = c.getContext('2d');
-      ctx.drawImage(img, 0, 0, SW, SH);
-      const w = SW, LIM = w * 0.46;
-      // sample three rows so one dark scene element can't fake a bar
-      const rows = [0.25, 0.5, 0.75].map((f) => ctx.getImageData(0, Math.floor(SH * f), SW, 1).data);
-      const dark = (x) => rows.every((r) => (r[x * 4] + r[x * 4 + 1] + r[x * 4 + 2]) / 3 < 30);
-      let left = 0; while (left < LIM && dark(left)) left++;
-      let right = 0; while (right < LIM && dark(w - 1 - right)) right++;
-      const bar = Math.min(left, right) / w;
-      if (bar > 0.015) {
-        const z = Math.min(2.6, 1 / (1 - 2 * bar));
-        this.setState({ zoom: z });
-        if (this.props.onZoom) this.props.onZoom(z);
-      }
-    } catch (err) { /* cross-origin: leave uncropped */ }
+    const z = detectBars(img);
+    if (z > 1) {
+      this.setState({ zoom: z });
+      if (this.props.onZoom) this.props.onZoom(z);
+    }
   };
   render() {
     const p = this.props, z = this.state.zoom * (p.hovered ? 1.06 : 1);
@@ -666,11 +677,106 @@ class Freeze extends React.Component {
   }
 }
 
+// self-hosted preview: a still until hover, then the local clip — no YouTube chrome
+// Letterbox/pillarbox detector. Scans at near-source resolution and uses the
+// brightest pixel per line (a bar is dark everywhere; one bright pixel is content),
+// then rounds the crop up a step so a single-line miss can't leave a band.
+function detectBars(img) {
+  try {
+    const SW = Math.min(img.naturalWidth || 320, 240);
+    const SH = Math.max(2, Math.round(SW * (img.naturalHeight / img.naturalWidth)));
+    const c = document.createElement('canvas');
+    c.width = SW; c.height = SH;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(img, 0, 0, SW, SH);
+    const px = ctx.getImageData(0, 0, SW, SH).data;
+    const DARK = 34;
+    const rowMax = (y) => { let m = 0; for (let x = 0; x < SW; x++) { const i = (y * SW + x) * 4; const l = (px[i] + px[i + 1] + px[i + 2]) / 3; if (l > m) m = l; } return m; };
+    const colMax = (x) => { let m = 0; for (let y = 0; y < SH; y++) { const i = (y * SW + x) * 4; const l = (px[i] + px[i + 1] + px[i + 2]) / 3; if (l > m) m = l; } return m; };
+    let top = 0; while (top < SH * 0.45 && rowMax(top) < DARK) top++;
+    let bot = 0; while (bot < SH * 0.45 && rowMax(SH - 1 - bot) < DARK) bot++;
+    let left = 0; while (left < SW * 0.45 && colMax(left) < DARK) left++;
+    let right = 0; while (right < SW * 0.45 && colMax(SW - 1 - right) < DARK) right++;
+    const h = Math.min(top, bot), v = Math.min(left, right);
+    // a genuine bar is at least two lines; one line is noise
+    const hf = h > 1 ? (h + 1) / SH : 0;
+    const vf = v > 1 ? (v + 1) / SW : 0;
+    const bar = Math.max(hf, vf);
+    return bar > 0.008 ? Math.min(2.6, 1 / (1 - 2 * bar)) : 1;
+  } catch (err) { return 1; }
+}
+
+class ClipPreview extends React.Component {
+  vref = React.createRef();
+  state = { zoom: 1, inView: false };
+  // No autoplay on phones: a tile that never plays never downloads its clip,
+  // so a phone visitor pays for the poster still only.
+  componentDidMount() {
+    if (!this.props.auto) return;
+    const v = this.vref.current;
+    if (!v) return;
+    v.muted = true;
+    const p = v.play(); if (p && p.catch) p.catch(() => {});
+  }
+  // YouTube posters can carry baked-in letterbox bars; crop them like Thumb does
+  measure = (e) => {
+    const img = e.currentTarget;
+    if (this.done) return;
+    this.done = true;
+    const z = detectBars(img);
+    if (z > 1) this.setState({ zoom: z });
+  };
+  componentDidUpdate(prev) {
+    const v = this.vref.current;
+    if (!v) return;
+    // an auto tile keeps looping through any re-render
+    if (this.props.auto) { if (v.paused) { v.muted = true; const p = v.play(); if (p && p.catch) p.catch(() => {}); } return; }
+    if (prev.hovered === this.props.hovered) return;
+    v.muted = true;
+    if (this.props.hovered) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+    else if (!this.props.auto) { v.pause(); v.currentTime = 0; }
+  }
+  render() {
+    const p = this.props;
+    const playing = p.mob ? false : p.hovered;
+    const cover = { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' };
+    return React.createElement('div', {
+      style: {
+        position: 'absolute', inset: 0, overflow: 'hidden', background: INK,
+        filter: 'contrast(1.05)'
+      }
+    }, [
+      React.createElement('video', {
+        key: 'v', ref: this.vref, src: p.clip, muted: true, loop: true,
+        playsInline: true, 'webkit-playsinline': 'true', disablePictureInPicture: true,
+        // 'none' means the clip is fetched only when it actually plays
+        preload: p.auto ? 'auto' : 'none', poster: p.src,
+        style: Object.assign({}, cover, { pointerEvents: 'none' })
+      }),
+      React.createElement('img', {
+        key: 'still', src: p.src, alt: p.alt || '',
+        crossOrigin: 'anonymous', onLoad: this.measure,
+        style: Object.assign({}, cover, {
+          opacity: playing ? 0 : 1, transition: 'opacity 200ms linear', pointerEvents: 'none',
+          transform: this.state.zoom > 1 ? 'scale(' + this.state.zoom + ')' : 'none'
+        })
+      })
+    ]);
+  }
+}
+
 class Component extends DCLogic {
   state = {
     routeA: 'home', projA: 0, hoverA: null, mx: 0, my: 0,
     routeB: 'home', projB: 0, hoverB: null, heroHov: false, logoA: false, logoB: false, order: DATA.map((_, i) => i),
-    mob: typeof window !== 'undefined' && window.innerWidth <= 760, menu: false, heroFull: false
+    mob: typeof window !== 'undefined' && window.innerWidth <= 760, menu: false, heroFull: false, contactFull: false,
+    // two tiles play on their own each load, so the grid isn't wholly static
+    // picked by film id, not grid position — the grid can be shuffled
+    autoIds: (function () {
+      const pool = DATA.filter((d) => d.clip).map((d) => d.id);
+      for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+      return pool.slice(0, 2);
+    })()
   };
 
   videoRef = React.createRef();
@@ -786,6 +892,29 @@ class Component extends DCLogic {
       });
     }
   }
+  // section jump: waits a beat so a route change has painted, offsets for the fixed bar
+  scrollTo(sel) {
+    // the target's offset keeps moving while the route paints and media sizes,
+    // so re-measure over a few frames instead of trusting one early reading
+    const bar = () => (this.state.mob ? 46 : 26);
+    const go = (smooth) => {
+      const el = document.querySelector(sel);
+      if (!el) return false;
+      const top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - bar());
+      window.scrollTo({ top: top, behavior: smooth ? 'smooth' : 'auto' });
+      return true;
+    };
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (!go(true)) return;
+      // settle: silent corrections once layout stops shifting
+      [220, 420].forEach((t) => setTimeout(() => {
+        const el = document.querySelector(sel);
+        if (!el) return;
+        const want = Math.max(0, el.getBoundingClientRect().top + window.scrollY - bar());
+        if (Math.abs(want - window.scrollY) > 4) window.scrollTo({ top: want, behavior: 'auto' });
+      }, t));
+    }));
+  }
   primeVideo() {
     const v = this.videoRef.current;
     if (!v) return;
@@ -899,8 +1028,13 @@ class Component extends DCLogic {
     if (d.media && /\.gif$/.test(d.media)) {
       return React.createElement(Freeze, { key: 'f' + i, src: d.media, height: '100%' });
     }
+    if (d.clip) {
+      const auto = !this.state.mob && (this.state.autoIds || []).indexOf(d.id) !== -1;
+      return React.createElement(ClipPreview, { key: 'c' + i, clip: d.clip, src: d.media, alt: d.title, hovered: hovered || auto, auto: auto, mob: !!this.state.mob });
+    }
     if (d.id) {
-      return React.createElement(TilePreview, { key: 't' + i, id: d.id, src: d.media, alt: d.title, hovered: hovered, auto: (this.state.autoPlay || []).indexOf(i) !== -1 });
+      // never auto-start a YouTube embed — autoplay is for local clips only
+      return React.createElement(TilePreview, { key: 't' + i, id: d.id, src: d.media, alt: d.title, hovered: hovered, auto: false });
     }
     if (d.media) {
       return React.createElement(Thumb, { key: 'm' + i, src: d.media, alt: d.title, hovered: hovered });
@@ -1028,7 +1162,7 @@ class Component extends DCLogic {
       wordmark: bp > 0.5
         ? 'PATRICK LINEHAN FILMS'
         : React.createElement(React.Fragment, null, 'PATRICK', React.createElement('br'), 'LINEHAN', React.createElement('br'), 'FILMS'),
-      barLabelText: bp > 0.5 ? '' : 'Director · Music video & documentary · Brooklyn',
+      barLabelText: bp > 0.5 ? '' : 'Director · Music | Narrative | Commercial · Brooklyn',
       barNavStyle: {
         position: 'absolute', pointerEvents: 'auto',
         right: lerp(40, 86, bp) + 'px', top: navTop + 'px',
@@ -1104,7 +1238,7 @@ class Component extends DCLogic {
       gridCols: 'repeat(' + (this.props.columns || 4) + ', 1fr)',
       showNavB: true, showBurgerB: false, showTools: true, menuOpen: false,
       toggleMenu: () => this.setState((p) => ({ menu: !p.menu })),
-      menuWork: () => { this.setState({ menu: false, routeB: 'home', hoverB: null }); window.scrollTo(0, 0); },
+      menuWork: () => { this.setState({ menu: false, routeB: 'home', hoverB: null }); this.scrollTo('[data-grid]'); },
       menuContact: () => { this.setState({ menu: false, routeB: 'contact', hoverB: null }); window.scrollTo(0, 0); },
       menuAbout: () => {
         this.setState({ menu: false, routeB: 'home', hoverB: null });
@@ -1131,15 +1265,58 @@ class Component extends DCLogic {
       aboutTitleStyle: { fontSize: '30px', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '22px', maxWidth: '24ch' },
       aboutBodyStyle: { fontSize: '18px', lineHeight: 1.55, maxWidth: '60ch', marginBottom: '34px' },
       ctaStyle: { background: RED, color: '#fff', padding: '60px 40px', display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', columnGap: '40px', rowGap: '44px' },
-      ctaTitleStyle: { fontSize: '64px', fontWeight: 900, letterSpacing: '-0.035em', lineHeight: 0.95, textTransform: 'uppercase', flex: '1 1 auto', minWidth: 0 },
+      ctaTitleStyle: { fontSize: '64px', fontWeight: 900, letterSpacing: '-0.035em', lineHeight: 0.95, textTransform: 'uppercase', flex: '1 1 auto', minWidth: 0, cursor: 'pointer', transition: 'opacity 200ms linear' },
       ctaMetaWrapStyle: { display: 'flex', alignItems: 'flex-end', gap: '36px', flex: '0 0 auto' },
       ctaMetaStyle: { fontFamily: MONO, fontSize: '14px', lineHeight: 2.1, letterSpacing: '0.08em', textTransform: 'uppercase', textAlign: 'right' },
       marksHomeStyle: { background: RED, padding: '30px 40px 34px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '44px', borderTop: '2px solid rgba(255,255,255,0.35)' },
+      playOpen: !!s.playOpen,
+      togglePlay: () => {
+        const next = !this.state.playOpen;
+        this.setState({ playOpen: next });
+        if (next) setTimeout(() => {
+          const el = document.querySelector('[data-play]');
+          if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 20, behavior: 'smooth' });
+        }, 220);
+      },
+      ctaArrowStyle: {
+        width: '80px', aspectRatio: '208 / 215', display: 'block', flexShrink: 0, cursor: 'pointer',
+        filter: 'brightness(0) invert(1)',
+        transform: s.playOpen ? 'scaleX(-1) rotate(180deg)' : 'scaleX(-1)',
+        transition: 'transform 380ms cubic-bezier(.2,.8,.2,1), opacity 200ms linear'
+      },
+      // the game owns its own canvas loop, so it stays sandboxed in an iframe
+      playPanelStyle: {
+        background: RED, overflow: 'hidden',
+        height: s.playOpen ? (mob ? '380px' : '480px') : '0px',
+        borderTop: s.playOpen ? '2px solid rgba(255,255,255,0.35)' : '0px solid transparent',
+        transition: 'height 460ms cubic-bezier(.2,.8,.2,1)'
+      },
+      playFrameStyle: { display: 'block', width: '100%', height: mob ? '380px' : '480px', border: 0 },
       marksStyle: { background: RED, padding: '30px 40px 34px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '44px' },
       pageBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 40px', borderBottom: '2px solid ' + INK, fontFamily: MONO, fontSize: '13px', letterSpacing: '0.12em', textTransform: 'uppercase' },
-      contactHeadStyle: { background: RED, color: '#fff', padding: '90px 40px 80px', display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', columnGap: '40px', rowGap: '44px', position: 'relative', overflow: 'hidden', isolation: 'isolate' },
+      pageBarNavStyle: { display: 'flex', alignItems: 'center', gap: '28px', whiteSpace: 'nowrap' },
+      backLabel: '← Back to the work',
+      backLinkStyle: { cursor: 'pointer', color: RED, whiteSpace: 'nowrap' },
+      caseCountStyle: { color: '#6d6867', whiteSpace: 'nowrap' },
+      contactHeadStyle: {
+        background: RED, color: '#fff', padding: '90px 40px 80px', display: 'flex', flexWrap: 'wrap',
+        alignItems: 'flex-end', justifyContent: 'space-between', columnGap: '40px', rowGap: '44px',
+        position: 'relative', overflow: 'hidden', isolation: 'isolate',
+        minHeight: s.contactFull ? '100vh' : 0, boxSizing: 'border-box',
+        transition: 'min-height 460ms cubic-bezier(.2,.8,.2,1)'
+      },
       contactTitleStyle: { fontSize: '72px', fontWeight: 900, letterSpacing: '-0.035em', lineHeight: 0.92, textTransform: 'uppercase' },
-      contactArrowStyle: { width: '88px', aspectRatio: '208 / 215', display: 'block', flexShrink: 0, transform: 'scaleX(-1)', filter: 'brightness(0) invert(1)', position: 'relative', zIndex: 1 },
+      toggleContactFull: () => {
+        const next = !this.state.contactFull;
+        this.setState({ contactFull: next });
+        if (next) window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+      contactArrowStyle: {
+        width: '88px', aspectRatio: '208 / 215', display: 'block', flexShrink: 0,
+        transform: s.contactFull ? 'scaleX(-1) rotate(180deg)' : 'scaleX(-1)',
+        transition: 'transform 320ms cubic-bezier(.2,.8,.2,1), opacity 200ms linear',
+        filter: 'brightness(0) invert(1)', position: 'relative', zIndex: 1, cursor: 'pointer'
+      },
       contactGridStyle: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', borderBottom: '2px solid ' + INK },
       contactLeftStyle: { padding: '56px 40px', borderRight: '2px solid ' + INK, display: 'flex', flexDirection: 'column', gap: '40px' },
       contactRightStyle: { padding: '56px 32px', display: 'flex', flexDirection: 'column', gap: '36px', fontFamily: MONO, fontSize: '13px', letterSpacing: '0.04em' },
@@ -1169,7 +1346,7 @@ class Component extends DCLogic {
       isHomeB: s.routeB === 'home', isCaseB: s.routeB === 'case',
       isContactB: s.routeB === 'contact',
       goContactB: () => { this.setState({ routeB: 'contact', hoverB: null }); window.scrollTo(0, 0); },
-      goWorkB: () => { this.setState({ routeB: 'home', hoverB: null }); window.scrollTo(0, 0); },
+      goWorkB: () => { this.setState({ routeB: 'home', hoverB: null }); this.scrollTo('[data-grid]'); },
       goAboutB: () => {
         this.setState({ routeB: 'home', hoverB: null });
         setTimeout(() => {
@@ -1193,7 +1370,10 @@ class Component extends DCLogic {
       nextA: () => setA(nA), nextB: () => setB(nB),
       prevA: () => setA(pA), prevB: () => setB(pB),
       goHomeA: () => this.setState({ routeA: 'home', hoverA: null }),
-      goHomeB: () => this.setState({ routeB: 'home', hoverB: null, caseLive: false }),
+      goHomeB: () => {
+        this.setState({ routeB: 'home', hoverB: null, caseLive: false, heroFull: false, contactFull: false, menu: false });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
       clearHoverA: () => this.setState({ hoverA: null }),
       clearHoverB: () => this.setState({ hoverB: null }),
       trackA: (e) => {
@@ -1275,13 +1455,25 @@ class Component extends DCLogic {
       aboutTitleStyle: { fontSize: '28px', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.12, marginBottom: '18px' },
       aboutBodyStyle: { fontSize: '17px', lineHeight: 1.55, marginBottom: '28px', textWrap: 'pretty' },
       ctaStyle: { background: RED, color: '#fff', padding: '44px ' + PAD, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '30px' },
-      ctaTitleStyle: { fontSize: '40px', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 0.98, textTransform: 'uppercase' },
+      ctaTitleStyle: { fontSize: '40px', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 0.98, textTransform: 'uppercase', cursor: 'pointer' },
       ctaMetaWrapStyle: { display: 'flex', alignItems: 'flex-end', gap: '18px', width: '100%' },
       ctaMetaStyle: { fontFamily: MONO, fontSize: '13px', lineHeight: 2.2, letterSpacing: '0.08em', textTransform: 'uppercase', textAlign: 'left' },
       marksHomeStyle: { background: RED, padding: '24px ' + PAD + ' 28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '30px', borderTop: '2px solid rgba(255,255,255,0.35)' },
       marksStyle: { background: RED, padding: '24px ' + PAD + ' 28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '30px' },
       pageBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px', padding: '14px ' + PAD, borderBottom: '2px solid ' + INK, fontFamily: MONO, fontSize: '12px', letterSpacing: '0.1em', textTransform: 'uppercase' },
-      contactHeadStyle: { background: RED, color: '#fff', padding: '48px ' + PAD + ' 44px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '26px', position: 'relative', overflow: 'hidden', isolation: 'isolate' },
+      // the nav's own Work item replaces the back label, and the counter would
+      // otherwise force the bar to wrap on every phone
+      pageBarNavStyle: { display: 'flex', alignItems: 'center', gap: '18px', whiteSpace: 'nowrap' },
+      backLabel: '←',
+      backLinkStyle: { cursor: 'pointer', color: RED, whiteSpace: 'nowrap', fontSize: '15px' },
+      caseCountStyle: { display: 'none' },
+      contactHeadStyle: {
+        background: RED, color: '#fff', padding: '48px ' + PAD + ' 44px', display: 'flex',
+        flexDirection: 'column', alignItems: 'flex-start', gap: '26px',
+        position: 'relative', overflow: 'hidden', isolation: 'isolate',
+        minHeight: s.contactFull ? '100vh' : 0, boxSizing: 'border-box',
+        transition: 'min-height 460ms cubic-bezier(.2,.8,.2,1)'
+      },
       contactTitleStyle: { fontSize: '40px', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 0.96, textTransform: 'uppercase' },
       contactArrowStyle: { width: '52px', aspectRatio: '208 / 215', display: 'block', transform: 'scaleX(-1)', filter: 'brightness(0) invert(1)', position: 'relative', zIndex: 1 },
       contactGridStyle: { display: 'grid', gridTemplateColumns: '1fr', borderBottom: '2px solid ' + INK },
