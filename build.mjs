@@ -4,6 +4,10 @@
  *
  * `site/` is written by Claude Design and is NEVER edited by hand.
  * `static/` is ours — assets Claude Design knows nothing about.
+ *
+ * The game at play/ is the exception: Claude Design owns it now and ships it in
+ * every export, so site/play/ is authoritative and static/ must not shadow it —
+ * otherwise a fix made in Design would be silently discarded here.
  * This script merges both into `dist/`, which Cloudflare Pages serves.
  *
  * Re-exporting from Claude Design therefore costs nothing: every fix below is
@@ -17,7 +21,7 @@
  *      override hook (see cdnScriptFor in support.js). No generated code is patched.
  *   5. inject favicons, canonical URL, and Open Graph / Twitter tags
  *   6. strip campaign tags (utm_*, fbclid, …) from the address bar on load
- *   7. serve static/play/index.html as the 404 page too
+ *   7. serve play/index.html as the 404 page too
  *
  * Design rule: never fail the build over a hardening step. If something can't be
  * applied we log it loudly and carry on, so the worst case is the site deploys
@@ -52,8 +56,14 @@ await cp(SRC, OUT, { recursive: true });
 log('copied site/ -> dist/');
 
 if (existsSync(STATIC)) {
-  await cp(STATIC, OUT, { recursive: true });
-  log('copied static/ -> dist/');
+  // Skip static/play — Claude Design owns the game and ships it in site/play/.
+  // Copying ours over it would throw away edits made in Design.
+  const skipPlay = (src) => {
+    const rel = path.relative(STATIC, src);
+    return !(rel === 'play' || rel.startsWith('play' + path.sep));
+  };
+  await cp(STATIC, OUT, { recursive: true, filter: skipPlay });
+  log('copied static/ -> dist/ (play/ left to Claude Design)');
 } else {
   log('no static/ directory — skipping');
 }
@@ -204,7 +214,7 @@ if (existsSync(playPage)) {
   await cp(playPage, path.join(OUT, '404.html'));
   log('play/index.html -> 404.html');
 } else {
-  warn('static/play/index.html missing — no custom 404 page written');
+  warn('site/play/index.html missing from the export — no custom 404 page written');
 }
 
 log('done. Serve dist/');
