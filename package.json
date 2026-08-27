@@ -1,0 +1,15 @@
+{
+  "name": "patrick-linehan-films",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Build layer for patrickjlinehan.com. site/ is exported from Claude Design and is never edited by hand; build.mjs turns it into dist/, which Cloudflare Pages serves.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@babel/standalone": "7.29.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}
