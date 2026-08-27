@@ -4,10 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Patrick Linehan Films — Director</title>
-  <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -26,6 +22,10 @@
   a { color: #ec3013; text-decoration: none; }
   a:hover { color: #201e1d; }
   ::selection { background: #ec3013; color: #fff; }
+  video::-webkit-media-controls,
+  video::-webkit-media-controls-enclosure,
+  video::-webkit-media-controls-panel,
+  video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
   @keyframes spinslow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   @keyframes marq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
@@ -55,35 +55,55 @@
                   </div>
                   <div style="{{ barWordStyle }}">{{ wordmark }}</div>
                 </div>
+                <sc-if value="{{ showNavB }}" hint-placeholder-val="{{ true }}">
                 <div style="{{ barNavStyle }}">
                   <span onClick="{{ goWorkB }}" style-hover="animation: rolodex 560ms ease;" style="cursor: pointer; display: inline-block; transformOrigin: center center;">Work</span><span onClick="{{ goAboutB }}" style-hover="animation: rolodex 560ms ease;" style="cursor: pointer; display: inline-block; transformOrigin: center center;">About</span><span onClick="{{ goContactB }}" style-hover="animation: rolodex 560ms ease;" style="cursor: pointer; display: inline-block; transformOrigin: center center; color: #ec3013; background: #f3f2f2; padding: 5px 10px; margin: -5px 0;">Contact</span>
                 </div>
+                </sc-if>
+                <sc-if value="{{ showBurgerB }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ toggleMenu }}" aria-label="Menu" style="{{ burgerStyle }}">
+                  <div style="{{ burgerBarStyle }}"></div>
+                  <div style="{{ burgerBarStyle }}"></div>
+                  <div style="{{ burgerBarStyle }}"></div>
+                </div>
+                </sc-if>
+                <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ menuOverlayStyle }}">
+                  <div onClick="{{ toggleMenu }}" style="{{ menuCloseStyle }}">Close ✕</div>
+                  <div onClick="{{ menuWork }}" style="{{ menuItemStyle }}">Work</div>
+                  <div onClick="{{ menuAbout }}" style="{{ menuItemStyle }}">About</div>
+                  <div onClick="{{ menuContact }}" style="{{ menuItemStyle }}">Contact</div>
+                  <a href="https://www.instagram.com/patrickjlinehan/" target="_blank" rel="noopener" style="{{ menuMetaStyle }}">Instagram ↗</a>
+                </div>
+                </sc-if>
             <div style="{{ barLabelStyle }}">Director · Music video &amp; documentary · Brooklyn</div>
             <img src="data:image/png;base64,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" alt="" style="{{ barArrowStyle }}">
           </div>
-          <div ref="{{ heroRef }}" onMouseEnter="{{ enterVideo }}" onMouseLeave="{{ leaveVideo }}" style="position: relative; height: 620px; background: #201e1d; overflow: hidden;">
-            <video src="assets/hero6.mp4" ref="{{ videoRef }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" style="{{ heroVideoStyle }}"></video>
+          <div ref="{{ heroRef }}" onMouseEnter="{{ enterVideo }}" onMouseLeave="{{ leaveVideo }}" style="{{ heroBoxStyle }}">
+            <video src="assets/hero6.mp4" ref="{{ videoRef }}" autoPlay="{{ heroAutoPlay }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" preload="auto" style="{{ heroVideoStyle }}"></video>
           </div>
 
           <div onMouseEnter="{{ pauseMarquee }}" onMouseLeave="{{ resumeMarquee }}" style="background: #201e1d; color: #f3f2f2; padding: 34px 0; overflow: hidden; borderBottom: 2px solid #201e1d;">
             <div ref="{{ marqRef }}" style="display: flex; gap: 70px; width: max-content; alignItems: center; willChange: transform;">{{ logoMarquee }}</div>
           </div>
 
-          <div style="display: flex; alignItems: center; justifyContent: space-between; padding: 20px 40px; borderBottom: 2px solid #201e1d;">
+          <div style="{{ sheetBarStyle }}">
             <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase;">{{ countLabel }}</div>
+            <sc-if value="{{ showTools }}" hint-placeholder-val="{{ true }}">
             <div style="display: flex; alignItems: center; gap: 14px;">
               <img src="assets/asterisk.png" alt="" style-hover="animationPlayState: paused;" style="width: 22px; height: 22px; display: block; animation: spinslow 9s linear infinite;">
               <div onClick="{{ shuffle }}" style-hover="background: #ec3013;" style="background: #201e1d; color: #f3f2f2; fontFamily: monospace; fontSize: 13px; letterSpacing: 0.14em; textTransform: uppercase; padding: 10px 16px; cursor: pointer;">Shuffle the sheet</div>
             </div>
+            </sc-if>
           </div>
 
           <div style="display: grid; gridTemplateColumns: {{ gridCols }}; gap: 2px; background: #201e1d; borderBottom: 2px solid #201e1d;">
             <sc-for list="{{ shuffled }}" as="p" hint-placeholder-count="8">
               <div style="background: #f3f2f2; padding: 0; cursor: pointer; position: relative; display: flex; flexDirection: column;" onClick="{{ p.open }}" onMouseEnter="{{ p.enterB }}" onMouseLeave="{{ clearHoverB }}">
-                <div style="position: relative; height: 190px; overflow: hidden;">{{ p.tile }}</div>
-                <div style="display: flex; flexDirection: column; gap: 8px; padding: 14px 16px 16px; flex: 1;">
+                <div style="{{ tileMediaStyle }}">{{ p.tile }}</div>
+                <div style="{{ tileMetaStyle }}">
                   <div style="display: flex; alignItems: baseline; justifyContent: space-between; gap: 10px; flex: 1;">
-                    <div style="fontSize: 22px; fontWeight: 800; letterSpacing: -0.015em; textTransform: uppercase; lineHeight: 1.05;">{{ p.title }}</div>
+                    <div style="{{ tileTitleStyle }}">{{ p.title }}</div>
                     <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 12px; letterSpacing: 0.08em; color: #6d6867; whiteSpace: nowrap;">{{ p.num }}</div>
                   </div>
                   <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 11px; letterSpacing: 0.14em; textTransform: uppercase; color: #6d6867;">{{ p.kind }}</div>
@@ -92,26 +112,26 @@
             </sc-for>
           </div>
 
-          <div data-about style="display: grid; gridTemplateColumns: 420px minmax(0, 1fr); borderBottom: 2px solid #201e1d;">
-            <div style="borderRight: 2px solid #201e1d;">
-              <img src="assets/about-portrait-sm.png" alt="Patrick Linehan on set" loading="lazy" decoding="async" style="width: 100%; height: 100%; objectFit: cover; display: block;">
+          <div data-about style="{{ aboutGridStyle }}">
+            <div style="{{ aboutPicStyle }}">
+              <img src="assets/about-portrait-sm.png" alt="Patrick Linehan on set" loading="lazy" decoding="async" style="{{ aboutImgStyle }}">
             </div>
-            <div style="padding: 54px 40px;">
+            <div style="{{ aboutPadStyle }}">
               <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; marginBottom: 24px;">About</div>
-              <div style="fontSize: 30px; fontWeight: 800; letterSpacing: -0.02em; lineHeight: 1.15; marginBottom: 22px; maxWidth: 24ch;">Documentary habits, pointed at your brand.</div>
-              <div style="fontSize: 18px; lineHeight: 1.55; maxWidth: 60ch; marginBottom: 34px;">Patrick Linehan is an Emmy and Clio-award winning director specializing in commercial, branded content, narrative, and music videos. He's worked with brands like Red Bull, Oatly, and Marshall, and directed for hundreds of musical artists from around the world including WHATMORE, Elmiene, Mark Ambor, Kevin Atwater, Royel Otis, Calum Scott, Ayumu Imazu, and Maggie Rogers across narrative pieces, live sets, and music videos.<br><br>He got his start producing documentaries for ABC News, where he won an Emmy for <em>Uvalde: 365</em>, a year-long look into the aftermath of the 2022 school shooting in south Texas. Since redirecting his focus onto directing in 2023, he has worked on over 200 projects, amassing more than 150 million views across YouTube, TikTok, and Instagram. The scripted-doc series he made alongside WHATMORE won a Clio award for outstanding music marketing.</div>
+              <div style="{{ aboutTitleStyle }}">Documentary habits, pointed at your brand.</div>
+              <div style="{{ aboutBodyStyle }}">Patrick Linehan is an Emmy and Clio-award winning director specializing in commercial, branded content, narrative, and music videos. He's worked with brands like Red Bull, Oatly, and Marshall, and directed for hundreds of musical artists from around the world including WHATMORE, Elmiene, Mark Ambor, Kevin Atwater, Royel Otis, Calum Scott, Ayumu Imazu, and Maggie Rogers across narrative pieces, live sets, and music videos.<br><br>He got his start producing documentaries for ABC News, where he won an Emmy for <em>Uvalde: 365</em>, a year-long look into the aftermath of the 2022 school shooting in south Texas. Since redirecting his focus onto directing in 2023, he has worked on over 200 projects, amassing more than 150 million views across YouTube, TikTok, and Instagram. The scripted-doc series he made alongside WHATMORE won a Clio award for outstanding music marketing.</div>
               <div>{{ statRow }}</div>
             </div>
           </div>
 
-          <div style="background: #ec3013; color: #fff; padding: 60px 40px; display: flex; flexWrap: wrap; alignItems: flex-end; justifyContent: space-between; columnGap: 40px; rowGap: 44px;">
-            <div style="fontSize: 64px; fontWeight: 900; letterSpacing: -0.035em; lineHeight: 0.95; textTransform: uppercase; flex: 1 1 auto; minWidth: 0;">Let's make<br>something loud</div>
-            <div style="display: flex; alignItems: flex-end; gap: 36px; flex: 0 0 auto;">
-              <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 14px; lineHeight: 2.1; letterSpacing: 0.08em; textTransform: uppercase; textAlign: right;"><a href="mailto:patrick.linehan.films@gmail.com" style="color: inherit;" style-hover="color: #201e1d;">patrick.linehan.films@gmail.com</a><br><a href="https://www.instagram.com/patrickjlinehan/" target="_blank" rel="noopener" style="color: inherit;" style-hover="color: #201e1d;">Instagram</a><br>Brooklyn, NY</div>
+          <div style="{{ ctaStyle }}">
+            <div style="{{ ctaTitleStyle }}">Let's make<br>something loud</div>
+            <div style="{{ ctaMetaWrapStyle }}">
+              <div style="{{ ctaMetaStyle }}"><a href="mailto:patrick.linehan.films@gmail.com" style="color: inherit;" style-hover="color: #201e1d;">patrick.linehan.films@gmail.com</a><br><a href="https://www.instagram.com/patrickjlinehan/" target="_blank" rel="noopener" style="color: inherit;" style-hover="color: #201e1d;">Instagram</a><br>Brooklyn, NY</div>
               <img src="data:image/png;base64,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" alt="" style="width: 80px; aspectRatio: 208 / 215; display: block; flexShrink: 0; transform: scaleX(-1); filter: brightness(0) invert(1);">
             </div>
           </div>
-          <div style="background: #ec3013; padding: 30px 40px 34px; display: flex; alignItems: center; justifyContent: center; gap: 44px; borderTop: 2px solid rgba(255,255,255,0.35);">
+          <div style="{{ marksHomeStyle }}">
             <img src="assets/mark-nyc.png" alt="NYC" style="height: 24px; display: block;">
             <img src="assets/mark-ce.png" alt="CE / WEEE" style="height: 26px; display: block; filter: brightness(0) invert(1);">
             <img src="assets/mark-mpa-globe.png" alt="MPA" style="height: 28px; display: block;">
@@ -121,22 +141,22 @@
 
         <sc-if value="{{ isContactB }}" hint-placeholder-val="{{ false }}">
         <div>
-          <div style="display: flex; alignItems: center; justifyContent: space-between; padding: 16px 40px; borderBottom: 2px solid #201e1d; fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.12em; textTransform: uppercase;">
+          <div style="{{ pageBarStyle }}">
             <span style="cursor: pointer; color: #ec3013;" onClick="{{ goHomeB }}">← Back to the work</span>
             <span>Contact</span>
           </div>
 
-          <div style="background: #ec3013; color: #fff; padding: 90px 40px 80px; display: flex; flexWrap: wrap; alignItems: flex-end; justifyContent: space-between; columnGap: 40px; rowGap: 44px; position: relative; overflow: hidden; isolation: isolate;" onMouseEnter="{{ pauseContactVid }}" onMouseLeave="{{ playContactVid }}">
+          <div style="{{ contactHeadStyle }}" onMouseEnter="{{ pauseContactVid }}" onMouseLeave="{{ playContactVid }}">
             <video src="assets/contact-bg.mp4" ref="{{ contactVidRef }}" autoPlay="{{ true }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" style="position: absolute; inset: 0; width: 100%; height: 100%; objectFit: cover; zIndex: 0; filter: grayscale(1) contrast(1.2); mixBlendMode: multiply; opacity: 0.55;"></video>
             <div style="flex: 1 1 auto; minWidth: 0; position: relative; zIndex: 1;">
               <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; opacity: 0.85; marginBottom: 22px;">Available for commissions worldwide</div>
-              <div style="fontSize: 72px; fontWeight: 900; letterSpacing: -0.035em; lineHeight: 0.92; textTransform: uppercase;">Tell me what<br>you're making</div>
+              <div style="{{ contactTitleStyle }}">Tell me what<br>you're making</div>
             </div>
-            <img src="assets/arrow.png" alt="" style="width: 88px; aspectRatio: 208 / 215; display: block; flexShrink: 0; transform: scaleX(-1); filter: brightness(0) invert(1); position: relative; zIndex: 1;">
+            <img src="assets/arrow.png" alt="" style="{{ contactArrowStyle }}">
           </div>
 
-          <div style="display: grid; gridTemplateColumns: minmax(0, 1fr) 380px; borderBottom: 2px solid #201e1d;">
-            <div style="padding: 56px 40px; borderRight: 2px solid #201e1d; display: flex; flexDirection: column; gap: 40px;">
+          <div style="{{ contactGridStyle }}">
+            <div style="{{ contactLeftStyle }}">
               <div>
                 <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; color: #6d6867; marginBottom: 14px;">Direct</div>
                 <a href="mailto:patrick.linehan.films@gmail.com" style="fontSize: clamp(14px, 1.85vw, 22px); fontWeight: 900; letterSpacing: -0.015em; lineHeight: 1.1; textTransform: uppercase; display: block; maxWidth: 100%; whiteSpace: nowrap;" style-hover="color: #201e1d;">patrick.linehan.films@gmail.com</a>
@@ -152,7 +172,7 @@
               <div style="fontSize: 20px; lineHeight: 1.5; maxWidth: 54ch; textWrap: pretty;">Fastest way in is an email with the artist or brand, the song or the product, the date range and the number. Treatments turn around in a week. Based in Brooklyn, on a plane most months.</div>
             </div>
 
-            <div style="padding: 56px 32px; display: flex; flexDirection: column; gap: 36px; fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.04em;">
+            <div style="{{ contactRightStyle }}">
               <div>
                 <div style="letterSpacing: 0.16em; textTransform: uppercase; color: #6d6867; marginBottom: 16px;">Based</div>
                 <div style="display: flex; flexDirection: column;">
@@ -172,7 +192,7 @@
             </div>
           </div>
 
-          <div style="background: #ec3013; padding: 30px 40px 34px; display: flex; alignItems: center; justifyContent: center; gap: 44px;">
+          <div style="{{ marksStyle }}">
             <img src="assets/mark-nyc.png" alt="NYC" style="height: 24px; display: block;">
             <img src="assets/mark-ce.png" alt="CE / WEEE" style="height: 26px; display: block; filter: brightness(0) invert(1);">
             <img src="assets/mark-mpa-globe.png" alt="MPA" style="height: 28px; display: block;">
@@ -182,20 +202,20 @@
 
         <sc-if value="{{ isCaseB }}" hint-placeholder-val="{{ false }}">
         <div>
-          <div style="display: flex; alignItems: center; justifyContent: space-between; padding: 16px 40px; borderBottom: 2px solid #201e1d; fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.12em; textTransform: uppercase;">
+          <div style="{{ pageBarStyle }}">
             <span style="cursor: pointer; color: #ec3013;" onClick="{{ goHomeB }}">← Back to the work</span>
             <span>{{ caseB.num }} / {{ total }}</span>
           </div>
           <div style="position: relative; borderBottom: 2px solid #201e1d;">
             {{ caseHeroB }}
             <img src="data:image/png;base64,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" alt="" style="position: absolute; right: 40px; bottom: 40px; width: 68px; aspectRatio: 208 / 215; display: block; zIndex: 3; pointerEvents: none; transform: scaleX(-1);">
-            <div style="position: absolute; left: 0; bottom: 0; background: #ec3013; color: #fff; padding: 26px 36px; overflow: hidden; maxWidth: 78%;">
+            <div style="{{ caseTitleBoxStyle }}">
               <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; opacity: 0.85; marginBottom: 12px;">{{ caseB.kind }}</div>
-              <h1 ref="{{ titleRef }}" style="margin: 0; fontSize: 78px; lineHeight: 0.88; fontWeight: 900; letterSpacing: -0.035em; textTransform: uppercase; willChange: transform; animation: slidein 620ms cubic-bezier(.16,.84,.28,1) both;">{{ caseB.title }}</h1>
+              <h1 ref="{{ titleRef }}" style="{{ caseTitleStyle }}">{{ caseB.title }}</h1>
             </div>
           </div>
           <div style="display: grid; gridTemplateColumns: {{ caseColsB }}; borderBottom: 2px solid #201e1d;">
-            <div style="padding: 48px 32px; borderRight: 2px solid #201e1d; fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.04em;">
+            <div style="{{ caseCreditsStyle }}">
               <div style="letterSpacing: 0.16em; textTransform: uppercase; marginBottom: 20px;">Credits</div>
               <div style="display: flex; flexDirection: column;">
                 <sc-for list="{{ creditRowsB }}" as="row" hint-placeholder-count="4">
@@ -204,20 +224,20 @@
               </div>
             </div>
             <sc-if value="{{ hasCopyB }}" hint-placeholder-val="{{ false }}">
-            <div style="padding: 48px 40px; display: flex; flexDirection: column; gap: 34px; alignItems: flex-start;">
-              <div style="fontSize: 24px; fontWeight: 600; lineHeight: 1.45; maxWidth: 52ch; textWrap: pretty;">{{ caseB.body }}</div>
+            <div style="{{ caseCopyStyle }}">
+              <div style="{{ caseBodyStyle }}">{{ caseB.body }}</div>
               <div style="width: 100%; maxWidth: 560px;">{{ caseStripB }}</div>
             </div>
             </sc-if>
           </div>
-          <div style="display: flex; alignItems: center; justifyContent: space-between; padding: 40px; borderTop: 2px solid #201e1d; background: #ec3013; color: #fff; gap: 40px;">
+          <div style="{{ caseNavStyle }}">
             <div onClick="{{ prevB }}" style="display: flex; flexDirection: column; gap: 12px; cursor: pointer; flex: 1;">
               <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; opacity: 0.85;">Previous</div>
-              <div style="fontSize: 40px; fontWeight: 900; letterSpacing: -0.03em; textTransform: uppercase; lineHeight: 1;">← {{ prevTitleB }}</div>
+              <div style="{{ caseNavTitleStyle }}">← {{ prevTitleB }}</div>
             </div>
-            <div onClick="{{ nextB }}" style="display: flex; flexDirection: column; alignItems: flex-end; gap: 12px; cursor: pointer; flex: 1; textAlign: right;">
+            <div onClick="{{ nextB }}" style="{{ caseNavNextStyle }}">
               <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; opacity: 0.85;">Next</div>
-              <div style="fontSize: 40px; fontWeight: 900; letterSpacing: -0.03em; textTransform: uppercase; lineHeight: 1;">{{ nextTitleB }} →</div>
+              <div style="{{ caseNavTitleStyle }}">{{ nextTitleB }} →</div>
             </div>
           </div>
         </div>
@@ -264,6 +284,7 @@ const OVERRIDES = {
     "title": "Dominic Fike Interview",
     "kind": "Interview",
     "year": 2026,
+    "thumb": "sd2.jpg",
     "dp": "P. Linehan",
     "edit": "P. Linehan",
     "producer": "Eric Skelton",
@@ -291,6 +312,7 @@ const OVERRIDES = {
     "title": "Aperol Spritz",
     "kind": "Music Video",
     "year": 2025,
+    "thumb": "sd2.jpg",
     "dp": "P. Linehan",
     "edit": "P. Linehan + Jude Lipkin",
     "producer": "Henry Pearl",
@@ -382,12 +404,19 @@ function parseIds(raw) {
 }
 
 function buildData(ids) {
-  return ids.map((id) => ({
-    id: id, title: '', kind: '', year: '',
-    media: 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg',
-    hero: 'https://i.ytimg.com/vi/' + id + '/maxresdefault.jpg',
-    fallback: 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg'
-  }));
+  return ids.map((id) => {
+    const ov = OVERRIDES[id] || {};
+    // ov.thumb: a project asset path, or a YouTube frame grab — '1.jpg' | '2.jpg' | '3.jpg'
+    const t = ov.thumb ? (/^https?:|^assets\//.test(ov.thumb) ? ov.thumb : 'https://i.ytimg.com/vi/' + id + '/' + ov.thumb) : null;
+    return {
+      id: id, title: '', kind: '', year: '',
+      media: t || 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg',
+      // YouTube frame grabs are only 480x360 — too soft for the case-study hero, so
+      // they stay on the grid tile; a local asset is full-res and can carry both.
+      hero: (t && /^assets\//.test(t)) ? t : 'https://i.ytimg.com/vi/' + id + '/maxresdefault.jpg',
+      fallback: t || 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg'
+    };
+  });
 }
 
 let DATA = buildData(VIDEO_IDS);
@@ -464,7 +493,7 @@ class TilePreview extends React.Component {
     if (live) {
       kids.push(React.createElement('iframe', {
         key: 'frame',
-        src: 'https://www.youtube.com/embed/' + p.id + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + p.id + '&rel=0&modestbranding=1',
+        src: 'https://www.youtube.com/embed/' + p.id + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + p.id + '&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0',
         title: p.alt || p.id, allow: 'autoplay; encrypted-media', frameBorder: '0',
         style: {
           position: 'absolute', inset: 0, width: '100%', height: '100%', border: '0',
@@ -486,7 +515,7 @@ class HoverPlayer extends React.Component {
     if (st.hov || st.live) {
       const q = st.live
         ? '?autoplay=1&rel=0&modestbranding=1'
-        : '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + p.id + '&rel=0&modestbranding=1';
+        : '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + p.id + '&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0';
       kids.push(React.createElement('iframe', {
         key: 'frame',
         src: 'https://www.youtube.com/embed/' + p.id + q,
@@ -499,14 +528,15 @@ class HoverPlayer extends React.Component {
       }));
     }
     if (!st.live) {
+      const inset = p.mob ? '18px' : '40px';
       kids.push(React.createElement('div', {
         key: 'cue',
         style: {
-          position: 'absolute', left: '40px', top: '40px', background: '#ec3013', color: '#fff',
+          position: 'absolute', left: inset, top: inset, background: '#ec3013', color: '#fff',
           fontFamily: 'monospace', fontSize: '12px', letterSpacing: '0.14em', textTransform: 'uppercase',
           padding: '8px 12px', pointerEvents: 'none', zIndex: 4
         }
-      }, st.hov ? 'click to play with sound' : 'hover to preview'));
+      }, p.mob ? 'tap to play' : (st.hov ? 'click to play with sound' : 'hover to preview')));
     }
     return React.createElement('div', {
       style: { position: 'relative', height: p.height, background: '#000', overflow: 'hidden', cursor: st.live ? 'default' : 'pointer' },
@@ -525,7 +555,13 @@ class Thumb extends React.Component {
     if (img.naturalWidth <= 121) {
       const step = (this.fb || 0) + 1;
       const alt = step === 1 ? 'sddefault' : step === 2 ? 'hqdefault' : null;
-      if (alt) { this.fb = step; img.src = String(this.props.src).replace(/\/[a-z]+default\.jpg/, '/' + alt + '.jpg'); return; }
+      // the retry only applies to YouTube's *default.jpg names; anything else
+      // (frame grabs, local assets) has no ladder to climb — don't dead-end here
+      if (alt && /\/[a-z]+default\.jpg/.test(String(this.props.src))) {
+        this.fb = step;
+        img.src = String(this.props.src).replace(/\/[a-z]+default\.jpg/, '/' + alt + '.jpg');
+        return;
+      }
       this.done = true;
       return;
     }
@@ -536,14 +572,15 @@ class Thumb extends React.Component {
       c.width = SW; c.height = SH;
       const ctx = c.getContext('2d');
       ctx.drawImage(img, 0, 0, SW, SH);
-      const w = SW;
-      const row = ctx.getImageData(0, Math.floor(SH / 2), SW, 1).data;
-      const dark = (x) => (row[x * 4] + row[x * 4 + 1] + row[x * 4 + 2]) / 3 < 26;
-      let left = 0; while (left < w * 0.35 && dark(left)) left++;
-      let right = 0; while (right < w * 0.35 && dark(w - 1 - right)) right++;
+      const w = SW, LIM = w * 0.46;
+      // sample three rows so one dark scene element can't fake a bar
+      const rows = [0.25, 0.5, 0.75].map((f) => ctx.getImageData(0, Math.floor(SH * f), SW, 1).data);
+      const dark = (x) => rows.every((r) => (r[x * 4] + r[x * 4 + 1] + r[x * 4 + 2]) / 3 < 30);
+      let left = 0; while (left < LIM && dark(left)) left++;
+      let right = 0; while (right < LIM && dark(w - 1 - right)) right++;
       const bar = Math.min(left, right) / w;
-      if (bar > 0.02) {
-        const z = 1 / (1 - 2 * bar);
+      if (bar > 0.015) {
+        const z = Math.min(2.6, 1 / (1 - 2 * bar));
         this.setState({ zoom: z });
         if (this.props.onZoom) this.props.onZoom(z);
       }
@@ -613,7 +650,8 @@ class Freeze extends React.Component {
 class Component extends DCLogic {
   state = {
     routeA: 'home', projA: 0, hoverA: null, mx: 0, my: 0,
-    routeB: 'home', projB: 0, hoverB: null, heroHov: false, logoA: false, logoB: false, order: DATA.map((_, i) => i)
+    routeB: 'home', projB: 0, hoverB: null, heroHov: false, logoA: false, logoB: false, order: DATA.map((_, i) => i),
+    mob: typeof window !== 'undefined' && window.innerWidth <= 760, menu: false
   };
 
   videoRef = React.createRef();
@@ -634,6 +672,11 @@ class Component extends DCLogic {
     };
     window.addEventListener('resize', () => this.onScroll());
     window.addEventListener('scroll', this.onScroll, { passive: true });
+    this.onResize = () => {
+      const m = window.innerWidth <= 760;
+      if (m !== this.state.mob) this.setState({ mob: m, menu: false });
+    };
+    window.addEventListener('resize', this.onResize, { passive: true });
     this.onScroll();
     this.primeVideo();
     this.startMarquee();
@@ -650,7 +693,12 @@ class Component extends DCLogic {
     else window.addEventListener('load', go, { once: true });
   }
 
-  componentDidUpdate() { this.primeVideo(); this.syncData(); }
+  componentDidUpdate() {
+    this.primeVideo();
+    this.syncData();
+    // don't let the page scroll behind the fixed menu overlay
+    document.body.style.overflow = (this.state.mob && this.state.menu) ? 'hidden' : '';
+  }
 
   syncData() {
     const ids = parseIds(this.props.videoIds);
@@ -688,13 +736,17 @@ class Component extends DCLogic {
   }
   primeVideo() {
     const v = this.videoRef.current;
-    if (!v || this.primed) return;
-    this.primed = true;
+    if (!v) return;
     v.muted = true;
     v.defaultMuted = true;
+    // phones have no hover, so the hero just runs
+    if (this.state.mob) { const p = v.play(); if (p && p.catch) p.catch(() => {}); return; }
+    if (this.primed) return;
+    this.primed = true;
     if (!v.paused) v.pause();
   }
   hoverVideo(on) {
+    if (this.state.mob) return;
     this.setState({ heroHov: on });
     const v = this.videoRef.current;
     if (!v) return;
@@ -776,7 +828,7 @@ class Component extends DCLogic {
   }
 
   player(d, h) {
-    return React.createElement(HoverPlayer, { key: 'hp-' + d.id, id: d.id, src: d.hero || d.media, alt: d.title, height: h });
+    return React.createElement(HoverPlayer, { key: 'hp-' + d.id, id: d.id, src: d.hero || d.media, alt: d.title, height: h, mob: !!this.state.mob });
   }
 
   thumbFallback = (e) => {
@@ -895,7 +947,8 @@ class Component extends DCLogic {
     const pA = (s.projA - 1 + DATA.length) % DATA.length, pB = (s.projB - 1 + DATA.length) % DATA.length;
 
 
-    return {
+    const mob = !!s.mob;
+    const vals = {
       projects, shuffled, peekStyle, peekInner, videoRef: this.videoRef, titleRef: this.titleRef, heroRef: this.heroRef,
       barTrackStyle: {
         position: 'fixed', left: 0, right: 0, top: 0, height: '46px', zIndex: 40, pointerEvents: 'none'
@@ -965,6 +1018,7 @@ class Component extends DCLogic {
         transition: 'filter 320ms linear'
       },
       enterVideo: () => this.hoverVideo(true), leaveVideo: () => this.hoverVideo(false),
+      heroAutoPlay: mob,
       contactVidRef: this.contactVidRef,
       pauseContactVid: () => { const v = this.contactVidRef.current; if (v) v.pause(); },
       playContactVid: () => { const v = this.contactVidRef.current; if (v) { v.muted = true; v.play().catch(() => {}); } },
@@ -975,6 +1029,51 @@ class Component extends DCLogic {
         React.createElement(CountStat, { key: 's3', to: 16, suffix: '', label: 'Films', accent: true })
       ]),
       gridCols: 'repeat(' + (this.props.columns || 4) + ', 1fr)',
+      showNavB: true, showBurgerB: false, showTools: true, menuOpen: false,
+      toggleMenu: () => this.setState((p) => ({ menu: !p.menu })),
+      menuWork: () => { this.setState({ menu: false, routeB: 'home', hoverB: null }); window.scrollTo(0, 0); },
+      menuContact: () => { this.setState({ menu: false, routeB: 'contact', hoverB: null }); window.scrollTo(0, 0); },
+      menuAbout: () => {
+        this.setState({ menu: false, routeB: 'home', hoverB: null });
+        setTimeout(() => {
+          const el = document.querySelector('[data-about]');
+          if (el) window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 20);
+        }, 60);
+      },
+      burgerStyle: { display: 'none' }, burgerBarStyle: { display: 'none' },
+      menuOverlayStyle: { display: 'none' }, menuItemStyle: {}, menuCloseStyle: {}, menuMetaStyle: {},
+      heroBoxStyle: { position: 'relative', height: '620px', background: INK, overflow: 'hidden' },
+      sheetBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 40px', borderBottom: '2px solid ' + INK },
+      tileMediaStyle: { position: 'relative', height: '190px', overflow: 'hidden' },
+      tileMetaStyle: { display: 'flex', flexDirection: 'column', gap: '8px', padding: '14px 16px 16px', flex: 1 },
+      tileTitleStyle: { fontSize: '22px', fontWeight: 800, letterSpacing: '-0.015em', textTransform: 'uppercase', lineHeight: 1.05 },
+      aboutGridStyle: { display: 'grid', gridTemplateColumns: '420px minmax(0, 1fr)', borderBottom: '2px solid ' + INK },
+      aboutPicStyle: { borderRight: '2px solid ' + INK },
+      aboutImgStyle: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
+      aboutPadStyle: { padding: '54px 40px' },
+      aboutTitleStyle: { fontSize: '30px', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '22px', maxWidth: '24ch' },
+      aboutBodyStyle: { fontSize: '18px', lineHeight: 1.55, maxWidth: '60ch', marginBottom: '34px' },
+      ctaStyle: { background: RED, color: '#fff', padding: '60px 40px', display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', columnGap: '40px', rowGap: '44px' },
+      ctaTitleStyle: { fontSize: '64px', fontWeight: 900, letterSpacing: '-0.035em', lineHeight: 0.95, textTransform: 'uppercase', flex: '1 1 auto', minWidth: 0 },
+      ctaMetaWrapStyle: { display: 'flex', alignItems: 'flex-end', gap: '36px', flex: '0 0 auto' },
+      ctaMetaStyle: { fontFamily: MONO, fontSize: '14px', lineHeight: 2.1, letterSpacing: '0.08em', textTransform: 'uppercase', textAlign: 'right' },
+      marksHomeStyle: { background: RED, padding: '30px 40px 34px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '44px', borderTop: '2px solid rgba(255,255,255,0.35)' },
+      marksStyle: { background: RED, padding: '30px 40px 34px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '44px' },
+      pageBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 40px', borderBottom: '2px solid ' + INK, fontFamily: MONO, fontSize: '13px', letterSpacing: '0.12em', textTransform: 'uppercase' },
+      contactHeadStyle: { background: RED, color: '#fff', padding: '90px 40px 80px', display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', columnGap: '40px', rowGap: '44px', position: 'relative', overflow: 'hidden', isolation: 'isolate' },
+      contactTitleStyle: { fontSize: '72px', fontWeight: 900, letterSpacing: '-0.035em', lineHeight: 0.92, textTransform: 'uppercase' },
+      contactArrowStyle: { width: '88px', aspectRatio: '208 / 215', display: 'block', flexShrink: 0, transform: 'scaleX(-1)', filter: 'brightness(0) invert(1)', position: 'relative', zIndex: 1 },
+      contactGridStyle: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', borderBottom: '2px solid ' + INK },
+      contactLeftStyle: { padding: '56px 40px', borderRight: '2px solid ' + INK, display: 'flex', flexDirection: 'column', gap: '40px' },
+      contactRightStyle: { padding: '56px 32px', display: 'flex', flexDirection: 'column', gap: '36px', fontFamily: MONO, fontSize: '13px', letterSpacing: '0.04em' },
+      caseTitleBoxStyle: { position: 'absolute', left: 0, bottom: 0, background: RED, color: '#fff', padding: '26px 36px', overflow: 'hidden', maxWidth: '78%' },
+      caseTitleStyle: { margin: 0, fontSize: '78px', lineHeight: 0.88, fontWeight: 900, letterSpacing: '-0.035em', textTransform: 'uppercase', willChange: 'transform', animation: 'slidein 620ms cubic-bezier(.16,.84,.28,1) both' },
+      caseCreditsStyle: { padding: '48px 32px', borderRight: '2px solid ' + INK, fontFamily: MONO, fontSize: '13px', letterSpacing: '0.04em' },
+      caseCopyStyle: { padding: '48px 40px', display: 'flex', flexDirection: 'column', gap: '34px', alignItems: 'flex-start' },
+      caseBodyStyle: { fontSize: '24px', fontWeight: 600, lineHeight: 1.45, maxWidth: '52ch', textWrap: 'pretty' },
+      caseNavStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '40px', borderTop: '2px solid ' + INK, background: RED, color: '#fff', gap: '40px' },
+      caseNavTitleStyle: { fontSize: '40px', fontWeight: 900, letterSpacing: '-0.03em', textTransform: 'uppercase', lineHeight: 1 },
+      caseNavNextStyle: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px', cursor: 'pointer', flex: 1, textAlign: 'right' },
       isHomeA: s.routeA === 'home', isCaseA: s.routeA === 'case',
       isHomeB: s.routeB === 'home', isCaseB: s.routeB === 'case',
       isContactB: s.routeB === 'contact',
@@ -1016,6 +1115,85 @@ class Component extends DCLogic {
         this.setState({ order: o });
       }
     };
+
+    if (!mob) return vals;
+
+    // ---- phone layout: one film per row, burger nav, no hover affordances ----
+    const PAD = '18px';
+    return Object.assign(vals, {
+      showNavB: false, showBurgerB: true, showTools: false, menuOpen: !!s.menu,
+      gridCols: '1fr',
+      // no hover on touch: tiles stay on their still and a tap opens the case study
+      shuffled: shuffled.map((p) => Object.assign({}, p, { enterB: () => {} })),
+      barLogoStyle: { position: 'absolute', pointerEvents: 'auto', left: PAD, top: logoTop + 'px', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' },
+      barMarkStyle: { position: 'relative', width: lerp(40, 26, bp) + 'px', height: lerp(40, 26, bp) + 'px', flexShrink: 0 },
+      barWordStyle: { fontSize: lerp(13, 10, bp) + 'px', fontWeight: 800, lineHeight: bp > 0.5 ? 1 : 1.05, letterSpacing: bp > 0.5 ? '0.08em' : '0.01em', color: '#f3f2f2', whiteSpace: 'nowrap' },
+      barLabelStyle: { display: 'none' },
+      barArrowStyle: { display: 'none' },
+      burgerStyle: {
+        position: 'absolute', pointerEvents: 'auto', right: PAD, top: Math.max(11, 30 - y) + 'px',
+        width: '44px', height: '44px', display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        gap: '5px', padding: '0 9px', cursor: 'pointer', zIndex: 50
+      },
+      burgerBarStyle: { height: '2px', background: bp > 0.5 ? '#fff' : '#f3f2f2', display: 'block' },
+      menuOverlayStyle: {
+        position: 'fixed', inset: 0, zIndex: 60, background: RED, color: '#fff',
+        display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center',
+        gap: '4px', padding: '0 ' + PAD
+      },
+      menuCloseStyle: {
+        position: 'absolute', top: '18px', right: PAD, fontFamily: MONO, fontSize: '13px',
+        letterSpacing: '0.16em', textTransform: 'uppercase', cursor: 'pointer', padding: '12px 0'
+      },
+      menuItemStyle: {
+        fontSize: '46px', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1.1,
+        textTransform: 'uppercase', cursor: 'pointer', padding: '6px 0'
+      },
+      menuMetaStyle: {
+        marginTop: '28px', color: '#fff', fontFamily: MONO, fontSize: '13px',
+        letterSpacing: '0.16em', textTransform: 'uppercase', padding: '12px 0'
+      },
+      heroBoxStyle: { position: 'relative', height: '60vh', minHeight: '360px', background: INK, overflow: 'hidden' },
+      // always running, so it doesn't need the dimmed resting state
+      heroVideoStyle: {
+        position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+        filter: 'contrast(1.05) brightness(0.92)'
+      },
+      sheetBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '15px ' + PAD, borderBottom: '2px solid ' + INK },
+      tileMediaStyle: { position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden' },
+      tileMetaStyle: { display: 'flex', flexDirection: 'column', gap: '7px', padding: '14px ' + PAD + ' 18px', flex: 1 },
+      tileTitleStyle: { fontSize: '26px', fontWeight: 800, letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 1.02 },
+      aboutGridStyle: { display: 'grid', gridTemplateColumns: '1fr', borderBottom: '2px solid ' + INK },
+      aboutPicStyle: { borderBottom: '2px solid ' + INK },
+      aboutImgStyle: { width: '100%', height: '54vw', maxHeight: '340px', objectFit: 'cover', display: 'block' },
+      aboutPadStyle: { padding: '38px ' + PAD },
+      aboutTitleStyle: { fontSize: '28px', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.12, marginBottom: '18px' },
+      aboutBodyStyle: { fontSize: '17px', lineHeight: 1.55, marginBottom: '28px', textWrap: 'pretty' },
+      ctaStyle: { background: RED, color: '#fff', padding: '44px ' + PAD, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '30px' },
+      ctaTitleStyle: { fontSize: '40px', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 0.98, textTransform: 'uppercase' },
+      ctaMetaWrapStyle: { display: 'flex', alignItems: 'flex-end', gap: '18px', width: '100%' },
+      ctaMetaStyle: { fontFamily: MONO, fontSize: '13px', lineHeight: 2.2, letterSpacing: '0.08em', textTransform: 'uppercase', textAlign: 'left' },
+      marksHomeStyle: { background: RED, padding: '24px ' + PAD + ' 28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '30px', borderTop: '2px solid rgba(255,255,255,0.35)' },
+      marksStyle: { background: RED, padding: '24px ' + PAD + ' 28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '30px' },
+      pageBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px', padding: '14px ' + PAD, borderBottom: '2px solid ' + INK, fontFamily: MONO, fontSize: '12px', letterSpacing: '0.1em', textTransform: 'uppercase' },
+      contactHeadStyle: { background: RED, color: '#fff', padding: '48px ' + PAD + ' 44px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '26px', position: 'relative', overflow: 'hidden', isolation: 'isolate' },
+      contactTitleStyle: { fontSize: '40px', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 0.96, textTransform: 'uppercase' },
+      contactArrowStyle: { width: '52px', aspectRatio: '208 / 215', display: 'block', transform: 'scaleX(-1)', filter: 'brightness(0) invert(1)', position: 'relative', zIndex: 1 },
+      contactGridStyle: { display: 'grid', gridTemplateColumns: '1fr', borderBottom: '2px solid ' + INK },
+      contactLeftStyle: { padding: '34px ' + PAD, borderBottom: '2px solid ' + INK, display: 'flex', flexDirection: 'column', gap: '30px' },
+      contactRightStyle: { padding: '34px ' + PAD, display: 'flex', flexDirection: 'column', gap: '30px', fontFamily: MONO, fontSize: '13px', letterSpacing: '0.04em' },
+      caseTitleBoxStyle: { position: 'relative', background: RED, color: '#fff', padding: '22px ' + PAD + ' 24px', overflow: 'hidden', maxWidth: '100%' },
+      caseTitleStyle: { margin: 0, fontSize: '36px', lineHeight: 0.95, fontWeight: 900, letterSpacing: '-0.03em', textTransform: 'uppercase', willChange: 'transform', animation: 'slidein 620ms cubic-bezier(.16,.84,.28,1) both' },
+      caseColsB: '1fr',
+      caseCreditsStyle: { padding: '30px ' + PAD, borderBottom: '2px solid ' + INK, fontFamily: MONO, fontSize: '13px', letterSpacing: '0.04em' },
+      caseCopyStyle: { padding: '30px ' + PAD, display: 'flex', flexDirection: 'column', gap: '26px', alignItems: 'flex-start' },
+      caseBodyStyle: { fontSize: '18px', fontWeight: 500, lineHeight: 1.5, textWrap: 'pretty' },
+      caseNavStyle: { display: 'flex', flexDirection: 'column', alignItems: 'stretch', padding: '30px ' + PAD, borderTop: '2px solid ' + INK, background: RED, color: '#fff', gap: '26px' },
+      caseNavTitleStyle: { fontSize: '26px', fontWeight: 900, letterSpacing: '-0.025em', textTransform: 'uppercase', lineHeight: 1.05 },
+      caseNavNextStyle: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px', cursor: 'pointer', textAlign: 'left' },
+      caseHeroB: this.player(dB, '46vh'),
+      caseHeroA: this.player(dA, '46vh')
+    });
   }
 }
 
