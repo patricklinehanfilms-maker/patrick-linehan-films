@@ -16,7 +16,7 @@
 <script src="_ds/modernist-a9bb7bd0-6e31-4b28-b775-c874d7811787/_ds_bundle.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Expanded:wght@700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   body { margin: 0; background: #f3f2f2; font-family: Archivo, Helvetica, sans-serif; color: #201e1d; -webkit-font-smoothing: antialiased; }
   a { color: #ec3013; text-decoration: none; }
@@ -92,7 +92,7 @@
             <sc-if value="{{ showTools }}" hint-placeholder-val="{{ true }}">
             <div style="display: flex; alignItems: center; gap: 14px;">
               <img src="assets/asterisk.png" alt="" style-hover="animationPlayState: paused;" style="width: 22px; height: 22px; display: block; animation: spinslow 9s linear infinite;">
-              <div onClick="{{ shuffle }}" style-hover="background: #ec3013;" style="background: #201e1d; color: #f3f2f2; fontFamily: monospace; fontSize: 13px; letterSpacing: 0.14em; textTransform: uppercase; padding: 10px 16px; cursor: pointer;">Shuffle the sheet</div>
+              <div onClick="{{ shuffle }}" style-hover="background: #ec3013;" style="background: #201e1d; color: #f3f2f2; fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.14em; textTransform: uppercase; padding: 10px 16px; cursor: pointer;">Shuffle the sheet</div>
             </div>
             </sc-if>
           </div>
@@ -167,11 +167,11 @@
             <div style="{{ contactLeftStyle }}">
               <div>
                 <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; color: #6d6867; marginBottom: 14px;">Direct</div>
-                <a href="mailto:patrick.linehan.films@gmail.com" style="fontSize: clamp(14px, 1.85vw, 22px); fontWeight: 900; letterSpacing: -0.015em; lineHeight: 1.1; textTransform: uppercase; display: block; maxWidth: 100%; whiteSpace: nowrap;" style-hover="color: #201e1d;">patrick.linehan.films@gmail.com</a>
+                <a href="mailto:patrick.linehan.films@gmail.com?cc=luis@back2backmusic.com" style="fontSize: clamp(14px, 1.85vw, 22px); fontWeight: 900; letterSpacing: -0.015em; lineHeight: 1.1; textTransform: uppercase; display: block; maxWidth: 100%; whiteSpace: nowrap;" style-hover="color: #201e1d;">patrick.linehan.films@gmail.com</a>
               </div>
               <div>
                 <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; color: #6d6867; marginBottom: 14px;">Manager</div>
-                <a href="mailto:luis@back2backmusic.com" style="fontSize: clamp(14px, 1.85vw, 22px); fontWeight: 900; letterSpacing: -0.015em; lineHeight: 1.1; textTransform: uppercase; display: block; maxWidth: 100%; whiteSpace: nowrap;" style-hover="color: #201e1d;">luis@back2backmusic.com</a>
+                <a href="mailto:luis@back2backmusic.com?cc=patrick.linehan.films@gmail.com" style="fontSize: clamp(14px, 1.85vw, 22px); fontWeight: 900; letterSpacing: -0.015em; lineHeight: 1.1; textTransform: uppercase; display: block; maxWidth: 100%; whiteSpace: nowrap;" style-hover="color: #201e1d;">luis@back2backmusic.com</a>
               </div>
               <div style="display: flex; flexWrap: wrap; gap: 2px;">
                 <a href="https://www.instagram.com/patrickjlinehan/" target="_blank" rel="noopener" style="background: #201e1d; color: #f3f2f2; padding: 20px 26px; fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.14em; textTransform: uppercase; flex: 1 1 auto; textAlign: left;" style-hover="background: #ec3013; color: #fff;">Instagram ↗</a>
@@ -282,7 +282,9 @@ const OVERRIDES = {
     "clip": "assets/clip-jackson.mp4",
     "year": 2025,
     "dir": "P. Linehan + J. August",
+    "written": "J. August",
     "dp": "P. Linehan",
+    "edit": "J. August",
     "desc": "The fourth in a series of portraits I've been shooting for WHATMORE. I followed Jackson through a shift at one of the oldest bars in New York, handheld and close in, while he talks about quitting the job and feeling like an imposter. It cuts against the live show and lands on the release of “jenny’s”."
   },
   "w_6r2iEur3g": {
@@ -293,8 +295,8 @@ const OVERRIDES = {
     "dir": "P. Linehan, J. August + Yoshi T.",
     "dp": "P. Linehan",
     "edit": "P. Linehan + J. August",
-    "color": "P. Linehan",
-    "desc": "The second WHATMORE portrait. Yoshi works the line at a sushi restaurant, so I shot him in the kitchen in whites and cut it against home video, the studio and the stage. He talks about how scary starting something new is. Jackson and I wrote it, I shot it and I graded it."
+    "script": "Yoshi T. + J. August",
+    "desc": "The second WHATMORE portrait. Yoshi works at his dad's sushi restaurant, so I shot him and his father in the kitchen wearing their whites and cut it against home video, the studio and the stage. He talks about how scary starting something new is. Jackson, Yoshi, and I wrote it, I shot it."
   },
   "wl7VscNbwAw": {
     "title": "Dominic Fike Interview",
@@ -315,7 +317,7 @@ const OVERRIDES = {
     "dp": "Kai Blamey",
     "producer": "Mathias Gilay",
     "color": "Jake Whitehouse",
-    "desc": "An Elmiene video that lives almost entirely inside one elevator. He rides it in a yellow lined suit while the car keeps filling up with people until there is nowhere left to stand. We shot it in London with Untold Studios for Def Jam and Polydor. Near black and green the whole way, so the yellow is the only thing that moves."
+    "desc": "An Elmiene video that lives almost entirely inside one elevator. He rides it in a yellow lined suit while the car keeps filling up with people until there is nowhere left to stand. We shot it in London with Untold Studios for Def Jam and Polydor."
   },
   "mq-5QnSmwLo": {
     "title": "Last Call",
@@ -325,7 +327,7 @@ const OVERRIDES = {
     "dp": "Ethan Wen",
     "producer": "Andrew Zapata",
     "color": "Avery Niles",
-    "desc": "Vacations on the last night of something. It starts in a packed basement party lit mostly by a TV, spills out onto empty streets with everyone running, and ends on the water at sunrise. Shot in New York with CITYISLAND."
+    "desc": "Vacations close out a karaoke bar in New York City, ending with a bar fight that gets them thrown out onto the streets. They run away from the bar and across the bridge at sunrise."
   },
   "rIgKZS8-HuY": {
     "title": "Aperol Spritz",
@@ -337,7 +339,7 @@ const OVERRIDES = {
     "edit": "P. Linehan + Jude Lipkin",
     "producer": "Henry Pearl",
     "color": "Cam McCutcheon",
-    "desc": "A LAUNDRY DAY video that runs from a bright tailor shop in the afternoon to behind a bar at 2am. Our guy gets fitted for a suit, walks out into the night and ends up pouring spritzes for a room full of people. Big cast, mostly friends. Lola came up with the concept, I directed it and cut it with Jude."
+    "desc": "A LAUNDRY DAY video that runs from a bright tailor shop in the afternoon to behind a bar at 2am. Our guy gets fitted for a suit, walks out into the night and ends up pouring spritzes for a room full of people. Big cast, mostly friends. Lola came up with the concept, I directed it and cut it."
   },
   "e4WFFY8JzgI": {
     "title": "Cry Against The Wind",
@@ -368,15 +370,16 @@ const OVERRIDES = {
     "dir": "J. August + P. Linehan",
     "producer": "Ethan Grossman",
     "color": "Brian Charles",
-    "desc": "Wide lens, all handheld, moving with the cast from a diner out into a night that keeps escalating. Cars, a bodega, a crowd that keeps growing, and it ends in a police lineup. Everyone on screen is playing somebody else in the band. Jackson and I directed it together."
+    "desc": "Wide lens, all handheld, moving with the cast from a jewelry robbery out into a night that keeps escalating. Getaway cars, a bodega, a photobooth, and it ends in a police lineup. Everyone on screen is playing the female doppelganger of the band. Jackson and I directed it together."
   },
   "wxLGzYsTBhg": {
     "title": "WHATMORE Album Trailer",
     "kind": "Short Film",
     "clip": "assets/clip-albumtrailer.mp4",
     "year": 2025,
+    "dir": "P. Linehan + J. August",
     "dp": "P. Linehan",
-    "desc": "A trailer for the debut WHATMORE record, played as a scene instead of a montage. The whole band sits in a red booth in an old New York restaurant getting talked at by a man in a grey suit and a red tie. Comedy first, record second. I shot it."
+    "desc": "A trailer for the debut WHATMORE record, played as a scene instead of a montage. The whole band sits in a red booth in an old New York restaurant getting talked at by a man in a grey suit and a red tie. Comedy first, record second."
   },
   "DmpCKe1DYqo": {
     "title": "Meet Me After Practice (Short)",
@@ -394,7 +397,7 @@ const OVERRIDES = {
     "year": 2026,
     "dp": "Jeremy Herron",
     "producer": "Lianne Rose Richards",
-    "desc": "Vacations in a New York park in the dead of winter, playing chess against his father. Every time the board resets the man across the table is older than he was the game before. Bare trees, a chess clock, a crowd of regulars gathering to watch it happen. Shot with Cityisland."
+    "desc": "Vacations in a New York park in the dead of winter, playing chess against progressively older versions of his father. As we progress through the game, the man ages drastically. Bare trees, a chess clock, a crowd of regulars gathering to watch it happen. Shot with Cityisland."
   },
   "7E9ZXITzgcc": {
     "title": "Comets + Gold",
@@ -405,7 +408,7 @@ const OVERRIDES = {
     "dp": "Scott Siracusano",
     "edit": "Ryan McKenna",
     "color": "Ryan Urzi",
-    "desc": "Elmiene and Fujii Kaze on a black stage with a single rectangle of light standing in it. He walks toward it, Kaze plays a grand piano, and fog rolls across the floor until the two of them are out there in it together. Gold and black and almost nothing else. Untold Studios, VFX by S4."
+    "desc": "Elmiene and Fujii Kaze on a black stage with a single rectangle of light standing in it. He walks toward the portal, Kaze plays a grand piano, and fog rolls across the floor until the two of them perform together. Gold and black and almost nothing else. Untold Studios, VFX by S4."
   },
   "59EJ_paMewk": {
     "kind": "Music Video",
@@ -415,6 +418,9 @@ const OVERRIDES = {
     "title": "If Our Love Is Dead (Live)",
     "kind": "Concert Film",
     "year": 2024,
+    "dir": "P. Linehan + J. Kerr",
+    "edit": "P. Linehan",
+    "color": "N. Consing",
     "desc": "Royel Otis live at Brooklyn Steel on the Glory To Glory tour. I shot it from the stage in a blue and green wash, close on the guitars and the kit, and ended on the room with everyone's hands up."
   }
 };
@@ -574,7 +580,7 @@ class HoverPlayer extends React.Component {
         key: 'cue',
         style: {
           position: 'absolute', left: inset, top: inset, background: '#ec3013', color: '#fff',
-          fontFamily: 'monospace', fontSize: '12px', letterSpacing: '0.14em', textTransform: 'uppercase',
+          fontFamily: MONO, fontSize: '12px', letterSpacing: '0.14em', textTransform: 'uppercase',
           padding: '8px 12px', pointerEvents: 'none', zIndex: 4
         }
       }, p.mob ? 'tap to play' : (st.hov ? 'click to play with sound' : 'hover to preview')));
@@ -668,7 +674,7 @@ class Freeze extends React.Component {
         key: 'cue',
         style: {
           position: 'absolute', left: '12px', bottom: '12px', background: '#ec3013', color: '#fff',
-          fontFamily: 'monospace', fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase',
+          fontFamily: MONO, fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase',
           padding: '5px 8px', opacity: st.hov ? 0 : 1, transition: 'opacity 160ms linear', pointerEvents: 'none',
           display: p.cue === false ? 'none' : 'block'
         }
@@ -999,6 +1005,8 @@ class Component extends DCLogic {
     const o = OVERRIDES[d.id] || {};
     return [
       { k: 'DIR', v: o.dir || 'P. Linehan' },
+      { k: 'SCRIPT', v: o.script },
+      { k: 'WRITTEN BY', v: o.written },
       { k: 'DP', v: o.dp },
       { k: 'EDIT', v: o.edit },
       { k: 'COLOR', v: o.color },
