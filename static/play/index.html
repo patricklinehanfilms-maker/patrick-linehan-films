@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Asterisk Run — a small game for patrickjlinehan.com.">
+<meta name="robots" content="noindex">
+<title>Asterisk Run — Patrick Linehan Films</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Archivo+Expanded:wght@900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  /* Patrick Linehan Films — site system, run as the logo itself:
+     white mark and white asterisks on the brand red, ink for accents.
+     One committed world, painted explicitly, so it holds on any host page. */
+  :root{
+    --red:#ec3013; --white:#fff; --ink:#201e1d;
+    --dim:rgba(255,255,255,.72); --faint:rgba(255,255,255,.5);
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+    --wide:'Archivo Expanded',Archivo,'Helvetica Neue',Helvetica,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%}
+  body{background:var(--red);color:var(--white);font-family:var(--sans);overflow:hidden}
+
+  #stage{
+    position:relative;width:100%;height:100%;min-height:220px;
+    background:var(--red);overflow:hidden;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #stage:focus{outline:none}
+  #stage.ptr:focus-visible{outline:none}
+  #stage:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+  #cv{display:block;width:100%;height:100%}
+
+  /* ---------- HUD ---------- */
+  .hud{
+    position:absolute;inset:0;pointer-events:none;
+    padding:clamp(12px,2.4vw,24px);
+    display:flex;flex-direction:column;justify-content:space-between;
+    font-family:var(--mono);font-variant-numeric:tabular-nums;
+  }
+  .hud-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+  .tc{
+    font-size:clamp(15px,2.6vw,22px);font-weight:500;letter-spacing:.04em;
+    color:var(--white);
+  }
+  .meta{
+    font-size:clamp(9px,1.3vw,11px);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--dim);text-align:right;line-height:1.7;
+  }
+  .meta b{font-weight:500;color:var(--white)}
+  .take{
+    font-size:clamp(9px,1.3vw,11px);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  }
+  #sound{
+    pointer-events:auto;cursor:pointer;background:none;border:0;padding:2px 0 2px 14px;
+    font:inherit;font-size:clamp(9px,1.3vw,11px);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--dim);
+  }
+  #sound:hover{color:var(--ink)}
+  #sound:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+  /* ---------- overlays ---------- */
+  .card{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:14px;
+    text-align:center;padding:24px;pointer-events:none;
+    /* the runner owns the lower half — keep copy clear of him */
+    padding-bottom:36%;
+  }
+  @media (min-aspect-ratio:5/2){ .card{padding-bottom:22%} }
+  .card[hidden]{display:none}
+  .eyebrow{
+    font-family:var(--mono);font-size:clamp(9px,1.2vw,11px);
+    letter-spacing:.28em;text-transform:uppercase;color:var(--dim);
+  }
+  .title{
+    font-family:var(--wide);font-weight:900;
+    font-size:clamp(30px,7.2vw,68px);line-height:.92;letter-spacing:-.02em;
+    text-transform:uppercase;color:var(--white);margin:0;text-wrap:balance;
+  }
+  .title .ast{color:var(--ink)}
+  .cut{
+    font-family:var(--wide);font-weight:900;text-transform:uppercase;
+    font-size:clamp(44px,11vw,104px);line-height:.86;letter-spacing:-.03em;
+    color:var(--white);margin:0;
+  }
+  .keys{
+    font-size:clamp(11px,1.5vw,14px);color:var(--dim);letter-spacing:.02em;
+  }
+  .keys kbd{
+    font-family:var(--mono);font-size:.92em;border:1px solid currentColor;
+    border-radius:3px;padding:1px 6px;margin:0 1px;opacity:.85;
+  }
+  .result{
+    font-family:var(--mono);font-size:clamp(12px,1.7vw,15px);
+    letter-spacing:.08em;color:var(--dim);font-variant-numeric:tabular-nums;
+  }
+  .result .big{color:var(--white);font-weight:500}
+  .pb{
+    font-family:var(--mono);font-size:clamp(9px,1.2vw,11px);letter-spacing:.22em;
+    text-transform:uppercase;color:var(--white);
+  }
+  #focusHint{
+    position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
+    font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--dim);pointer-events:none;opacity:0;transition:opacity 200ms linear;
+  }
+  #focusHint.show{opacity:1}
+
+  @media (prefers-reduced-motion:reduce){
+    #stage{transition:none}
+  }
+</style>
+
+</head>
+<body>
+<div id="stage" tabindex="0" role="application"
+     aria-label="Asterisk Run — jump the running mark over asterisks. Space or tap to jump, arrow down to duck.">
+  <canvas id="cv"></canvas>
+
+  <div class="hud">
+    <div class="hud-row">
+      <div class="tc" id="tc">00:00:00</div>
+      <div class="meta">
+        <div>Best <b id="best">00:00:00</b></div>
+        <div><button id="sound" type="button" aria-pressed="false">Sound off</button></div>
+      </div>
+    </div>
+    <div class="hud-row">
+      <div class="take" id="take">Take 01</div>
+      <div class="take" id="spd"></div>
+    </div>
+  </div>
+
+  <div class="card" id="startCard">
+    <div class="eyebrow">Patrick Linehan Films</div>
+    <h1 class="title">Asterisk<span class="ast">*</span>Run</h1>
+    <div class="keys"><kbd>Space</kbd> to jump · <kbd>↓</kbd> to duck · or tap</div>
+  </div>
+
+  <div class="card" id="overCard" hidden>
+    <p class="cut">Cut.</p>
+    <div class="result">Take <span id="oTake">01</span> — <span class="big" id="oTc">00:00:00</span></div>
+    <div class="pb" id="oPb" hidden>New best</div>
+    <div class="keys"><kbd>Space</kbd> for take <span id="oNext">02</span></div>
+  </div>
+
+  <div id="focusHint">Click to play</div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  // ---------------------------------------------------------------- assets
+  const RUNNER_SRC = 'data:image/png;base64,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';
+  const AST_SRC    = 'data:image/png;base64,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';
+  const RUN_ASPECT = 99 / 128;        // the mark holds one pose — no sprite sheet
+
+  const stage = document.getElementById('stage');
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d', { alpha: false });
+  const el = {
+    tc: document.getElementById('tc'), best: document.getElementById('best'),
+    take: document.getElementById('take'), spd: document.getElementById('spd'),
+    start: document.getElementById('startCard'), over: document.getElementById('overCard'),
+    oTake: document.getElementById('oTake'), oTc: document.getElementById('oTc'),
+    oNext: document.getElementById('oNext'), oPb: document.getElementById('oPb'),
+    sound: document.getElementById('sound'), hint: document.getElementById('focusHint')
+  };
+
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const COL = { red:'#ec3013', white:'#ffffff', ink:'#201e1d' };
+
+  // Tint a white-alpha mask into a solid colour once, and cache it.
+  const tintCache = new Map();
+  function tinted(img, colour) {
+    const key = img.src.slice(-24) + colour;
+    let c = tintCache.get(key);
+    if (c) return c;
+    c = document.createElement('canvas');
+    c.width = img.naturalWidth; c.height = img.naturalHeight;
+    const g = c.getContext('2d');
+    g.drawImage(img, 0, 0);
+    g.globalCompositeOperation = 'source-in';
+    g.fillStyle = colour;
+    g.fillRect(0, 0, c.width, c.height);
+    tintCache.set(key, c);
+    return c;
+  }
+
+  // ------------------------------------------------------------ world size
+  // Fixed logical height; width follows the container so a wide embed simply
+  // shows more track rather than stretching the runner.
+  const H = 260;
+  let W = 900, DPR = 1;
+  const GROUND_Y = 212;
+
+  function resize() {
+    const r = stage.getBoundingClientRect();
+    const cw = Math.max(240, r.width), ch = Math.max(180, r.height);
+    W = Math.round(H * (cw / ch));
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(cw * DPR);
+    cv.height = Math.round(ch * DPR);
+    const s = (ch * DPR) / H;
+    ctx.setTransform(s, 0, 0, s, 0, 0);
+    ctx.imageSmoothingQuality = 'high';
+  }
+  new ResizeObserver(resize).observe(stage);
+
+  // ------------------------------------------------------------- constants
+  const GRAV = 2500, JUMP_V = -800, CUT = 0.62, FALL_BOOST = 1900;
+  // He faces left and runs on the left; the asterisks sweep past him right to left.
+  const RUN_H = 78, RUN_W = RUN_H * RUN_ASPECT, RUN_X = 92;
+  const HB = { x0:0.26, x1:0.55, y0:0.10, y1:0.98 };   // torso box inside the pose
+  const DUCK_S = 0.60;
+  const SPD0 = 330, SPD_MAX = 720, SPD_RAMP = 0.0055;
+  const FPS_TC = 24, UNITS_PER_FRAME = 14;
+
+  // --------------------------------------------------------------- state
+  let running = false, over = false, started = false;
+  let dist = 0, speed = SPD0, best = 0, take = 1;
+  let shake = 0, groundOff = 0;
+  const runner = { y:0, vy:0, ducking:false, held:false, dead:false };
+  let obstacles = [], nextGap = 420, clouds = [];
+
+  // best score persists per viewer; storage can be absent or throw.
+  try { best = parseInt(localStorage.getItem('plf.asteriskrun.best') || '0', 10) || 0; } catch (e) {}
+  function saveBest() { try { localStorage.setItem('plf.asteriskrun.best', String(best)); } catch (e) {} }
+
+  // ------------------------------------------------------------- timecode
+  function timecode(frames) {
+    const f = Math.max(0, Math.floor(frames));
+    const totalSec = Math.floor(f / FPS_TC);
+    const mm = Math.min(99, Math.floor(totalSec / 60));
+    const ss = totalSec % 60;
+    const ff = f % FPS_TC;
+    const p = n => String(n).padStart(2, '0');
+    return p(mm) + ':' + p(ss) + ':' + p(ff);
+  }
+  const scoreFrames = () => Math.floor(dist / UNITS_PER_FRAME);
+
+  // ---------------------------------------------------------------- audio
+  let audioOn = false, actx = null;
+  function blip(freq, dur, type, gain) {
+    if (!audioOn) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type || 'square'; o.frequency.value = freq;
+      g.gain.setValueAtTime(gain || 0.035, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(); o.stop(actx.currentTime + dur);
+    } catch (e) {}
+  }
+  el.sound.addEventListener('click', e => {
+    e.stopPropagation();
+    audioOn = !audioOn;
+    el.sound.textContent = audioOn ? 'Sound on' : 'Sound off';
+    el.sound.setAttribute('aria-pressed', String(audioOn));
+    if (audioOn) blip(660, 0.07);
+  });
+
+  // ------------------------------------------------------------ obstacles
+  function spawn() {
+    const t = scoreFrames();
+    const flying = t > 320 && Math.random() < 0.22;
+    if (flying) {
+      obstacles.push({ air:true, x:W + 40, size:38, rot:Math.random() * 6.28, spin:(Math.random() - 0.5) * 1.4,
+                       yc: GROUND_Y - 78 - Math.random() * 12 });
+    } else {
+      const n = Math.random() < 0.16 ? 3 : (Math.random() < 0.38 ? 2 : 1);
+      let x = W + 40;
+      for (let i = 0; i < n; i++) {
+        const size = 34 + Math.random() * (n === 1 ? 26 : 12);
+        obstacles.push({ air:false, x, size, rot:Math.random() * 6.28, spin:(Math.random() - 0.5) * 0.9 });
+        x += size * 0.92;
+      }
+    }
+    const tight = Math.max(0, Math.min(1, (speed - SPD0) / (SPD_MAX - SPD0)));
+    nextGap = (340 - tight * 60) + Math.random() * (300 - tight * 110);
+  }
+
+  function makeClouds() {
+    clouds = [];
+    for (let i = 0; i < 7; i++) {
+      clouds.push({ x: Math.random() * W, y: 20 + Math.random() * 68,
+                    s: 9 + Math.random() * 15, d: 0.05 + Math.random() * 0.14,
+                    rot: Math.random() * 6.28 });
+    }
+  }
+
+  // ----------------------------------------------------------------- loop
+  function reset() {
+    dist = 0; speed = SPD0; obstacles = []; nextGap = 420;
+    runner.y = 0; runner.vy = 0; runner.ducking = false; runner.dead = false;
+    shake = 0;
+    makeClouds();
+  }
+
+  function start() {
+    if (running) return;
+    reset();
+    running = true; over = false; started = true;
+    el.start.hidden = true; el.over.hidden = true;
+    el.take.textContent = 'Take ' + String(take).padStart(2, '0');
+    last = performance.now();
+    requestAnimationFrame(tick);
+  }
+
+  function jump() {
+    if (!running) { start(); return; }
+    if (runner.y === 0 && !runner.dead) {
+      runner.vy = JUMP_V; runner.held = true;
+      blip(520, 0.06, 'square', 0.03);
+    }
+  }
+  function releaseJump() {
+    if (runner.held && runner.vy < 0) runner.vy *= CUT;
+    runner.held = false;
+  }
+  function duck(on) {
+    runner.ducking = on && !runner.dead;
+    if (on && runner.y < 0) runner.vy += FALL_BOOST * 0.016;   // fast-fall
+  }
+
+  function die() {
+    running = false; over = true; runner.dead = true; runner.ducking = false;
+    if (!REDUCED) shake = 1;
+    blip(180, 0.28, 'sawtooth', 0.05);
+    const f = scoreFrames();
+    const isPb = f > best;
+    if (isPb) { best = f; saveBest(); el.best.textContent = timecode(best); }
+    el.oTake.textContent = String(take).padStart(2, '0');
+    el.oTc.textContent = timecode(f);
+    el.oPb.hidden = !isPb;
+    take++;
+    el.oNext.textContent = String(take).padStart(2, '0');
+    el.over.hidden = false;
+  }
+
+  function hitbox() {
+    const h = runner.ducking ? RUN_H * DUCK_S : RUN_H;
+    const w = runner.ducking ? RUN_W * 1.10 : RUN_W;
+    const top = GROUND_Y - h + runner.y;
+    return { x: RUN_X + HB.x0 * w, y: top + HB.y0 * h,
+             w: (HB.x1 - HB.x0) * w, h: (HB.y1 - HB.y0) * h };
+  }
+
+  function update(dt) {
+    dist += speed * dt;
+    speed = Math.min(SPD_MAX, SPD0 + dist * SPD_RAMP);
+    groundOff = (groundOff + speed * dt) % 24;
+
+    runner.vy += GRAV * dt * (runner.ducking && runner.y < 0 ? 1.7 : 1);
+    runner.y += runner.vy * dt;
+    if (runner.y > 0) { runner.y = 0; runner.vy = 0; }
+
+    for (const o of obstacles) { o.x -= speed * dt; o.rot += o.spin * dt; }
+    obstacles = obstacles.filter(o => o.x > -140);
+
+    nextGap -= speed * dt;
+    if (nextGap <= 0) spawn();
+
+    for (const c of clouds) {
+      c.x -= speed * c.d * dt;
+      c.rot += 0.12 * dt;
+      if (c.x < -60) { c.x = W + 40; c.y = 20 + Math.random() * 68; }
+    }
+
+    const hb = hitbox();
+    for (const o of obstacles) {
+      const pad = o.air ? 0.30 : 0.26;               // asterisk arms are sparse — be fair
+      const ow = o.size * (1 - pad * 2), oh = o.size * (1 - pad * 2);
+      const ox = o.x + o.size * pad;
+      const oy = (o.air ? o.yc - o.size / 2 : GROUND_Y - o.size) + o.size * pad;
+      if (hb.x < ox + ow && hb.x + hb.w > ox && hb.y < oy + oh && hb.y + hb.h > oy) { die(); return; }
+    }
+  }
+
+  // ----------------------------------------------------------------- draw
+  let grain = null, grainPat = null;
+  function makeGrain() {
+    const c = document.createElement('canvas');
+    c.width = c.height = 96;
+    const g = c.getContext('2d');
+    const im = g.createImageData(96, 96);
+    for (let i = 0; i < im.data.length; i += 4) {
+      const v = 128 + (Math.random() - 0.5) * 255;
+      im.data[i] = im.data[i+1] = im.data[i+2] = v;
+      im.data[i+3] = 15;
+    }
+    g.putImageData(im, 0, 0);
+    grain = c;
+    grainPat = ctx.createPattern(c, 'repeat');
+  }
+
+  function draw() {
+    ctx.save();
+    if (shake > 0) {
+      const m = shake * 5;
+      ctx.translate((Math.random() - 0.5) * m, (Math.random() - 0.5) * m);
+    }
+
+    ctx.fillStyle = COL.red;
+    ctx.fillRect(-20, -20, W + 40, H + 40);
+
+    // parallax asterisks
+    if (astImg) {
+      const faint = tinted(astImg, COL.white);
+      for (const c of clouds) {
+        ctx.save();
+        ctx.globalAlpha = 0.22;
+        ctx.translate(c.x, c.y); ctx.rotate(c.rot);
+        ctx.drawImage(faint, -c.s / 2, -c.s / 2, c.s, c.s);
+        ctx.restore();
+      }
+    }
+
+    // ground: solid rule + ticks travelling with the world
+    ctx.fillStyle = COL.white;
+    ctx.fillRect(0, GROUND_Y, W, 2);
+    ctx.globalAlpha = 0.45;
+    for (let x = -24 - groundOff; x < W + 24; x += 24) ctx.fillRect(x, GROUND_Y + 7, 10, 2);
+    ctx.globalAlpha = 1;
+
+    // obstacles
+    if (astImg) {
+      const ast = tinted(astImg, COL.white);
+      for (const o of obstacles) {
+        const cx = o.x + o.size / 2;
+        const cy = o.air ? o.yc : GROUND_Y - o.size / 2;
+        ctx.save();
+        ctx.translate(cx, cy); ctx.rotate(o.rot);
+        ctx.drawImage(ast, -o.size / 2, -o.size / 2, o.size, o.size);
+        ctx.restore();
+      }
+    }
+
+    // runner
+    if (runImg) {
+      const sprite = tinted(runImg, COL.white);
+      const h = runner.ducking ? RUN_H * DUCK_S : RUN_H;
+      const w = runner.ducking ? RUN_W * 1.10 : RUN_W;
+      const top = GROUND_Y - h + runner.y;
+      ctx.save();
+      if (runner.dead) ctx.globalAlpha = 0.72;
+      ctx.drawImage(sprite, RUN_X, top, w, h);
+      ctx.restore();
+    }
+
+    ctx.restore();
+
+    if (grainPat && !REDUCED) {
+      ctx.save();
+      ctx.globalAlpha = 0.4;
+      const ox = -(Math.random() * 96) | 0, oy = -(Math.random() * 96) | 0;
+      ctx.fillStyle = grainPat;
+      ctx.translate(ox, oy);
+      ctx.fillRect(0, 0, W + 96, H + 96);
+      ctx.restore();
+    }
+  }
+
+  // ---------------------------------------------------------------- ticks
+  let last = 0;
+  function tick(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (paused) return;
+    if (running) update(dt);
+    if (shake > 0) shake = Math.max(0, shake - dt * 3.4);
+    draw();
+    el.tc.textContent = timecode(scoreFrames());
+    if (running || shake > 0) requestAnimationFrame(tick);
+  }
+
+  // --------------------------------------------------------------- input
+  // Only claim the keyboard when this game is actually the thing in focus —
+  // otherwise Space would hijack scrolling on the page that embeds it.
+  const EMBEDDED = window.self !== window.top;
+  let hovered = false, focused = false;
+  const armed = () => focused || (hovered && !EMBEDDED);
+
+  stage.addEventListener('pointerenter', () => { hovered = true; });
+  stage.addEventListener('pointerleave', () => { hovered = false; duck(false); });
+  stage.addEventListener('focus', () => { focused = true; el.hint.classList.remove('show'); });
+  stage.addEventListener('blur', () => { focused = false; });
+
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Tab') stage.classList.remove('ptr');
+    if (!armed()) return;
+    if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+      e.preventDefault();
+      if (over) { start(); return; }
+      jump();
+    } else if (e.code === 'ArrowDown' || e.code === 'KeyS') {
+      e.preventDefault(); duck(true);
+    } else if (e.code === 'KeyR') {
+      e.preventDefault(); if (!running) start();
+    }
+  });
+  window.addEventListener('keyup', e => {
+    if (!armed()) return;
+    if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') releaseJump();
+    if (e.code === 'ArrowDown' || e.code === 'KeyS') duck(false);
+  });
+
+  stage.addEventListener('pointerdown', e => {
+    if (e.target === el.sound) return;
+    stage.classList.add('ptr');
+    stage.focus({ preventScroll: true });
+    const r = stage.getBoundingClientRect();
+    const lower = (e.clientY - r.top) > r.height * 0.62;
+    if (over) { start(); return; }
+    if (lower && running) duck(true); else jump();
+  });
+  window.addEventListener('pointerup', () => { releaseJump(); duck(false); });
+  stage.addEventListener('contextmenu', e => e.preventDefault());
+
+  let paused = false;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { paused = true; return; }
+    if (paused) { paused = false; last = performance.now(); if (running) requestAnimationFrame(tick); }
+  });
+
+  // in an iframe the page can't type until the frame has focus — say so
+  if (window.self !== window.top) {
+    setTimeout(() => { if (!focused && !started) el.hint.classList.add('show'); }, 1200);
+  }
+
+  // ---------------------------------------------------------------- boot
+  let runImg = null, astImg = null, loaded = 0;
+  function ready() {
+    if (++loaded < 2) return;
+    resize(); makeGrain();
+    el.best.textContent = timecode(best);
+    el.spd.textContent = '24 fps';
+    draw();
+    // idle attract: the mark runs on the spot until the first input
+    (function idle() {
+      if (started) return;
+      groundOff = (groundOff + 2.2) % 24;
+      for (const c of clouds) { c.x -= c.d * 2.2; c.rot += 0.004; if (c.x < -60) c.x = W + 40; }
+      draw();
+      requestAnimationFrame(idle);
+    })();
+  }
+  runImg = new Image(); runImg.onload = ready; runImg.src = RUNNER_SRC;
+  astImg = new Image(); astImg.onload = ready; astImg.src = AST_SRC;
+  makeClouds();
+})();
+</script>
+
+</body>
+</html>
