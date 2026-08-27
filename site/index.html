@@ -284,7 +284,7 @@ const OVERRIDES = {
     "title": "Dominic Fike Interview",
     "kind": "Interview",
     "year": 2026,
-    "thumb": "sd2.jpg",
+    "thumb": "assets/thumb-fike.jpg",
     "dp": "P. Linehan",
     "edit": "P. Linehan",
     "producer": "Eric Skelton",
@@ -293,6 +293,7 @@ const OVERRIDES = {
   "V_OSd1Al7Bc": {
     "title": "Reclusive",
     "kind": "Music Video",
+    "thumb": "assets/thumb-reclusive.jpg",
     "year": 2026,
     "dp": "Kai Blamey",
     "producer": "Mathias Gilay",
@@ -312,7 +313,7 @@ const OVERRIDES = {
     "title": "Aperol Spritz",
     "kind": "Music Video",
     "year": 2025,
-    "thumb": "sd2.jpg",
+    "thumb": "assets/thumb-aperol.jpg",
     "dp": "P. Linehan",
     "edit": "P. Linehan + Jude Lipkin",
     "producer": "Henry Pearl",
@@ -322,6 +323,7 @@ const OVERRIDES = {
   "e4WFFY8JzgI": {
     "title": "Cry Against The Wind",
     "kind": "Music Video",
+    "thumb": "assets/thumb-cry.jpg",
     "year": 2025,
     "dp": "Ujjwal Chande",
     "edit": "P. Linehan",
@@ -493,12 +495,16 @@ class TilePreview extends React.Component {
     if (live) {
       kids.push(React.createElement('iframe', {
         key: 'frame',
-        src: 'https://www.youtube.com/embed/' + p.id + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + p.id + '&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0',
+        src: 'https://www.youtube.com/embed/' + p.id + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + p.id + '&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0&cc_load_policy=0&color=white',
         title: p.alt || p.id, allow: 'autoplay; encrypted-media', frameBorder: '0',
         style: {
-          position: 'absolute', inset: 0, width: '100%', height: '100%', border: '0',
-          display: 'block', pointerEvents: 'none',
-          transform: z > 1 ? 'scale(' + z + ')' : 'none', transformOrigin: 'center center'
+          // cover, not stretch: the player stays 16:9 and overflows the short axis,
+          // so a non-16:9 tile crops instead of letterboxing
+          position: 'absolute', top: '50%', left: '50%',
+          width: 'auto', height: 'auto', minWidth: '100%', minHeight: '100%',
+          aspectRatio: '16 / 9', border: '0', display: 'block', pointerEvents: 'none',
+          transform: 'translate(-50%, -50%) scale(' + Math.max(z, 1.08) + ')',
+          transformOrigin: 'center center'
         }
       }));
     }
@@ -515,15 +521,25 @@ class HoverPlayer extends React.Component {
     if (st.hov || st.live) {
       const q = st.live
         ? '?autoplay=1&rel=0&modestbranding=1'
-        : '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + p.id + '&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0';
+        : '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + p.id + '&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0&cc_load_policy=0&color=white';
       kids.push(React.createElement('iframe', {
         key: 'frame',
         src: 'https://www.youtube.com/embed/' + p.id + q,
         title: p.alt || p.id, allow: 'autoplay; encrypted-media; picture-in-picture; fullscreen',
         allowFullScreen: true, frameBorder: '0',
         style: {
-          position: 'absolute', inset: 0, width: '100%', height: '100%', border: '0', display: 'block',
-          transform: !st.live && z > 1 ? 'scale(' + z + ')' : 'none', transformOrigin: 'center center'
+          // muted preview covers the frame; once live it goes back to fit so the
+          // real player's controls and full picture are reachable
+          position: 'absolute', top: '50%', left: '50%', border: '0', display: 'block',
+          width: st.live ? '100%' : 'auto', height: st.live ? '100%' : 'auto',
+          minWidth: st.live ? 0 : '100%', minHeight: st.live ? 0 : '100%',
+          aspectRatio: st.live ? 'auto' : '16 / 9',
+          // while it's a muted preview, keep the cursor off the iframe so YouTube
+          // never paints its play/pause, captions or title chrome — the wrapper
+          // div takes the click and swaps in the real player
+          pointerEvents: st.live ? 'auto' : 'none',
+          transform: 'translate(-50%, -50%)' + (st.live ? '' : ' scale(' + Math.max(z, 1.08) + ')'),
+          transformOrigin: 'center center'
         }
       }));
     }
@@ -1139,7 +1155,9 @@ class Component extends DCLogic {
       menuOverlayStyle: {
         position: 'fixed', inset: 0, zIndex: 60, background: RED, color: '#fff',
         display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center',
-        gap: '4px', padding: '0 ' + PAD
+        gap: '4px', padding: '0 ' + PAD,
+        // the bar track above sets pointerEvents:none — taps need it back
+        pointerEvents: 'auto'
       },
       menuCloseStyle: {
         position: 'absolute', top: '18px', right: PAD, fontFamily: MONO, fontSize: '13px',
