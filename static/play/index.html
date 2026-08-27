@@ -38,7 +38,11 @@
   /* ---------- HUD ---------- */
   .hud{
     position:absolute;inset:0;pointer-events:none;
-    padding:clamp(12px,2.4vw,24px);
+    padding:
+      max(clamp(12px,2.4vw,24px), env(safe-area-inset-top))
+      max(clamp(12px,2.4vw,24px), env(safe-area-inset-right))
+      max(clamp(12px,2.4vw,24px), env(safe-area-inset-bottom))
+      max(clamp(12px,2.4vw,24px), env(safe-area-inset-left));
     display:flex;flex-direction:column;justify-content:space-between;
     font-family:var(--mono);font-variant-numeric:tabular-nums;
   }
@@ -111,6 +115,20 @@
   }
   #focusHint.show{opacity:1}
 
+  /* phones: the vw terms bottom out, so set real sizes and give the copy room */
+  @media (max-width:560px){
+    .tc{font-size:17px}
+    .meta,.take,#sound{font-size:10px;letter-spacing:.12em}
+    .keys{font-size:12px}
+    .card{padding-left:16px;padding-right:16px;gap:11px}
+    #sound{padding-left:10px}
+  }
+
+  /* Embedded, a finger swipe has to keep scrolling the host page, so only the
+     standalone page claims the gesture. Both stop double-tap zoom. */
+  #stage{touch-action:manipulation}
+  #stage.solo{touch-action:none}
+
   @media (prefers-reduced-motion:reduce){
     #stage{transition:none}
   }
@@ -161,6 +179,8 @@
   const AST_SRC    = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACBCAYAAAAIYrJuAAANCUlEQVR42u2de7Bd0x3HP/ucE60hKEmFmjLTSCNpVbyJx4gQ2pQi1dJKPKaKMF5tPYKYeFVJhYoxndZzVNSgQj0qNN5pJ9Q7NIoYkdSjCRGve8/Z/eP3+83ZOU7uOffevfda55z1nblzJ7nnsdf6fdfvvdaK4jjGcwwCjgTuB56lNbAVsAtwpe8PGnlOgGHA7cBIYKH+uxWwGNgY+BewH/CWrw9a8HgSp+oEjgQ+AzYHJreA8E9X4X8KjAIeA34RNEDzGAEcDxwLxPqD/n5PCfG+p/O5BfCCPmsBqABF/dtM4FwdQyDAarA3cAuwHtCtkxfp38r679nA/p4S4AFgrAq+kCBuGSipGTsOmBNMwBcxHbgvIfxSQvio8LuBfYDRHgp/b2BPFXZyXiMdS7easbt9MmU+aICRqh5315UT1Qg+CSPGHGAvzwiwBNgwof7rITm+OcBhwNJO1gCTgfkq/C59nqiH19tKGqtOoi+4BBhSo/p7mu8uHcPjwDGdqAGGAWcCkxIro1kyVvTnHTUFbzgW/tc1WllXydvsOMoJB/F84OxO0QCjlfmTdBLiXj6HvXZjjRZcYzawfi+Fbz6Nkfks4BVgeLsT4GqNiwfV8fJ7AzMFp2iixRUOBb5Tx/HrzfwX1CQMAx4ETmtHE7CzJkMOUMEVUiCfTfo/gJ0cEeA5dWLjhDrvz3jsM25S7ba8HTTAocCjCeGXUvpeU6E7Aoc4EP51wLdTEr6NJ9Y5+gnwJDChlTXAhsD1wDgdWCWliUrCMoXLgK2BN3MS/ijgYWDNfpixnmALBeAk4PJW0wB7Ag+p8MsJhqdOYCXABsCUHFf/FGBg4hnSRknnrQLMAObpGFuCAOdrkmNEwq5FGQrDVOfR+p1Z4wTgIKrp3SzHZQ7iDuo8n+CzCdhGEyJ76EMXc4wyykqyp4HtMvyeIerPbKbfV8xpfMk8yWUa/XilASYAc1X4ZWBAziGmaYFtVRNkhZOBoTkL3+RkOYOTgZfV+fVCA8wGvl+HqXnDBrIsI3u5m5q2KGPV36yD+IFqgmtcagAT/uf0PqOXhUNYRlKyV2Tw+WepZotwi5IutIHAH4FLXWqA3YG/ZxTi9UcTdCEp5/kpfeaPgFk1yRqXME37ro5zoSsN8DBwI9VaPZ5Mzhqk15C5mTpe3fjRP1FRIr6r4fbC/nxYGgOaBNyciF1do6gaYCvgiBQ+bzKwUYYxf18IMEAJ/rxPYeAHapdiD1aKqcjFSLp2WR8/ZwvgJcfObT0HcBYppb/THNREVm3idImCTtbX6Hud/SvAtZ5oNSN1CXiNFGsfaRLgTuBnCRXsgynoVjOwZR/ePx7JwOHB6reFVUFqA+mFThkUgx5FdsV0O46XSXjtdwI/6MX7NgIWAGvTuE0tT9V/MHBr2qoybUzQybNyrQ8O4f5IibVZXKL5BB8cvy4V/h1pCz8rDQCSLn1RCVZ0PIk2wEVIGXd5g9dviexBjD0QvjmfzyCV1XeycJaywKvAb6hmrVwi0mfYrEn7eT3VUqxru18BVgIHZiH8rJ2bs4GL8SNJZFHBVM0PrA6nJP5e9GD1l4ALgdczWx059ATaTlnXsbR9/73Ad1fzmhXAWh7Y/i4k2TMDqf5lujKyxgHIZs7YsVotqGrfBxhT5+93IC1eFcfCt0zf4qyFn5cGACkazfUgNDThrgA2TTiE45B9ia61lG0kXQHsi3Q80+oaAKRoZPWCbsdaoAKsw6r995fhRxbT2syOy0P4eWoAw1/V/rpcaRUV9ArgW5ofuED/VnIs/CJwFzludsmbAEOQdqaBOWug1TmELwObIBk/1yvfdgyPyzVGdrA5dKLG2j7YWx/Ku0kMR/YI5moT88YNVNubXRaNooQ5cIku1QBH5i18VxrA8DSSmvWlzcoFLCr6NXCGk1XgkACbAn9Djk3xoYnElR/ybw2Tl3YaAUCKRi9Q3TAadYjwLSm2BNhefzuLi13iVVV/PjWV5mX3i8A0l8L3QQMYZgAndog/YGNMdYtXqxMApIlkeJuTwJy+ngpSHWUCkjgKqX1H+NFYmoXdLwGfIAdkEQiwKp5AkkQFT+LzLJy+j5H2tGd8ebAojuN6HbMR0uefRqLm8wYTU3t27rXA4W1mCmws9eL9QQ2inzVS+P4BSI9jXCPjlSWyP4N/eYNY+Hak3WmAEu5D/Vs7+QE2lrWVBNahNBhp9+pJE6+XtQZoR3sb0CTyKH82IpgdFhklfpfadL6764y1kaaLggYI6IgoICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQICAQIKBZZLEHr9FWM7sEOVrNe+2WkXZEcm/g6sbeaFGmulcw7A0MGiB1rEQOhYjqrPwvIyeHPwV8iS8eWPAZctffEW0631cAHyFnIdQb+zbImYGf1tEEMXJYxFppE2BL/bKP9ScNNVeuQ4BYVft/G7z/Nv3djieErIOchtYTNmwwf/1dtAXk0IkCsDLyzAIcAvyJ9jspzM4IKgIHIaeieAGfCDAaOT5tTdxfNZcVCWLklLC9kUOxAgEUg5GbsdbCn4uaszQFLyMXU4c8gGKaCr/c5rmJoo5xOHI6aiAAcDlwjDqPnXBsvF1neyJwaqebgO2Ry5E67c4Acwo/0ChscSdqgE2BG3XlR3QWIv1ZH3hIcx8dR4B7gWE0l/5sR9hhkcOAczuNAKepF9yF+4ujXN5mWtI5OBxH2U8XPsAk4DoP7L5Pt4bZs4xDrtFpWwJ8A7kZK3KsgYx85yB3Ce+E23uLzA+aD+zYzgS4G7koweVk21H0rwAjgZ2BxxM5iMjhcxWQ21XHt6MP8Bfge7hP9lhR5Uj99xPATP0/17ebd+scHdtuGmA8cieu69vD7ftvBQ5O/P9GyO1l6+C2DmG3hy9XIvyzHTTADur0ufb4Lf5eSfWyaMMSYDrubzePdI4GaZi8cTsQ4H5gA11ZBcervwhcRf1LMi4EHkGaNVybgi4kSXRGqxPgCuSqkm7Hwje/4yXgVz287mykG8fuMHCFATpnxwNTW5UAFyCXRJfx4wKIAvDbBq95BLhHBVB2/Lx2mea5wIhWcwK3UwfGdWiVjPnnAHs18fqhwFwkP+86WWSm6Fl99vdbQQMMBq6n2vrtcgKN3R8Dk5t8j11nW8b9dbYFHcMo9aVawgTcg+T5fbgR3PrwbkBu6W4WVwL/8cAhTJqCbZCagdcEOBnYlurlyK6Fb+3WF/Th/ScCK2o0iUsSdAF/ACb46gMcoAmW2BOnz1KrBwJ39PEzrkGKVxUPxmTjeV/zBF4R4JvI5c8RflTZzPF7Auk27iu+CrxFdSOH63FZOH0bq2YynZuA6YmJjzxZ/QBT+vk57yAXPX/ugS+AaqEY+CEpNZWmoQFuUTa6zvPXrv7LgZNS+sz56onHnvg2ZSSlvStSw3BGgKPUMfGlqdM2X7yN1CDeTulzdwEexZ8mEvMH/gfsATznygSMTqw6H3aYWMHpdykKH+AxYBbVap0PRK8g9YKjXZuAP6tNwrEZsFXxtMbMWWA5MBC3CS7Ttst13ue4dgIPRmrXH+GunGor4kOk4TQrTNE5qzgiuPkgDwK79Vf4aUYB9yD72q9VElRyniQrOD2QxqT0gFnAMzWRRp7aLQIuBsYCz/uUB0jiHKSCFalNHpDD6o9U8wwFFmX8fSOAF3N0CE34C5BS9t1pfngWufppSDr4Oapl1Tjj1W9l00U5COQl1XRRxubOzhMqIGXqXdMWflYawDAYOA/4eY3zkkXC5zVg8xxV8hYaFq5LNj2Eybk6FLg5q4FkWa17F9n1+2NgGdWCRpzBGE7J2SFbgDS7lFIOC5MnicwD9sxS+FlrgNoVc5ayOSadUrGlne8lxz76GjyJJJwqKWi35Kq/CfhpHgPIe2PIhUif28B+OohxIikzBMmIucB+yH6H/ra9Wf7kbdVmt+Q1gLwbNs5UZ2ZpwkGs9HG1FNTHcCV8gNlIybiv+Q8zHyWkhW5MnsJ3QQCQ/radkLYraxXvjR21Ro/XkTqEa5xHNe1c6aXwTeWfrqbklbwf3lXL1htIz/tk9eCLSMm1WfVvGzuXeECARcDvqSbAmnl+26PwFNKwcrGrh/fhlLAh6vSMacJBNFt5l9pfnzBPV3FP4W53Imy8D9jX9UP7cDLHUg13plLteOnJnn4CXIR/OFW1WNyAvJ8BE30Qvi8EMExDikoLE05VXGMzS8DVGn75hsd1VdfmBqyIU0Ja1MYjZyN5gcjDw8IHIWndyTXxfgy8CWyNlEJ9xAZInWBQ4pnNHMzUENgr+Hg403s6Ub9UB8scxCJwqcfCB+nYPa/mmRcCh/kofF81QBKbaKw9CtmoMZTWwKvIcTjz1Mtf4uuDRi1yX8QxyD0DC1qEAFsjZ/1c5fuD/h+SnalGpvGpfgAAAABJRU5ErkJggg==';
   const RUN_ASPECT = 99 / 128;        // the mark holds one pose — no sprite sheet
 
+  let clouds = [];
+
   const stage = document.getElementById('stage');
   const cv = document.getElementById('cv');
   const ctx = cv.getContext('2d', { alpha: false });
@@ -174,6 +194,7 @@
   };
 
   const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TOUCH = matchMedia('(hover: none) and (pointer: coarse)').matches;
   const COL = { red:'#ec3013', white:'#ffffff', ink:'#201e1d' };
 
   // Tint a white-alpha mask into a solid colour once, and cache it.
@@ -194,22 +215,49 @@
   }
 
   // ------------------------------------------------------------ world size
-  // Fixed logical height; width follows the container so a wide embed simply
-  // shows more track rather than stretching the runner.
-  const H = 260;
-  let W = 900, DPR = 1;
-  const GROUND_Y = 212;
+  // On a wide screen the height fills and the extra width is free runway.
+  // On a phone that would leave barely 200 units of track — the asterisks would
+  // appear almost on top of the runner — so we hold a MINIMUM visible width and
+  // let the world zoom out instead. Whichever constraint bites, the runner keeps
+  // his real proportions; only the on-screen size changes.
+  const MOBILE_MAX = 760;  // the site's own mobile breakpoint — below this, mobile rules
+  const W_MIN = 560;   // never show less track than this, at any size
+  const H_MIN = 260;   // never show less sky than this
+  const W_REF = 685;   // the width a comfortable desktop embed gets
+  const BAND  = 360;   // the action band; extra height becomes sky, not stretch
+
+  let W = W_REF, H = H_MIN, GROUND_Y = 212, BAND_TOP = 0, ws = 1, DPR = 1, mobile = false;
 
   function resize() {
     const r = stage.getBoundingClientRect();
-    const cw = Math.max(240, r.width), ch = Math.max(180, r.height);
-    W = Math.round(H * (cw / ch));
+    const cw = Math.max(240, r.width), ch = Math.max(160, r.height);
+
+    // The 760 breakpoint decides the mobile TREATMENT (band placement, touch copy,
+    // compact HUD, gesture handling). The minimum-track floor is not mobile-only:
+    // without it a tall desktop window collapses to ~300 units of track with a
+    // giant runner, which is worse than any phone. On a normal wide embed the
+    // height binds first and the floor never engages, so desktop is untouched.
+    mobile = cw <= MOBILE_MAX;
+    const scale = Math.min(cw / W_MIN, ch / H_MIN);
+    W = cw / scale;
+    H = ch / scale;
+
+    // Sit the action in a band rather than stranding it at the bottom of a tall
+    // phone screen. The ground is a touch below centre, which reads as grounded.
+    const bandH = Math.min(H, BAND);
+    BAND_TOP = (H - bandH) * (mobile ? 0.72 : 0.55);
+    GROUND_Y = BAND_TOP + bandH - 48;
+
+    // Everything moves proportionally to how much track is visible, so an
+    // asterisk takes the same wall-clock time to cross any screen size.
+    ws = W / W_REF;
+
     DPR = Math.min(window.devicePixelRatio || 1, 2);
     cv.width = Math.round(cw * DPR);
     cv.height = Math.round(ch * DPR);
-    const s = (ch * DPR) / H;
-    ctx.setTransform(s, 0, 0, s, 0, 0);
+    ctx.setTransform(scale * DPR, 0, 0, scale * DPR, 0, 0);
     ctx.imageSmoothingQuality = 'high';
+    if (clouds.length) placeClouds();
   }
   new ResizeObserver(resize).observe(stage);
 
@@ -227,7 +275,7 @@
   let dist = 0, speed = SPD0, best = 0, take = 1;
   let shake = 0, groundOff = 0;
   const runner = { y:0, vy:0, ducking:false, held:false, dead:false };
-  let obstacles = [], nextGap = 420, clouds = [];
+  let obstacles = [], nextGap = 420;
 
   // best score persists per viewer; storage can be absent or throw.
   try { best = parseInt(localStorage.getItem('plf.asteriskrun.best') || '0', 10) || 0; } catch (e) {}
@@ -283,22 +331,29 @@
         x += size * 0.92;
       }
     }
-    const tight = Math.max(0, Math.min(1, (speed - SPD0) / (SPD_MAX - SPD0)));
-    nextGap = (340 - tight * 60) + Math.random() * (300 - tight * 110);
+    const base = Math.min(SPD_MAX, SPD0 + dist * SPD_RAMP);
+    const tight = Math.max(0, Math.min(1, (base - SPD0) / (SPD_MAX - SPD0)));
+    // gaps scale with the track so the rhythm is the same everywhere
+    nextGap = ((340 - tight * 60) + Math.random() * (300 - tight * 110)) * ws;
   }
 
+  const skyY = () => BAND_TOP + 20 + Math.random() * Math.max(30, (GROUND_Y - BAND_TOP) * 0.45);
   function makeClouds() {
     clouds = [];
     for (let i = 0; i < 7; i++) {
-      clouds.push({ x: Math.random() * W, y: 20 + Math.random() * 68,
+      clouds.push({ x: Math.random() * W, y: skyY(),
                     s: 9 + Math.random() * 15, d: 0.05 + Math.random() * 0.14,
                     rot: Math.random() * 6.28 });
     }
   }
+  // after a resize the old positions belong to a different sky
+  function placeClouds() {
+    for (const c of clouds) { if (c.x > W) c.x = Math.random() * W; c.y = skyY(); }
+  }
 
   // ----------------------------------------------------------------- loop
   function reset() {
-    dist = 0; speed = SPD0; obstacles = []; nextGap = 420;
+    dist = 0; speed = SPD0 * ws; obstacles = []; nextGap = 420 * ws;
     runner.y = 0; runner.vy = 0; runner.ducking = false; runner.dead = false;
     shake = 0;
     makeClouds();
@@ -354,8 +409,11 @@
   }
 
   function update(dt) {
-    dist += speed * dt;
-    speed = Math.min(SPD_MAX, SPD0 + dist * SPD_RAMP);
+    // dist is in reference units so score and difficulty are identical on every
+    // screen; only the on-screen speed is scaled to the visible track.
+    const base = Math.min(SPD_MAX, SPD0 + dist * SPD_RAMP);
+    dist += base * dt;
+    speed = base * ws;
     groundOff = (groundOff + speed * dt) % 24;
 
     runner.vy += GRAV * dt * (runner.ducking && runner.y < 0 ? 1.7 : 1);
@@ -371,7 +429,7 @@
     for (const c of clouds) {
       c.x -= speed * c.d * dt;
       c.rot += 0.12 * dt;
-      if (c.x < -60) { c.x = W + 40; c.y = 20 + Math.random() * 68; }
+      if (c.x < -60) { c.x = W + 40; c.y = skyY(); }
     }
 
     const hb = hitbox();
@@ -517,7 +575,7 @@
     stage.classList.add('ptr');
     stage.focus({ preventScroll: true });
     const r = stage.getBoundingClientRect();
-    const lower = (e.clientY - r.top) > r.height * 0.62;
+    const lower = (e.clientY - r.top) > r.height * 0.70;
     if (over) { start(); return; }
     if (lower && running) duck(true); else jump();
   });
@@ -531,8 +589,21 @@
   });
 
   // in an iframe the page can't type until the frame has focus — say so
-  if (window.self !== window.top) {
+  if (EMBEDDED) {
     setTimeout(() => { if (!focused && !started) el.hint.classList.add('show'); }, 1200);
+  } else {
+    stage.classList.add('solo');
+  }
+
+  // On a phone there is no Space bar and no arrow keys — say what actually works.
+  if (TOUCH) {
+    el.start.querySelector('.keys').innerHTML =
+      'Tap to jump · hold the bottom of the screen to duck';
+    el.over.querySelector('.keys').innerHTML =
+      'Tap for take <span id="oNext">02</span>';
+    el.oNext = el.over.querySelector('#oNext');
+    stage.setAttribute('aria-label',
+      'Asterisk Run — tap to jump the running mark over the asterisks, hold the bottom of the screen to duck.');
   }
 
   // ---------------------------------------------------------------- boot
