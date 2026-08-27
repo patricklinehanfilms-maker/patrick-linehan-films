@@ -16,6 +16,8 @@
  *   4. point the runtime at those via window.__resources — the runtime's own
  *      override hook (see cdnScriptFor in support.js). No generated code is patched.
  *   5. inject favicons, canonical URL, and Open Graph / Twitter tags
+ *   6. strip campaign tags (utm_*, fbclid, …) from the address bar on load
+ *   7. serve static/play/index.html as the 404 page too
  *
  * Design rule: never fail the build over a hardening step. If something can't be
  * applied we log it loudly and carry on, so the worst case is the site deploys
@@ -154,6 +156,26 @@ if (!/property=["']og:/i.test(html)) {
   log('og: tags already present in export — leaving as-is');
 }
 
+// Links shared from Instagram's link-in-bio arrive as
+// patrickjlinehan.com/?utm_source=ig&utm_medium=social&... — the site ignores them,
+// but they look untidy when the link gets passed on by text. Tidy the address bar
+// after load; the link itself still works exactly as before.
+const CLEAN_URL = `<script>(function(){try{` +
+  `var u=new URL(location.href),p=u.searchParams,c=false;` +
+  `['utm_source','utm_medium','utm_campaign','utm_term','utm_content',` +
+  `'fbclid','gclid','igshid','mc_cid','mc_eid','ref','ref_src'].forEach(function(k){` +
+  `if(p.has(k)){p.delete(k);c=true;}});` +
+  `if(c&&history.replaceState){var q=p.toString();` +
+  `history.replaceState(null,'',u.pathname+(q?'?'+q:'')+u.hash);}` +
+  `}catch(e){}})();</script>`;
+
+if (!/utm_source/.test(html)) {
+  html = html.replace(/<\/title>/i, `</title>\n${CLEAN_URL}`);
+  injected.push('campaign-tag cleanup');
+} else {
+  log('campaign-tag cleanup already present — leaving as-is');
+}
+
 if (!existsSync(path.join(OUT, 'og-image.jpg'))) {
   warn('og-image.jpg is not in dist/ — link previews will show no image. Expected static/og-image.jpg');
 }
@@ -173,4 +195,16 @@ if (Object.keys(resourceMap).length) {
 
 await writeFile(indexPath, html);
 log(injected.length ? `injected: ${injected.join(', ')}` : 'no injections needed');
+
+// ------------------------------------------------------------------ 7. 404
+// Chrome's runner is its offline page; ours is the not-found page. One source
+// file in static/play/, served at /play/ and again as the 404.
+const playPage = path.join(OUT, 'play', 'index.html');
+if (existsSync(playPage)) {
+  await cp(playPage, path.join(OUT, '404.html'));
+  log('play/index.html -> 404.html');
+} else {
+  warn('static/play/index.html missing — no custom 404 page written');
+}
+
 log('done. Serve dist/');
