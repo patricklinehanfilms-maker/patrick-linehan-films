@@ -22,6 +22,8 @@
     --wide:'Archivo Expanded',Archivo,'Helvetica Neue',Helvetica,sans-serif;
   }
   *{box-sizing:border-box}
+  /* class rules set display:flex, which outranks the UA [hidden] rule */
+  [hidden]{display:none!important}
   html,body{margin:0;padding:0;height:100%}
   body{background:var(--red);color:var(--white);font-family:var(--sans);overflow:hidden}
 
@@ -72,10 +74,16 @@
     position:absolute;inset:0;display:flex;flex-direction:column;
     align-items:center;justify-content:center;gap:14px;
     text-align:center;padding:24px;pointer-events:none;
-    /* the runner owns the lower half — keep copy clear of him */
-    padding-bottom:36%;
+    /* the runner owns the lower half — keep copy clear of him, but never let the
+       offset eat so much height that the headline pushes off the top */
+    padding-bottom:min(36%,190px);
   }
-  @media (min-aspect-ratio:5/2){ .card{padding-bottom:22%} }
+  @media (min-aspect-ratio:5/2){ .card{padding-bottom:min(22%,150px)} }
+  /* with the leaderboard open there is ~160px more to fit: give back the offset
+     and step the headline down a size */
+  .card.compact{padding-bottom:20px;gap:10px;justify-content:center}
+  .card.compact .cut{font-size:clamp(26px,5.6vw,56px)}
+  .card.compact .result{font-size:clamp(11px,1.4vw,13px)}
   .card[hidden]{display:none}
   .eyebrow{
     font-family:var(--mono);font-size:clamp(9px,1.2vw,11px);
@@ -108,6 +116,40 @@
     font-family:var(--mono);font-size:clamp(9px,1.2vw,11px);letter-spacing:.22em;
     text-transform:uppercase;color:var(--white);
   }
+  /* ---------- leaderboard ---------- */
+  .lb{
+    font-family:var(--mono);font-size:clamp(10px,1.3vw,12px);letter-spacing:.06em;
+    color:var(--dim);font-variant-numeric:tabular-nums;
+    display:flex;flex-direction:column;gap:2px;width:min(280px,72vw);
+  }
+  .lb .lbhead{
+    letter-spacing:.22em;text-transform:uppercase;color:var(--white);
+    padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.4);margin-bottom:4px;
+  }
+  .lb .row{display:flex;justify-content:space-between;gap:12px}
+  .lb .row.me{color:var(--white)}
+  .lb .rank{width:2.4em;flex-shrink:0}
+  .lb .who{flex:1;text-align:left}
+  .initials{
+    display:flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:clamp(10px,1.3vw,12px);
+    letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+  }
+  .initials input{
+    font-family:var(--mono);font-size:clamp(16px,2.4vw,22px);font-weight:500;
+    letter-spacing:.3em;text-transform:uppercase;
+    width:4.2em;padding:6px 0 6px 8px;
+    background:transparent;color:var(--white);
+    border:0;border-bottom:2px solid var(--white);border-radius:0;
+    outline:none;
+  }
+  .initials button{
+    font-family:var(--mono);font-size:clamp(9px,1.2vw,11px);letter-spacing:.18em;
+    text-transform:uppercase;color:var(--red);background:var(--white);
+    border:0;border-radius:0;padding:9px 14px;cursor:pointer;
+  }
+  .initials button:hover{background:var(--ink);color:var(--white)}
+
   #focusHint{
     position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
     font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
@@ -164,6 +206,12 @@
     <p class="cut">Cut.</p>
     <div class="result">Take <span id="oTake">01</span> — <span class="big" id="oTc">00:00:00</span></div>
     <div class="pb" id="oPb" hidden>New best</div>
+    <div class="initials" id="oEntry" hidden>
+      <span>Initials</span>
+      <input id="oIn" maxlength="3" autocomplete="off" spellcheck="false" aria-label="Your initials">
+      <button id="oSave" type="button">Post</button>
+    </div>
+    <div class="lb" id="oBoard" hidden></div>
     <div class="keys"><kbd>Space</kbd> for take <span id="oNext">02</span></div>
   </div>
 
@@ -190,6 +238,8 @@
     start: document.getElementById('startCard'), over: document.getElementById('overCard'),
     oTake: document.getElementById('oTake'), oTc: document.getElementById('oTc'),
     oNext: document.getElementById('oNext'), oPb: document.getElementById('oPb'),
+    oEntry: document.getElementById('oEntry'), oIn: document.getElementById('oIn'),
+    oSave: document.getElementById('oSave'), oBoard: document.getElementById('oBoard'),
     sound: document.getElementById('sound'), hint: document.getElementById('focusHint')
   };
 
@@ -281,6 +331,98 @@
   try { best = parseInt(localStorage.getItem('plf.asteriskrun.best') || '0', 10) || 0; } catch (e) {}
   function saveBest() { try { localStorage.setItem('plf.asteriskrun.best', String(best)); } catch (e) {} }
 
+  // ---------------------------------------------------------- leaderboard
+  // Paste the Worker URL here to make the board shared (see worker/README.md).
+  // Left empty, everything below still works — the board is just local.
+  const LB_API = 'https://asterisk-run-leaderboard.patrick-linehan-films.workers.dev';
+
+  let lbTop = [];        // [{ initials, frames }] best first
+  let lbMine = null;     // the row this session posted, so it can be highlighted
+  let lbPending = 0;     // frames awaiting initials
+
+  function lbLocal(read, write) {
+    try {
+      if (write) { localStorage.setItem('plf.asteriskrun.board', JSON.stringify(write)); return write; }
+      return read ? (JSON.parse(localStorage.getItem('plf.asteriskrun.board') || '[]') || []) : [];
+    } catch (e) { return []; }
+  }
+
+  function lbInitials() {
+    try { return localStorage.getItem('plf.asteriskrun.initials') || ''; } catch (e) { return ''; }
+  }
+
+  async function lbLoad() {
+    if (!LB_API) { lbTop = lbLocal(true); return; }
+    try {
+      const r = await fetch(LB_API + '/scores', { cache: 'no-store' });
+      const d = await r.json();
+      if (Array.isArray(d.top)) lbTop = d.top;
+    } catch (e) { lbTop = lbLocal(true); }   // offline or Worker down: show the local board
+  }
+
+  async function lbPost(initials, frames) {
+    const entry = { initials: initials, frames: frames, at: Date.now() };
+    lbMine = entry;
+    try { localStorage.setItem('plf.asteriskrun.initials', initials); } catch (e) {}
+
+    if (!LB_API) {
+      const list = lbLocal(true).concat([entry]).sort((a, b) => b.frames - a.frames).slice(0, 20);
+      lbTop = lbLocal(false, list);
+      return;
+    }
+    try {
+      const r = await fetch(LB_API + '/scores', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ initials: initials, frames: frames })
+      });
+      const d = await r.json();
+      if (Array.isArray(d.top)) lbTop = d.top;
+    } catch (e) {
+      lbTop = lbLocal(false, lbLocal(true).concat([entry]).sort((a, b) => b.frames - a.frames).slice(0, 20));
+    }
+  }
+
+  function lbRender() {
+    // a short embed (mobile is 300px) only has room for a few rows
+    const room = (stage.clientHeight || 480) < 380 ? 3 : 5;
+    const rows = lbTop.slice(0, room);
+    if (!rows.length) { el.oBoard.hidden = true; return; }
+    const head = '<div class="lbhead">' + (LB_API ? 'Top takes' : 'Your takes') + '</div>';
+    el.oBoard.innerHTML = head + rows.map(function (r, i) {
+      const me = lbMine && r.initials === lbMine.initials && r.frames === lbMine.frames;
+      return '<div class="row' + (me ? ' me' : '') + '">' +
+        '<span class="rank">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<span class="who">' + r.initials + '</span>' +
+        '<span>' + timecode(r.frames) + '</span></div>';
+    }).join('');
+    el.oBoard.hidden = false;
+  }
+
+  function lbSubmit() {
+    if (!lbPending) return;
+    const v = (el.oIn.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 3);
+    if (!v) { el.oIn.focus(); return; }
+    const frames = lbPending;
+    lbPending = 0;
+    el.oEntry.hidden = true;
+    lbPost(v, frames).then(function () {
+      lbRender();
+      el.over.classList.toggle('compact', !el.oBoard.hidden);
+    });
+  }
+
+  el.oSave.addEventListener('click', function (e) { e.stopPropagation(); lbSubmit(); });
+  el.oIn.addEventListener('keydown', function (e) {
+    e.stopPropagation();                       // don't let Space restart the game
+    if (e.code === 'Enter') { e.preventDefault(); lbSubmit(); }
+  });
+  el.oIn.addEventListener('keyup', function (e) { e.stopPropagation(); });
+  el.oIn.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+  el.oEntry.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+
+  lbLoad();
+
   // ------------------------------------------------------------- timecode
   function timecode(frames) {
     const f = Math.max(0, Math.floor(frames));
@@ -329,7 +471,7 @@
       for (let i = 0; i < n; i++) {
         const size = 34 + Math.random() * (n === 1 ? 26 : 12);
         obstacles.push({ air:false, x, size, rot:Math.random() * 6.28, spin:(Math.random() - 0.5) * 0.9 });
-        x += size * 0.92;
+        x += size * (n === 3 ? 0.70 : 0.92);
       }
     }
     const base = Math.min(SPD_MAX, SPD0 + dist * SPD_RAMP);
@@ -396,6 +538,19 @@
     el.oTake.textContent = String(take).padStart(2, '0');
     el.oTc.textContent = timecode(f);
     el.oPb.hidden = !isPb;
+    // offer the board only for a run worth posting
+    const lowest = lbTop.length >= 5 ? lbTop[Math.min(4, lbTop.length - 1)].frames : 0;
+    if (f > 0 && (lbTop.length < 5 || f > lowest)) {
+      lbPending = f;
+      el.oIn.value = lbInitials();
+      el.oEntry.hidden = false;
+    } else {
+      lbPending = 0;
+      el.oEntry.hidden = true;
+    }
+    lbRender();
+    // the board and initials row need the vertical space the runner offset takes
+    el.over.classList.toggle('compact', !el.oEntry.hidden || !el.oBoard.hidden);
     take++;
     el.oNext.textContent = String(take).padStart(2, '0');
     el.over.hidden = false;
