@@ -39,6 +39,14 @@
   #stage.ptr:focus-visible{outline:none}
   #stage:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
   #cv{display:block;width:100%;height:100%}
+  /* Grain used to be a full-canvas pattern fill every frame, which on a large
+     display is millions of pixels of alpha compositing per frame. As its own
+     layer it costs the compositor a translate and nothing else. */
+  #grain{
+    position:absolute;top:-96px;left:-96px;right:-96px;bottom:-96px;
+    pointer-events:none;opacity:.4;will-change:transform;
+  }
+  @media (prefers-reduced-motion:reduce){ #grain{display:none} }
 
   /* ---------- HUD ---------- */
   .hud{
@@ -187,6 +195,7 @@
 <div id="stage" tabindex="0" role="application"
      aria-label="Asterisk Run — jump the running mark over asterisks. Space or tap to jump, arrow down to duck.">
   <canvas id="cv"></canvas>
+  <div id="grain" aria-hidden="true"></div>
 
   <div class="hud">
     <div class="hud-row">
@@ -311,7 +320,6 @@
     cv.width = Math.round(cw * DPR);
     cv.height = Math.round(ch * DPR);
     ctx.setTransform(scale * DPR, 0, 0, scale * DPR, 0, 0);
-    ctx.imageSmoothingQuality = 'high';
     if (clouds.length) placeClouds();
   }
   new ResizeObserver(resize).observe(stage);
@@ -613,7 +621,8 @@
   }
 
   // ----------------------------------------------------------------- draw
-  let grain = null, grainPat = null;
+  let grain = null;
+  const grainEl = document.getElementById('grain');
   function makeGrain() {
     const c = document.createElement('canvas');
     c.width = c.height = 96;
@@ -626,7 +635,9 @@
     }
     g.putImageData(im, 0, 0);
     grain = c;
-    grainPat = ctx.createPattern(c, 'repeat');
+    const layer = document.getElementById('grain');
+    if (layer) { layer.style.backgroundImage = 'url(' + c.toDataURL() + ')';
+                 layer.style.backgroundRepeat = 'repeat'; }
   }
 
   function draw() {
@@ -685,14 +696,11 @@
 
     ctx.restore();
 
-    if (grainPat && !REDUCED) {
-      ctx.save();
-      ctx.globalAlpha = 0.4;
+    // jitter the grain layer instead of repainting it: transform only, so this
+    // never touches the canvas and stays on the compositor
+    if (grainEl && !REDUCED) {
       const ox = -(Math.random() * 96) | 0, oy = -(Math.random() * 96) | 0;
-      ctx.fillStyle = grainPat;
-      ctx.translate(ox, oy);
-      ctx.fillRect(0, 0, W + 96, H + 96);
-      ctx.restore();
+      grainEl.style.transform = 'translate3d(' + ox + 'px,' + oy + 'px,0)';
     }
   }
 
