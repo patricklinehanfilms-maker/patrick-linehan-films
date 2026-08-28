@@ -74,11 +74,12 @@
     position:absolute;inset:0;display:flex;flex-direction:column;
     align-items:center;justify-content:center;gap:14px;
     text-align:center;padding:24px;pointer-events:none;
-    /* the runner owns the lower half — keep copy clear of him, but never let the
-       offset eat so much height that the headline pushes off the top */
-    padding-bottom:min(36%,190px);
+    /* the runner owns the lower half — keep copy clear of him. NB percentage
+       padding resolves against WIDTH, so this offset is in vh: inside the iframe
+       that's the embed's own height, which is what we actually mean here. */
+    padding-bottom:min(190px,34vh);
   }
-  @media (min-aspect-ratio:5/2){ .card{padding-bottom:min(22%,150px)} }
+  @media (min-aspect-ratio:5/2){ .card{padding-bottom:min(150px,26vh)} }
   /* with the leaderboard open there is ~160px more to fit: give back the offset
      and step the headline down a size */
   .card.compact{padding-bottom:20px;gap:10px;justify-content:center}
@@ -132,9 +133,7 @@
   .lb .who{flex:1;text-align:left}
   .initials{
     display:flex;align-items:center;gap:8px;
-    /* the card above is click-through so a tap anywhere restarts; this row
-       has to opt back in or the field and Post button can never be clicked */
-    pointer-events:auto;
+    pointer-events:auto;   /* the card above is click-through */
     font-family:var(--mono);font-size:clamp(10px,1.3vw,12px);
     letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
   }
@@ -187,9 +186,9 @@
 
   <div class="hud">
     <div class="hud-row">
-      <div class="tc" id="tc">00:00:00</div>
+      <div class="tc" id="tc">0</div>
       <div class="meta">
-        <div>Best <b id="best">00:00:00</b></div>
+        <div>Best <b id="best">0</b></div>
         <div><button id="sound" type="button" aria-pressed="false">Sound off</button></div>
       </div>
     </div>
@@ -207,7 +206,7 @@
 
   <div class="card" id="overCard" hidden>
     <p class="cut">Cut.</p>
-    <div class="result">Take <span id="oTake">01</span> — <span class="big" id="oTc">00:00:00</span></div>
+    <div class="result">Take <span id="oTake">01</span> — <span class="big" id="oTc">0</span> pts</div>
     <div class="pb" id="oPb" hidden>New best</div>
     <div class="initials" id="oEntry" hidden>
       <span>Initials</span>
@@ -320,19 +319,26 @@
   const RUN_H = 78, RUN_W = RUN_H * RUN_ASPECT, RUN_X = 92;
   const HB = { x0:0.26, x1:0.55, y0:0.10, y1:0.98 };   // torso box inside the pose
   const DUCK_S = 0.60;
-  const SPD0 = 330, SPD_MAX = 720, SPD_RAMP = 0.0055;
+  const SPD0 = 330, SPD_MAX = 720, SPD_RAMP = 0.0105;   // ramps to top speed in ~half the time
   const FPS_TC = 24, UNITS_PER_FRAME = 14;
 
   // --------------------------------------------------------------- state
   let running = false, over = false, started = false;
-  let dist = 0, speed = SPD0, best = 0, take = 1;
+  let dist = 0, speed = SPD0, best = 0, take = 1, elapsed = 0;
   let shake = 0, groundOff = 0;
   const runner = { y:0, vy:0, ducking:false, held:false, dead:false };
   let obstacles = [], nextGap = 420;
 
+  // Scores moved from a distance scale to points, so the keys are versioned —
+  // a v1 value would read back as a six-figure, unbeatable best.
+  try {
+    localStorage.removeItem('plf.asteriskrun.best');
+    localStorage.removeItem('plf.asteriskrun.board');
+  } catch (e) {}
+
   // best score persists per viewer; storage can be absent or throw.
-  try { best = parseInt(localStorage.getItem('plf.asteriskrun.best') || '0', 10) || 0; } catch (e) {}
-  function saveBest() { try { localStorage.setItem('plf.asteriskrun.best', String(best)); } catch (e) {} }
+  try { best = parseInt(localStorage.getItem('plf.asteriskrun.best.v2') || '0', 10) || 0; } catch (e) {}
+  function saveBest() { try { localStorage.setItem('plf.asteriskrun.best.v2', String(best)); } catch (e) {} }
 
   // ---------------------------------------------------------- leaderboard
   // Paste the Worker URL here to make the board shared (see worker/README.md).
@@ -345,8 +351,8 @@
 
   function lbLocal(read, write) {
     try {
-      if (write) { localStorage.setItem('plf.asteriskrun.board', JSON.stringify(write)); return write; }
-      return read ? (JSON.parse(localStorage.getItem('plf.asteriskrun.board') || '[]') || []) : [];
+      if (write) { localStorage.setItem('plf.asteriskrun.board.v2', JSON.stringify(write)); return write; }
+      return read ? (JSON.parse(localStorage.getItem('plf.asteriskrun.board.v2') || '[]') || []) : [];
     } catch (e) { return []; }
   }
 
@@ -391,13 +397,13 @@
     const room = (stage.clientHeight || 480) < 380 ? 3 : 5;
     const rows = lbTop.slice(0, room);
     if (!rows.length) { el.oBoard.hidden = true; return; }
-    const head = '<div class="lbhead">' + (LB_API ? 'Top takes' : 'Your takes') + '</div>';
+    const head = '<div class="lbhead">' + (LB_API ? 'Top scores' : 'Your scores') + '</div>';
     el.oBoard.innerHTML = head + rows.map(function (r, i) {
       const me = lbMine && r.initials === lbMine.initials && r.frames === lbMine.frames;
       return '<div class="row' + (me ? ' me' : '') + '">' +
         '<span class="rank">' + String(i + 1).padStart(2, '0') + '</span>' +
         '<span class="who">' + r.initials + '</span>' +
-        '<span>' + timecode(r.frames) + '</span></div>';
+        '<span>' + points(r.frames) + '</span></div>';
     }).join('');
     el.oBoard.hidden = false;
   }
@@ -426,17 +432,13 @@
 
   lbLoad();
 
-  // ------------------------------------------------------------- timecode
-  function timecode(frames) {
-    const f = Math.max(0, Math.floor(frames));
-    const totalSec = Math.floor(f / FPS_TC);
-    const mm = Math.min(99, Math.floor(totalSec / 60));
-    const ss = totalSec % 60;
-    const ff = f % FPS_TC;
-    const p = n => String(n).padStart(2, '0');
-    return p(mm) + ':' + p(ss) + ':' + p(ff);
-  }
-  const scoreFrames = () => Math.floor(dist / UNITS_PER_FRAME);
+  // -------------------------------------------------------------- scoring
+  // Exactly 3 points a second of play, regardless of how fast the world is
+  // moving. 'dist' still drives the world and the obstacle schedule.
+  const PTS_PER_SEC = 3;
+  function points(n) { return String(Math.max(0, Math.floor(n))); }
+  const score = () => Math.floor(elapsed * PTS_PER_SEC);
+  const scoreFrames = () => Math.floor(dist / UNITS_PER_FRAME);   // world progress, not score
 
   // ---------------------------------------------------------------- audio
   let audioOn = false, actx = null;
@@ -463,24 +465,25 @@
   // ------------------------------------------------------------ obstacles
   function spawn() {
     const t = scoreFrames();
-    const flying = t > 320 && Math.random() < 0.22;
+    const flying = t > 150 && Math.random() < 0.28;   // duckers show up early now
     if (flying) {
       obstacles.push({ air:true, x:W + 40, size:38, rot:Math.random() * 6.28, spin:(Math.random() - 0.5) * 1.4,
                        // low enough that a standing runner is caught, high enough that a duck clears it
                        yc: GROUND_Y - 60 - Math.random() * 8 });
     } else {
-      const n = Math.random() < 0.16 ? 3 : (Math.random() < 0.38 ? 2 : 1);
+      const hard = Math.min(1, t / 700);   // full difficulty about 40s in
+      const n = Math.random() < 0.10 + hard * 0.18 ? 3 : (Math.random() < 0.30 + hard * 0.22 ? 2 : 1);
       let x = W + 40;
       for (let i = 0; i < n; i++) {
         const size = 34 + Math.random() * (n === 1 ? 26 : 12);
         obstacles.push({ air:false, x, size, rot:Math.random() * 6.28, spin:(Math.random() - 0.5) * 0.9 });
-        x += size * (n === 3 ? 0.70 : 0.92);
+        x += size * (n === 3 ? 0.77 : 0.92);
       }
     }
     const base = Math.min(SPD_MAX, SPD0 + dist * SPD_RAMP);
     const tight = Math.max(0, Math.min(1, (base - SPD0) / (SPD_MAX - SPD0)));
     // gaps scale with the track so the rhythm is the same everywhere
-    nextGap = ((340 - tight * 60) + Math.random() * (300 - tight * 110)) * ws;
+    nextGap = ((330 - tight * 90) + Math.random() * (280 - tight * 140)) * ws;
   }
 
   const skyY = () => BAND_TOP + 20 + Math.random() * Math.max(30, (GROUND_Y - BAND_TOP) * 0.45);
@@ -499,7 +502,9 @@
 
   // ----------------------------------------------------------------- loop
   function reset() {
-    dist = 0; speed = SPD0 * ws; obstacles = []; nextGap = 420 * ws;
+    // elapsed is the score's only input, so it has to go back to zero here or
+    // every take after the first starts on the previous take's total
+    dist = 0; elapsed = 0; speed = SPD0 * ws; obstacles = []; nextGap = 420 * ws;
     runner.y = 0; runner.vy = 0; runner.ducking = false; runner.dead = false;
     shake = 0;
     makeClouds();
@@ -535,11 +540,11 @@
     running = false; over = true; runner.dead = true; runner.ducking = false;
     if (!REDUCED) shake = 1;
     blip(180, 0.28, 'sawtooth', 0.05);
-    const f = scoreFrames();
+    const f = score();
     const isPb = f > best;
-    if (isPb) { best = f; saveBest(); el.best.textContent = timecode(best); }
+    if (isPb) { best = f; saveBest(); el.best.textContent = points(best); }
     el.oTake.textContent = String(take).padStart(2, '0');
-    el.oTc.textContent = timecode(f);
+    el.oTc.textContent = points(f);
     el.oPb.hidden = !isPb;
     // offer the board only for a run worth posting
     const lowest = lbTop.length >= 5 ? lbTop[Math.min(4, lbTop.length - 1)].frames : 0;
@@ -572,6 +577,7 @@
     // screen; only the on-screen speed is scaled to the visible track.
     const base = Math.min(SPD_MAX, SPD0 + dist * SPD_RAMP);
     dist += base * dt;
+    elapsed += dt;                 // the score's only input: 3 pts per second
     speed = base * ws;
     groundOff = (groundOff + speed * dt) % 24;
 
@@ -694,7 +700,7 @@
     if (running) update(dt);
     if (shake > 0) shake = Math.max(0, shake - dt * 3.4);
     draw();
-    el.tc.textContent = timecode(scoreFrames());
+    el.tc.textContent = points(score());
     if (running || shake > 0) requestAnimationFrame(tick);
   }
 
@@ -770,8 +776,8 @@
   function ready() {
     if (++loaded < 2) return;
     resize(); makeGrain();
-    el.best.textContent = timecode(best);
-    el.spd.textContent = '24 fps';
+    el.best.textContent = points(best);
+    el.spd.textContent = '3 pts / sec';
     draw();
     // idle attract: the mark runs on the spot until the first input
     (function idle() {
