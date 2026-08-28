@@ -194,7 +194,6 @@
     </div>
     <div class="hud-row">
       <div class="take" id="take">Take 01</div>
-      <div class="take" id="spd"></div>
     </div>
   </div>
 
@@ -236,7 +235,7 @@
   const ctx = cv.getContext('2d', { alpha: false });
   const el = {
     tc: document.getElementById('tc'), best: document.getElementById('best'),
-    take: document.getElementById('take'), spd: document.getElementById('spd'),
+    take: document.getElementById('take'),
     start: document.getElementById('startCard'), over: document.getElementById('overCard'),
     oTake: document.getElementById('oTake'), oTc: document.getElementById('oTc'),
     oNext: document.getElementById('oNext'), oPb: document.getElementById('oPb'),
@@ -777,7 +776,6 @@
     if (++loaded < 2) return;
     resize(); makeGrain();
     el.best.textContent = points(best);
-    el.spd.textContent = '3 pts / sec';
     draw();
     // idle attract: the mark runs on the spot until the first input
     (function idle() {
