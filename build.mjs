@@ -21,7 +21,10 @@
  *      override hook (see cdnScriptFor in support.js). No generated code is patched.
  *   5. inject favicons, canonical URL, and Open Graph / Twitter tags
  *   6. strip campaign tags (utm_*, fbclid, …) from the address bar on load
- *   7. serve play/index.html as the 404 page too
+ *   7. lang="en", JSON-LD (Person + the films), and a sitemap — the page is
+ *      client-rendered, so without this a crawler sees an empty document
+ *   8. canonical + share tags on play/
+ *   9. serve play/index.html as the 404 page too
  *
  * Design rule: never fail the build over a hardening step. If something can't be
  * applied we log it loudly and carry on, so the worst case is the site deploys
@@ -203,8 +206,139 @@ if (Object.keys(resourceMap).length) {
   }
 }
 
+
+// ------------------------------------------------------- 7. lang + JSON-LD
+// The homepage is rendered entirely in the browser: the export's <body> holds
+// styles and a JSX blob, and every film title only exists after Babel runs. Google
+// will usually render it on a second pass, but nothing else will. Structured data
+// is static text, so it says who this is and what the work is without any JS.
+
+if (!/<html[^>]*\blang=/i.test(html)) {
+  html = html.replace(/<html(\s|>)/i, '<html lang="en"$1');
+  injected.push('lang="en"');
+}
+
+// Pull the film list straight out of the export so it can never drift from the
+// site. If Claude Design changes the shape, we log it and skip — never guess.
+function readFilms(src) {
+  const idsMatch = src.match(/const\s+VIDEO_IDS\s*=\s*(\[[^\]]*\])/);
+  const ovStart = src.indexOf('const OVERRIDES');
+  if (!idsMatch || ovStart === -1) return null;
+  const open = src.indexOf('{', ovStart);
+  let depth = 0, end = -1;
+  for (let i = open; i < src.length; i++) {
+    if (src[i] === '{') depth++;
+    else if (src[i] === '}' && --depth === 0) { end = i; break; }
+  }
+  if (end === -1) return null;
+  try {
+    const ids = JSON.parse(idsMatch[1]);
+    const overrides = JSON.parse(src.slice(open, end + 1));
+    return ids.map(id => ({ id, ...(overrides[id] || {}) })).filter(f => f.title);
+  } catch { return null; }
+}
+
+const films = readFilms(html);
+if (!films) {
+  warn('could not read VIDEO_IDS/OVERRIDES from the export — skipping film structured data');
+} else if (!/application\/ld\+json/.test(html)) {
+  const person = {
+    '@type': 'Person',
+    '@id': `${SITE_URL}/#person`,
+    name: 'Patrick Linehan',
+    jobTitle: 'Director',
+    description: DESCRIPTION,
+    url: `${SITE_URL}/`,
+    address: { '@type': 'PostalAddress', addressLocality: 'Brooklyn', addressRegion: 'NY', addressCountry: 'US' },
+    knowsAbout: ['Music video direction', 'Documentary', 'Narrative film', 'Commercial direction'],
+  };
+  const work = films.map((f, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'VideoObject',
+      name: f.title,
+      // year alone is not a valid ISO date, so uploadDate is deliberately absent
+      // rather than invented. Add real dates and Google can show video results.
+      ...(f.desc ? { description: f.desc } : {}),
+      ...(f.kind ? { genre: f.kind } : {}),
+      ...(f.year ? { copyrightYear: f.year } : {}),
+      thumbnailUrl: `https://i.ytimg.com/vi/${f.id}/maxresdefault.jpg`,
+      embedUrl: `https://www.youtube.com/embed/${f.id}`,
+      url: `https://www.youtube.com/watch?v=${f.id}`,
+      director: { '@type': 'Person', name: 'Patrick Linehan' },
+    },
+  }));
+  const graph = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      person,
+      { '@type': 'WebSite', '@id': `${SITE_URL}/#website`, url: `${SITE_URL}/`,
+        name: 'Patrick Linehan Films', inLanguage: 'en',
+        publisher: { '@id': `${SITE_URL}/#person` } },
+      { '@type': 'ItemList', name: 'Films directed by Patrick Linehan',
+        numberOfItems: work.length, itemListElement: work },
+    ],
+  };
+  // '<' must be escaped or a '</script>' inside any description ends the block early
+  const ld = JSON.stringify(graph).replace(/</g, '\\u003c');
+  html = html.replace(/<\/title>/i,
+    `</title>\n<script type="application/ld+json">${ld}</script>`);
+  injected.push(`JSON-LD (person + ${work.length} films)`);
+} else {
+  log('JSON-LD already present in export — leaving as-is');
+}
+
 await writeFile(indexPath, html);
 log(injected.length ? `injected: ${injected.join(', ')}` : 'no injections needed');
+
+// ---------------------------------------------- 8. play/ head + 9. sitemap
+
+// The game is a real page people link to, so it deserves its own canonical and
+// share card rather than borrowing whatever the scraper guesses.
+const playPath = path.join(OUT, 'play', 'index.html');
+if (existsSync(playPath)) {
+  let playHtml = await readFile(playPath, 'utf8');
+  if (!/rel=["']canonical["']/i.test(playHtml)) {
+    const PLAY_TITLE = 'Asterisk Run — Patrick Linehan Films';
+    const PLAY_DESC =
+      'Jump the running mark over the asterisks. A small game on Patrick Linehan Films.';
+    const head = [
+      `<link rel="canonical" href="${SITE_URL}/play/">`,
+      `<meta property="og:type" content="website">`,
+      `<meta property="og:site_name" content="Patrick Linehan Films">`,
+      `<meta property="og:title" content="${PLAY_TITLE}">`,
+      `<meta property="og:description" content="${PLAY_DESC}">`,
+      `<meta property="og:url" content="${SITE_URL}/play/">`,
+      `<meta property="og:image" content="${SITE_URL}/og-image.jpg">`,
+      `<meta name="twitter:card" content="summary_large_image">`,
+      `<meta name="twitter:title" content="${PLAY_TITLE}">`,
+      `<meta name="twitter:description" content="${PLAY_DESC}">`,
+      `<meta name="twitter:image" content="${SITE_URL}/og-image.jpg">`,
+    ].join('\n');
+    playHtml = playHtml.replace(/<\/title>/i, `</title>\n${head}`);
+    await writeFile(playPath, playHtml);
+    log('injected canonical + share tags into play/index.html');
+  } else {
+    log('play/ already has a canonical — leaving as-is');
+  }
+} else {
+  warn('play/index.html missing — no canonical or share tags written for the game');
+}
+
+// robots.txt is served by Cloudflare, not from this repo, so it is left alone —
+// submit the sitemap in Search Console instead.
+const today = new Date().toISOString().slice(0, 10);
+const sitemap =
+  `<?xml version="1.0" encoding="UTF-8"?>\n` +
+  `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+  [[`${SITE_URL}/`, '1.0'], [`${SITE_URL}/play/`, '0.3']]
+    .map(([loc, pri]) =>
+      `  <url><loc>${loc}</loc><lastmod>${today}</lastmod><priority>${pri}</priority></url>`)
+    .join('\n') +
+  `\n</urlset>\n`;
+await writeFile(path.join(OUT, 'sitemap.xml'), sitemap);
+log('wrote sitemap.xml');
 
 // ------------------------------------------------------------------ 7. 404
 // Chrome's runner is its offline page; ours is the not-found page. One source
