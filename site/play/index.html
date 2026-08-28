@@ -132,6 +132,9 @@
   .lb .who{flex:1;text-align:left}
   .initials{
     display:flex;align-items:center;gap:8px;
+    /* the card above is click-through so a tap anywhere restarts; this row
+       has to opt back in or the field and Post button can never be clicked */
+    pointer-events:auto;
     font-family:var(--mono);font-size:clamp(10px,1.3vw,12px);
     letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
   }
