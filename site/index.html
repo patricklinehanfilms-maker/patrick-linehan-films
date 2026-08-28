@@ -1,1510 +1,792 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Patrick Linehan Films — Director</title>
-<script src="./support.js"></script>
-</head>
-<body>
-<template id="__bundler_thumbnail">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#ec3013"/><text x="50" y="50" font-family="Archivo, Helvetica, sans-serif" font-size="30" font-weight="900" fill="#fff" text-anchor="middle" dominant-baseline="central">PL</text></svg>
-</template>
-<x-dc>
-<helmet>
-<link rel="stylesheet" href="_ds/modernist-a9bb7bd0-6e31-4b28-b775-c874d7811787/styles.css">
-<script src="_ds/modernist-a9bb7bd0-6e31-4b28-b775-c874d7811787/_ds_bundle.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Asterisk Run — a small game for patrickjlinehan.com.">
+<meta name="robots" content="noindex">
+<title>Asterisk Run — Patrick Linehan Films</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Archivo+Expanded:wght@900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
 <style>
-  body { margin: 0; background: #f3f2f2; font-family: Archivo, Helvetica, sans-serif; color: #201e1d; -webkit-font-smoothing: antialiased; }
-  a { color: #ec3013; text-decoration: none; }
-  a:hover { color: #201e1d; }
-  ::selection { background: #ec3013; color: #fff; }
-  video::-webkit-media-controls,
-  video::-webkit-media-controls-enclosure,
-  video::-webkit-media-controls-panel,
-  video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
-  @keyframes spinslow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  @keyframes marq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-  @keyframes slidein {
-    from { transform: translateX(-108%); }
-    to   { transform: translateX(0); }
+  /* Patrick Linehan Films — site system, run as the logo itself:
+     white mark and white asterisks on the brand red, ink for accents.
+     One committed world, painted explicitly, so it holds on any host page. */
+  :root{
+    --red:#ec3013; --white:#fff; --ink:#201e1d;
+    --dim:rgba(255,255,255,.72); --faint:rgba(255,255,255,.5);
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+    --wide:'Archivo Expanded',Archivo,'Helvetica Neue',Helvetica,sans-serif;
   }
-  @keyframes rolodex {
-    0%   { transform: rotateX(0deg); }
-    45%  { transform: rotateX(-88deg); opacity: 0.25; }
-    55%  { transform: rotateX(88deg); opacity: 0.25; }
-    100% { transform: rotateX(0deg); opacity: 1; }
+  *{box-sizing:border-box}
+  /* class rules set display:flex, which outranks the UA [hidden] rule */
+  [hidden]{display:none!important}
+  html,body{margin:0;padding:0;height:100%}
+  body{background:var(--red);color:var(--white);font-family:var(--sans);overflow:hidden}
+
+  #stage{
+    position:relative;width:100%;height:100%;min-height:220px;
+    background:var(--red);overflow:hidden;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #stage:focus{outline:none}
+  #stage.ptr:focus-visible{outline:none}
+  #stage:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+  #cv{display:block;width:100%;height:100%}
+
+  /* ---------- HUD ---------- */
+  .hud{
+    position:absolute;inset:0;pointer-events:none;
+    padding:
+      max(clamp(12px,2.4vw,24px), env(safe-area-inset-top))
+      max(clamp(12px,2.4vw,24px), env(safe-area-inset-right))
+      max(clamp(12px,2.4vw,24px), env(safe-area-inset-bottom))
+      max(clamp(12px,2.4vw,24px), env(safe-area-inset-left));
+    display:flex;flex-direction:column;justify-content:space-between;
+    font-family:var(--mono);font-variant-numeric:tabular-nums;
+  }
+  .hud-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+  .tc{
+    font-size:clamp(15px,2.6vw,22px);font-weight:500;letter-spacing:.04em;
+    color:var(--white);
+  }
+  .meta{
+    font-size:clamp(9px,1.3vw,11px);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--dim);text-align:right;line-height:1.7;
+  }
+  .meta b{font-weight:500;color:var(--white)}
+  .take{
+    font-size:clamp(9px,1.3vw,11px);letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  }
+  #sound{
+    pointer-events:auto;cursor:pointer;background:none;border:0;padding:2px 0 2px 14px;
+    font:inherit;font-size:clamp(9px,1.3vw,11px);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--dim);
+  }
+  #sound:hover{color:var(--ink)}
+  #sound:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+  /* ---------- overlays ---------- */
+  .card{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:14px;
+    text-align:center;padding:24px;pointer-events:none;
+    /* the runner owns the lower half — keep copy clear of him, but never let the
+       offset eat so much height that the headline pushes off the top */
+    padding-bottom:min(36%,190px);
+  }
+  @media (min-aspect-ratio:5/2){ .card{padding-bottom:min(22%,150px)} }
+  /* with the leaderboard open there is ~160px more to fit: give back the offset
+     and step the headline down a size */
+  .card.compact{padding-bottom:20px;gap:10px;justify-content:center}
+  .card.compact .cut{font-size:clamp(26px,5.6vw,56px)}
+  .card.compact .result{font-size:clamp(11px,1.4vw,13px)}
+  .card[hidden]{display:none}
+  .eyebrow{
+    font-family:var(--mono);font-size:clamp(9px,1.2vw,11px);
+    letter-spacing:.28em;text-transform:uppercase;color:var(--dim);
+  }
+  .title{
+    font-family:var(--wide);font-weight:900;
+    font-size:clamp(30px,7.2vw,68px);line-height:.92;letter-spacing:-.02em;
+    text-transform:uppercase;color:var(--white);margin:0;text-wrap:balance;
+  }
+  .title .ast{color:var(--ink)}
+  .cut{
+    font-family:var(--wide);font-weight:900;text-transform:uppercase;
+    font-size:clamp(44px,11vw,104px);line-height:.86;letter-spacing:-.03em;
+    color:var(--white);margin:0;
+  }
+  .keys{
+    font-size:clamp(11px,1.5vw,14px);color:var(--dim);letter-spacing:.02em;
+  }
+  .keys kbd{
+    font-family:var(--mono);font-size:.92em;border:1px solid currentColor;
+    border-radius:3px;padding:1px 6px;margin:0 1px;opacity:.85;
+  }
+  .result{
+    font-family:var(--mono);font-size:clamp(12px,1.7vw,15px);
+    letter-spacing:.08em;color:var(--dim);font-variant-numeric:tabular-nums;
+  }
+  .result .big{color:var(--white);font-weight:500}
+  .pb{
+    font-family:var(--mono);font-size:clamp(9px,1.2vw,11px);letter-spacing:.22em;
+    text-transform:uppercase;color:var(--white);
+  }
+  /* ---------- leaderboard ---------- */
+  .lb{
+    font-family:var(--mono);font-size:clamp(10px,1.3vw,12px);letter-spacing:.06em;
+    color:var(--dim);font-variant-numeric:tabular-nums;
+    display:flex;flex-direction:column;gap:2px;width:min(280px,72vw);
+  }
+  .lb .lbhead{
+    letter-spacing:.22em;text-transform:uppercase;color:var(--white);
+    padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.4);margin-bottom:4px;
+  }
+  .lb .row{display:flex;justify-content:space-between;gap:12px}
+  .lb .row.me{color:var(--white)}
+  .lb .rank{width:2.4em;flex-shrink:0}
+  .lb .who{flex:1;text-align:left}
+  .initials{
+    display:flex;align-items:center;gap:8px;
+    /* the card above is click-through so a tap anywhere restarts; this row
+       has to opt back in or the field and Post button can never be clicked */
+    pointer-events:auto;
+    font-family:var(--mono);font-size:clamp(10px,1.3vw,12px);
+    letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+  }
+  .initials input{
+    font-family:var(--mono);font-size:clamp(16px,2.4vw,22px);font-weight:500;
+    letter-spacing:.3em;text-transform:uppercase;
+    width:4.2em;padding:6px 0 6px 8px;
+    background:transparent;color:var(--white);
+    border:0;border-bottom:2px solid var(--white);border-radius:0;
+    outline:none;
+  }
+  .initials button{
+    font-family:var(--mono);font-size:clamp(9px,1.2vw,11px);letter-spacing:.18em;
+    text-transform:uppercase;color:var(--red);background:var(--white);
+    border:0;border-radius:0;padding:9px 14px;cursor:pointer;
+  }
+  .initials button:hover{background:var(--ink);color:var(--white)}
+
+  #focusHint{
+    position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
+    font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--dim);pointer-events:none;opacity:0;transition:opacity 200ms linear;
+  }
+  #focusHint.show{opacity:1}
+
+  /* phones: the vw terms bottom out, so set real sizes and give the copy room */
+  @media (max-width:560px){
+    .tc{font-size:17px}
+    .meta,.take,#sound{font-size:10px;letter-spacing:.12em}
+    .keys{font-size:12px}
+    .card{padding-left:16px;padding-right:16px;gap:11px}
+    #sound{padding-left:10px}
+  }
+
+  /* Embedded, a finger swipe has to keep scrolling the host page, so only the
+     standalone page claims the gesture. Both stop double-tap zoom. */
+  #stage{touch-action:manipulation}
+  #stage.solo{touch-action:none}
+
+  @media (prefers-reduced-motion:reduce){
+    #stage{transition:none}
   }
 </style>
-</helmet>
 
-<div style="width: 100%; background: #f3f2f2; position: relative;">
-        <sc-if value="{{ isHomeB }}" hint-placeholder-val="{{ true }}">
-        <div>
-          <div style="{{ barTrackStyle }}">
-            <div style="{{ barFillStyle }}"></div>
-                <div onClick="{{ goHomeB }}" onMouseEnter="{{ enterLogoB }}" onMouseLeave="{{ leaveLogoB }}" style="{{ barLogoStyle }}">
-                  <div style="{{ barMarkStyle }}">
-                    <img src="assets/mark.png" alt="Patrick Linehan Films" style="{{ markBaseStyle }}">
-                    <img src="assets/mark-tight.png" alt="" style="{{ markTightStyle }}">
-                    <img src="assets/running-mark.gif" alt="" style="{{ runB }}">
-                  </div>
-                  <div style="{{ barWordStyle }}">{{ wordmark }}</div>
-                </div>
-                <sc-if value="{{ showNavB }}" hint-placeholder-val="{{ true }}">
-                <div style="{{ barNavStyle }}">
-                  <span onClick="{{ goWorkB }}" style-hover="opacity: 0.55;" style="cursor: pointer; display: inline-block; transformOrigin: center center;">Work</span><span onClick="{{ goAboutB }}" style-hover="opacity: 0.55;" style="cursor: pointer; display: inline-block; transformOrigin: center center;">About</span><span onClick="{{ goContactB }}" style-hover="opacity: 0.55;" style="cursor: pointer; display: inline-block; transformOrigin: center center; color: #ec3013; background: #f3f2f2; padding: 5px 10px; margin: -5px 0;">Contact</span>
-                </div>
-                </sc-if>
-                <sc-if value="{{ showBurgerB }}" hint-placeholder-val="{{ false }}">
-                <div onClick="{{ toggleMenu }}" aria-label="Menu" style="{{ burgerStyle }}">
-                  <div style="{{ burgerBarStyle }}"></div>
-                  <div style="{{ burgerBarStyle }}"></div>
-                  <div style="{{ burgerBarStyle }}"></div>
-                </div>
-                </sc-if>
-                <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
-                <div style="{{ menuOverlayStyle }}">
-                  <div onClick="{{ toggleMenu }}" style="{{ menuCloseStyle }}">Close ✕</div>
-                  <div onClick="{{ menuWork }}" style="{{ menuItemStyle }}">Work</div>
-                  <div onClick="{{ menuAbout }}" style="{{ menuItemStyle }}">About</div>
-                  <div onClick="{{ menuContact }}" style="{{ menuItemStyle }}">Contact</div>
-                  <a href="https://www.instagram.com/patrickjlinehan/" target="_blank" rel="noopener" style="{{ menuMetaStyle }}">Instagram ↗</a>
-                </div>
-                </sc-if>
-            <div style="{{ barLabelStyle }}">Director · Music | Narrative | Commercial · Brooklyn</div>
-            <img src="data:image/png;base64,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" alt="Expand the hero" onClick="{{ toggleHeroFull }}" style-hover="filter: brightness(0) invert(1);" style="{{ barArrowStyle }}">
-          </div>
-          <div ref="{{ heroRef }}" onMouseEnter="{{ enterVideo }}" onMouseLeave="{{ leaveVideo }}" style="{{ heroBoxStyle }}">
-            <video src="assets/hero6.mp4" ref="{{ videoRef }}" autoPlay="{{ heroAutoPlay }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" preload="auto" style="{{ heroVideoStyle }}"></video>
-          </div>
+</head>
+<body>
+<div id="stage" tabindex="0" role="application"
+     aria-label="Asterisk Run — jump the running mark over asterisks. Space or tap to jump, arrow down to duck.">
+  <canvas id="cv"></canvas>
 
-          <div onMouseEnter="{{ pauseMarquee }}" onMouseLeave="{{ resumeMarquee }}" style="background: #201e1d; color: #f3f2f2; padding: 34px 0; overflow: hidden; borderBottom: 2px solid #201e1d;">
-            <div ref="{{ marqRef }}" style="display: flex; gap: 70px; width: max-content; alignItems: center; willChange: transform;">{{ logoMarquee }}</div>
-          </div>
+  <div class="hud">
+    <div class="hud-row">
+      <div class="tc" id="tc">00:00:00</div>
+      <div class="meta">
+        <div>Best <b id="best">00:00:00</b></div>
+        <div><button id="sound" type="button" aria-pressed="false">Sound off</button></div>
+      </div>
+    </div>
+    <div class="hud-row">
+      <div class="take" id="take">Take 01</div>
+      <div class="take" id="spd"></div>
+    </div>
+  </div>
 
-          <div data-grid style="{{ sheetBarStyle }}">
-            <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase;">{{ countLabel }}</div>
-            <sc-if value="{{ showTools }}" hint-placeholder-val="{{ true }}">
-            <div style="display: flex; alignItems: center; gap: 14px;">
-              <img src="assets/asterisk.png" alt="" style-hover="animationPlayState: paused;" style="width: 22px; height: 22px; display: block; animation: spinslow 9s linear infinite;">
-              <div onClick="{{ shuffle }}" style-hover="background: #ec3013;" style="background: #201e1d; color: #f3f2f2; fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.14em; textTransform: uppercase; padding: 10px 16px; cursor: pointer;">Shuffle the sheet</div>
-            </div>
-            </sc-if>
-          </div>
+  <div class="card" id="startCard">
+    <div class="eyebrow">Patrick Linehan Films</div>
+    <h1 class="title">Asterisk<span class="ast">*</span>Run</h1>
+    <div class="keys"><kbd>Space</kbd> to jump · <kbd>↓</kbd> to duck · or tap</div>
+  </div>
 
-          <div style="display: grid; gridTemplateColumns: {{ gridCols }}; gap: 2px; background: #201e1d; borderBottom: 2px solid #201e1d;">
-            <sc-for list="{{ shuffled }}" as="p" hint-placeholder-count="8">
-              <div style="background: #f3f2f2; padding: 0; cursor: pointer; position: relative; display: flex; flexDirection: column;" onClick="{{ p.open }}" onMouseEnter="{{ p.enterB }}" onMouseLeave="{{ clearHoverB }}">
-                <div style="{{ tileMediaStyle }}">{{ p.tile }}</div>
-                <div style="{{ tileMetaStyle }}">
-                  <div style="display: flex; alignItems: baseline; justifyContent: space-between; gap: 10px; flex: 1;">
-                    <div style="{{ tileTitleStyle }}">{{ p.title }}</div>
-                    <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 12px; letterSpacing: 0.08em; color: #6d6867; whiteSpace: nowrap;">{{ p.num }}</div>
-                  </div>
-                  <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 11px; letterSpacing: 0.14em; textTransform: uppercase; color: #6d6867;">{{ p.kind }}</div>
-                </div>
-              </div>
-            </sc-for>
-          </div>
+  <div class="card" id="overCard" hidden>
+    <p class="cut">Cut.</p>
+    <div class="result">Take <span id="oTake">01</span> — <span class="big" id="oTc">00:00:00</span></div>
+    <div class="pb" id="oPb" hidden>New best</div>
+    <div class="initials" id="oEntry" hidden>
+      <span>Initials</span>
+      <input id="oIn" maxlength="3" autocomplete="off" spellcheck="false" aria-label="Your initials">
+      <button id="oSave" type="button">Post</button>
+    </div>
+    <div class="lb" id="oBoard" hidden></div>
+    <div class="keys"><kbd>Space</kbd> for take <span id="oNext">02</span></div>
+  </div>
 
-          <div data-about style="{{ aboutGridStyle }}">
-            <div style="{{ aboutPicStyle }}">
-              <img src="assets/about-portrait-sm.png" alt="Patrick Linehan on set" loading="lazy" decoding="async" style="{{ aboutImgStyle }}">
-            </div>
-            <div style="{{ aboutPadStyle }}">
-              <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; marginBottom: 24px;">About</div>
-              <div style="{{ aboutTitleStyle }}">Authentic filmmaking, pointed at your brand.</div>
-              <div style="{{ aboutBodyStyle }}">Patrick Linehan is an Emmy and Clio-award winning director specializing in commercial, branded content, narrative, and music videos. He's worked with brands like Red Bull, Oatly, and Marshall, and directed for hundreds of musical artists from around the world including WHATMORE, Elmiene, Mark Ambor, Kevin Atwater, Royel Otis, Calum Scott, Ayumu Imazu, and Maggie Rogers across narrative pieces, live sets, and music videos.<br><br>He got his start producing documentaries for ABC News, where he won an Emmy for <em>Uvalde: 365</em>, a year-long look into the aftermath of the 2022 school shooting in south Texas. Since redirecting his focus onto directing in 2023, he has worked on over 200 projects, amassing more than 150 million views across YouTube, TikTok, and Instagram. The scripted-doc series he made alongside WHATMORE won a Clio award for outstanding music marketing.</div>
-              <div>{{ statRow }}</div>
-            </div>
-          </div>
-
-          <div style="{{ ctaStyle }}">
-            <div onClick="{{ goContactB }}" style-hover="opacity: 0.7;" style="{{ ctaTitleStyle }}">Let's make<br>something loud</div>
-            <div style="{{ ctaMetaWrapStyle }}">
-              <div style="{{ ctaMetaStyle }}"><a href="mailto:patrick.linehan.films@gmail.com" style="color: inherit;" style-hover="color: #201e1d;">patrick.linehan.films@gmail.com</a><br><a href="https://www.instagram.com/patrickjlinehan/" target="_blank" rel="noopener" style="color: inherit;" style-hover="color: #201e1d;">Instagram</a><br>Brooklyn, NY</div>
-              <img src="data:image/png;base64,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" alt="Play Asterisk Run" onClick="{{ togglePlay }}" style-hover="opacity: 0.55;" style="{{ ctaArrowStyle }}">
-            </div>
-          </div>
-
-          <div data-play style="{{ playPanelStyle }}">
-            <iframe src="play/index.html" title="Asterisk Run" loading="lazy" style="{{ playFrameStyle }}"></iframe>
-          </div>
-          <div style="{{ marksHomeStyle }}">
-            <img src="assets/mark-nyc.png" alt="NYC" style="height: 24px; display: block;">
-            <img src="assets/mark-ce.png" alt="CE / WEEE" style="height: 26px; display: block; filter: brightness(0) invert(1);">
-            <img src="assets/mark-mpa-globe.png" alt="MPA" style="height: 28px; display: block;">
-          </div>
-        </div>
-        </sc-if>
-
-        <sc-if value="{{ isContactB }}" hint-placeholder-val="{{ false }}">
-        <div>
-          <div style="{{ pageBarStyle }}">
-            <span style="{{ backLinkStyle }}" onClick="{{ goHomeB }}">{{ backLabel }}</span>
-            <div style="{{ pageBarNavStyle }}">
-              <span onClick="{{ goWorkB }}" style="cursor: pointer; whiteSpace: nowrap;" style-hover="opacity: 0.55;">Work</span>
-              <span onClick="{{ goAboutB }}" style="cursor: pointer; whiteSpace: nowrap;" style-hover="opacity: 0.55;">About</span>
-              <span style="color: #6d6867; whiteSpace: nowrap;">Contact</span>
-            </div>
-          </div>
-
-          <div style="{{ contactHeadStyle }}" onMouseEnter="{{ pauseContactVid }}" onMouseLeave="{{ playContactVid }}">
-            <video src="assets/contact-bg.mp4" ref="{{ contactVidRef }}" autoPlay="{{ true }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" style="position: absolute; inset: 0; width: 100%; height: 100%; objectFit: cover; zIndex: 0; filter: grayscale(1) contrast(1.2); mixBlendMode: multiply; opacity: 0.55; pointerEvents: none;"></video>
-            <div style="flex: 1 1 auto; minWidth: 0; position: relative; zIndex: 1;">
-              <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; opacity: 0.85; marginBottom: 22px;">Available for work worldwide</div>
-              <div style="{{ contactTitleStyle }}">Tell me what<br>you're making</div>
-            </div>
-            <img src="assets/arrow.png" alt="Expand" onClick="{{ toggleContactFull }}" style-hover="opacity: 0.55;" style="{{ contactArrowStyle }}">
-          </div>
-
-          <div style="{{ contactGridStyle }}">
-            <div style="{{ contactLeftStyle }}">
-              <div>
-                <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; color: #6d6867; marginBottom: 14px;">Direct</div>
-                <a href="mailto:patrick.linehan.films@gmail.com?cc=luis@back2backmusic.com" style="fontSize: clamp(14px, 1.85vw, 22px); fontWeight: 900; letterSpacing: -0.015em; lineHeight: 1.1; textTransform: uppercase; display: block; maxWidth: 100%; whiteSpace: nowrap;" style-hover="color: #201e1d;">patrick.linehan.films@gmail.com</a>
-              </div>
-              <div>
-                <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; color: #6d6867; marginBottom: 14px;">Manager</div>
-                <a href="mailto:luis@back2backmusic.com?cc=patrick.linehan.films@gmail.com" style="fontSize: clamp(14px, 1.85vw, 22px); fontWeight: 900; letterSpacing: -0.015em; lineHeight: 1.1; textTransform: uppercase; display: block; maxWidth: 100%; whiteSpace: nowrap;" style-hover="color: #201e1d;">luis@back2backmusic.com</a>
-              </div>
-              <div style="display: flex; flexWrap: wrap; gap: 2px;">
-                <a href="https://www.instagram.com/patrickjlinehan/" target="_blank" rel="noopener" style="background: #201e1d; color: #f3f2f2; padding: 20px 26px; fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.14em; textTransform: uppercase; flex: 1 1 auto; textAlign: left;" style-hover="background: #ec3013; color: #fff;">Instagram ↗</a>
-                <a href="mailto:patrick.linehan.films@gmail.com?cc=luis@back2backmusic.com&amp;subject=Project%20enquiry" style="background: #201e1d; color: #f3f2f2; padding: 20px 26px; fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.14em; textTransform: uppercase; flex: 1 1 auto; textAlign: left;" style-hover="background: #ec3013; color: #fff;">Send a brief ↗</a>
-              </div>
-              <div style="fontSize: 20px; lineHeight: 1.5; maxWidth: 54ch; textWrap: pretty;">Please reach out to both of us with as much project information as possible. Based in Brooklyn.</div>
-            </div>
-
-            <div style="{{ contactRightStyle }}">
-              <div>
-                <div style="letterSpacing: 0.16em; textTransform: uppercase; color: #6d6867; marginBottom: 16px;">Based</div>
-                <div style="display: flex; flexDirection: column;">
-                  <div style="display: flex; justifyContent: space-between; gap: 12px; padding: 11px 0; borderBottom: 1px solid #c9c6c5;"><span style="color: #6d6867;">CITY</span><span>BROOKLYN, NY</span></div>
-                  <div style="display: flex; justifyContent: space-between; gap: 12px; padding: 11px 0;"><span style="color: #6d6867;">TRAVEL</span><span>WORLDWIDE</span></div>
-                </div>
-              </div>
-              <div>
-                <div style="letterSpacing: 0.16em; textTransform: uppercase; color: #6d6867; marginBottom: 16px;">Takes on</div>
-                <div style="display: flex; flexDirection: column;">
-                  <div style="padding: 11px 0; borderBottom: 1px solid #c9c6c5;">MUSIC VIDEOS</div>
-                  <div style="padding: 11px 0; borderBottom: 1px solid #c9c6c5;">BRANDED + COMMERCIAL</div>
-                  <div style="padding: 11px 0; borderBottom: 1px solid #c9c6c5;">NARRATIVE + SHORT FILM</div>
-                  <div style="padding: 11px 0;">LIVE + DOCUMENTARY</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div style="{{ marksStyle }}">
-            <img src="assets/mark-nyc.png" alt="NYC" style="height: 24px; display: block;">
-            <img src="assets/mark-ce.png" alt="CE / WEEE" style="height: 26px; display: block; filter: brightness(0) invert(1);">
-            <img src="assets/mark-mpa-globe.png" alt="MPA" style="height: 28px; display: block;">
-          </div>
-        </div>
-        </sc-if>
-
-        <sc-if value="{{ isCaseB }}" hint-placeholder-val="{{ false }}">
-        <div>
-          <div style="{{ pageBarStyle }}">
-            <span style="{{ backLinkStyle }}" onClick="{{ goHomeB }}">{{ backLabel }}</span>
-            <div style="{{ pageBarNavStyle }}">
-              <span onClick="{{ goWorkB }}" style="cursor: pointer; whiteSpace: nowrap;" style-hover="opacity: 0.55;">Work</span>
-              <span onClick="{{ goAboutB }}" style="cursor: pointer; whiteSpace: nowrap;" style-hover="opacity: 0.55;">About</span>
-              <span onClick="{{ goContactB }}" style="cursor: pointer; whiteSpace: nowrap;" style-hover="opacity: 0.55;">Contact</span>
-              <span style="{{ caseCountStyle }}">{{ caseB.num }} / {{ total }}</span>
-            </div>
-          </div>
-          <div style="position: relative; borderBottom: 2px solid #201e1d; overflow: hidden;">
-            {{ caseHeroB }}
-            <img src="data:image/png;base64,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" alt="" style="{{ caseArrowStyle }}">
-            <div style="{{ caseTitleBoxStyle }}">
-              <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; opacity: 0.85; marginBottom: 12px;">{{ caseB.kind }}</div>
-              <h1 ref="{{ titleRef }}" style="{{ caseTitleStyle }}">{{ caseB.title }}</h1>
-            </div>
-          </div>
-          <div style="display: grid; gridTemplateColumns: {{ caseColsB }}; borderBottom: 2px solid #201e1d;">
-            <div style="{{ caseCreditsStyle }}">
-              <div style="letterSpacing: 0.16em; textTransform: uppercase; marginBottom: 20px;">Credits</div>
-              <div style="display: flex; flexDirection: column;">
-                <sc-for list="{{ creditRowsB }}" as="row" hint-placeholder-count="4">
-                  <div style="display: flex; justifyContent: space-between; alignItems: baseline; gap: 16px; padding: 11px 0; borderBottom: 1px solid #c9c6c5;"><span style="color: #6d6867; flexShrink: 0;">{{ row.k }}</span><span style="textAlign: right;">{{ row.v }}</span></div>
-                </sc-for>
-              </div>
-            </div>
-            <sc-if value="{{ hasCopyB }}" hint-placeholder-val="{{ false }}">
-            <div style="{{ caseCopyStyle }}">
-              <div style="{{ caseBodyStyle }}">{{ caseB.body }}</div>
-              <div style="width: 100%; maxWidth: 560px;">{{ caseStripB }}</div>
-            </div>
-            </sc-if>
-          </div>
-          <div style="{{ caseNavStyle }}">
-            <div onClick="{{ prevB }}" style="display: flex; flexDirection: column; gap: 12px; cursor: pointer; flex: 1;">
-              <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; opacity: 0.85;">Previous</div>
-              <div style="{{ caseNavTitleStyle }}">← {{ prevTitleB }}</div>
-            </div>
-            <div onClick="{{ nextB }}" style="{{ caseNavNextStyle }}">
-              <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; opacity: 0.85;">Next</div>
-              <div style="{{ caseNavTitleStyle }}">{{ nextTitleB }} →</div>
-            </div>
-          </div>
-        </div>
-        </sc-if>
+  <div id="focusHint">Click to play</div>
 </div>
 
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;videoIds&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;,&quot;label&quot;:&quot;YouTube links or IDs (space or comma separated) — leave blank to use the built-in list&quot;},&quot;columns&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:4,&quot;min&quot;:2,&quot;max&quot;:6,&quot;step&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Layout&quot;,&quot;label&quot;:&quot;Contact-sheet columns&quot;}}">
-const RED = '#ec3013', INK = '#201e1d', BG = '#f3f2f2', MONO = "'IBM Plex Mono', monospace";
-const STRIPE = 'repeating-linear-gradient(135deg, #dcdad9 0 9px, #f3f2f2 9px 18px)';
+<script>
+(() => {
+  'use strict';
 
-const VIDEO_IDS = ["5NsMIXv0gRs","JhwyMiCH-Mc","w_6r2iEur3g","wl7VscNbwAw","V_OSd1Al7Bc","mq-5QnSmwLo","rIgKZS8-HuY","e4WFFY8JzgI","SizhMPbjEk8","L-9QwatubPo","wxLGzYsTBhg","DmpCKe1DYqo","zhkoGDcNnc0","7E9ZXITzgcc","59EJ_paMewk","nG3rHSOug5c"];
+  // ---------------------------------------------------------------- assets
+  const RUNNER_SRC = 'data:image/png;base64,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';
+  const AST_SRC    = 'data:image/png;base64,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';
+  const RUN_ASPECT = 99 / 128;        // the mark holds one pose — no sprite sheet
 
-// Per-film overrides. Any of: title, kind, year, dp, edit, color, producer.
-// Anything omitted falls back to YouTube's data / P. Linehan.
-const OVERRIDES = {
-  "5NsMIXv0gRs": {
-    "title": "but they were kissing",
-    "kind": "Short Film",
-    "clip": "assets/clip-kissing.mp4",
-    "year": 2025,
-    "dp": "P. Linehan",
-    "edit": "P. Linehan",
-    "desc": "Two guys on a late night subway car spend the whole ride inventing a history for the couple sitting across from them. Where they met, how long it's been, whether it's real. I cut their conversation against the night it might have come from, a dark bar in purple light, a dance floor, an exit sign. Kevin and I wrote it together and I shot and cut it myself."
-  },
-  "JhwyMiCH-Mc": {
-    "title": "Jackson August (Short)",
-    "kind": "Short Film",
-    "clip": "assets/clip-jackson.mp4",
-    "year": 2025,
-    "dir": "P. Linehan + J. August",
-    "written": "J. August",
-    "dp": "P. Linehan",
-    "edit": "J. August",
-    "desc": "The fourth in a series of portraits I've been shooting for WHATMORE. I followed Jackson through a shift at one of the oldest bars in New York, handheld and close in, while he talks about quitting the job and feeling like an imposter. It cuts against the live show and lands on the release of “jenny’s”."
-  },
-  "w_6r2iEur3g": {
-    "title": "Yoshi T. (Short)",
-    "kind": "Short Film",
-    "clip": "assets/clip-yoshi.mp4",
-    "year": 2025,
-    "dir": "P. Linehan, J. August + Yoshi T.",
-    "dp": "P. Linehan",
-    "edit": "P. Linehan + J. August",
-    "script": "Yoshi T. + J. August",
-    "desc": "The second WHATMORE portrait. Yoshi works at his dad's sushi restaurant, so I shot him and his father in the kitchen wearing their whites and cut it against home video, the studio and the stage. He talks about how scary starting something new is. Jackson, Yoshi, and I wrote it, I shot it."
-  },
-  "wl7VscNbwAw": {
-    "title": "Dominic Fike Interview",
-    "kind": "Interview",
-    "year": 2026,
-    "thumb": "assets/thumb-fike.jpg",
-    "dp": "P. Linehan",
-    "edit": "P. Linehan",
-    "producer": "Eric Skelton",
-    "desc": "A long sit down with Dominic Fike for Pigeons and Planes, shot in the wood panelled lounge at Electric Lady. One warm lamp, one bench, and enough room to let him talk. He gets into growing up in Florida, the label bidding war, Euphoria, the second life of “Babydoll” and becoming a dad. I was DP, director and editor on it."
-  },
-  "V_OSd1Al7Bc": {
-    "title": "Reclusive",
-    "kind": "Music Video",
-    "thumb": "assets/thumb-reclusive.jpg",
-    "clip": "assets/clip-reclusive.mp4",
-    "year": 2026,
-    "dp": "Kai Blamey",
-    "producer": "Mathias Gilay",
-    "color": "Jake Whitehouse",
-    "desc": "An Elmiene video that lives almost entirely inside one elevator. He rides it in a yellow lined suit while the car keeps filling up with people until there is nowhere left to stand. We shot it in London with Untold Studios for Def Jam and Polydor."
-  },
-  "mq-5QnSmwLo": {
-    "title": "Last Call",
-    "kind": "Music Video",
-    "clip": "assets/clip-lastcall.mp4",
-    "year": 2026,
-    "dp": "Ethan Wen",
-    "producer": "Andrew Zapata",
-    "color": "Avery Niles",
-    "desc": "Vacations close out a karaoke bar in New York City, ending with a bar fight that gets them thrown out onto the streets. They run away from the bar and across the bridge at sunrise."
-  },
-  "rIgKZS8-HuY": {
-    "title": "Aperol Spritz",
-    "kind": "Music Video",
-    "year": 2025,
-    "thumb": "assets/thumb-aperol.jpg",
-    "clip": "assets/clip-aperol.mp4",
-    "dp": "P. Linehan",
-    "edit": "P. Linehan + Jude Lipkin",
-    "producer": "Henry Pearl",
-    "color": "Cam McCutcheon",
-    "desc": "A LAUNDRY DAY video that runs from a bright tailor shop in the afternoon to behind a bar at 2am. Our guy gets fitted for a suit, walks out into the night and ends up pouring spritzes for a room full of people. Big cast, mostly friends. Lola came up with the concept, I directed it and cut it."
-  },
-  "e4WFFY8JzgI": {
-    "title": "Cry Against The Wind",
-    "kind": "Music Video",
-    "thumb": "assets/thumb-cry.jpg",
-    "clip": "assets/clip-cry.mp4",
-    "year": 2025,
-    "dp": "Ujjwal Chande",
-    "edit": "P. Linehan",
-    "producer": "Ade Macalinao + Caroline Gluck",
-    "color": "Brian Charles",
-    "desc": "Elmiene aged up in prosthetics, grey bearded and in a long dark coat, walking a narrow wood corridor for the length of the song. The camera stays with him the whole way and the space never opens up. Malina built the make up, Ujjwal shot it, and I directed and cut it for Untold Studios."
-  },
-  "SizhMPbjEk8": {
-    "title": "Know You",
-    "kind": "Short Film",
-    "clip": "assets/clip-knowyou.mp4",
-    "year": 2025,
-    "dp": "P. Linehan",
-    "edit": "P. Linehan",
-    "desc": "The other short I made with Kevin Atwater off Blush Red. Two people sit next to each other and barely speak, and the whole relationship plays underneath it. Birthday candles, a backyard, a kiss, a bedroom. I shot it to feel found rather than made."
-  },
-  "L-9QwatubPo": {
-    "title": "jackie chan",
-    "kind": "Music Video",
-    "clip": "assets/clip-jackiechan.mp4",
-    "year": 2025,
-    "dir": "J. August + P. Linehan",
-    "producer": "Ethan Grossman",
-    "color": "Brian Charles",
-    "desc": "Wide lens, all handheld, moving with the cast from a jewelry robbery out into a night that keeps escalating. Getaway cars, a bodega, a photobooth, and it ends in a police lineup. Everyone on screen is playing the female doppelganger of the band. Jackson and I directed it together."
-  },
-  "wxLGzYsTBhg": {
-    "title": "WHATMORE Album Trailer",
-    "kind": "Short Film",
-    "clip": "assets/clip-albumtrailer.mp4",
-    "year": 2025,
-    "dir": "P. Linehan + J. August",
-    "dp": "P. Linehan",
-    "desc": "A trailer for the debut WHATMORE record, played as a scene instead of a montage. The whole band sits in a red booth in an old New York restaurant getting talked at by a man in a grey suit and a red tie. Comedy first, record second."
-  },
-  "DmpCKe1DYqo": {
-    "title": "Meet Me After Practice (Short)",
-    "kind": "Short Film",
-    "clip": "assets/clip-meetme.mp4",
-    "year": 2025,
-    "dp": "P. Linehan",
-    "edit": "P. Linehan",
-    "desc": "A five minute short for Boys Go To Jupiter that runs alongside their debut LP. It follows one friendship from a high school classroom to a dorm room to a highway at night to the part where she cancels and moves away. Home video texture with diagrams drawn over the top. I directed, shot and cut it."
-  },
-  "zhkoGDcNnc0": {
-    "title": "I See Myself In You",
-    "kind": "Music Video",
-    "clip": "assets/clip-ismiy.mp4",
-    "year": 2026,
-    "dp": "Jeremy Herron",
-    "producer": "Lianne Rose Richards",
-    "desc": "Vacations in a New York park in the dead of winter, playing chess against progressively older versions of his father. As we progress through the game, the man ages drastically. Bare trees, a chess clock, a crowd of regulars gathering to watch it happen. Shot with Cityisland."
-  },
-  "7E9ZXITzgcc": {
-    "title": "Comets + Gold",
-    "kind": "Music Video",
-    "clip": "assets/clip-comets.mp4",
-    "thumb": "assets/thumb-comets.jpg",
-    "year": 2026,
-    "dp": "Scott Siracusano",
-    "edit": "Ryan McKenna",
-    "color": "Ryan Urzi",
-    "desc": "Elmiene and Fujii Kaze on a black stage with a single rectangle of light standing in it. He walks toward the portal, Kaze plays a grand piano, and fog rolls across the floor until the two of them perform together. Gold and black and almost nothing else. Untold Studios, VFX by S4."
-  },
-  "59EJ_paMewk": {
-    "kind": "Music Video",
-    "clip": "assets/clip-aside.mp4"
-  },
-  "nG3rHSOug5c": {
-    "title": "If Our Love Is Dead (Live)",
-    "kind": "Concert Film",
-    "year": 2024,
-    "dir": "P. Linehan + J. Kerr",
-    "edit": "P. Linehan",
-    "color": "N. Consing",
-    "desc": "Royel Otis live at Brooklyn Steel on the Glory To Glory tour. I shot it from the stage in a blue and green wash, close on the guitars and the kit, and ended on the room with everyone's hands up."
-  }
-};
+  let clouds = [];
 
-function parseIds(raw) {
-  if (!raw) return VIDEO_IDS.slice();
-  const out = [];
-  String(raw).split(/[\s,]+/).forEach((tok) => {
-    if (!tok) return;
-    const m = tok.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/) || tok.match(/^([A-Za-z0-9_-]{11})$/);
-    if (m) out.push(m[1]);
-  });
-  return out.length ? out : VIDEO_IDS.slice();
-}
-
-function buildData(ids) {
-  return ids.map((id) => {
-    const ov = OVERRIDES[id] || {};
-    // ov.thumb: a project asset path, or a YouTube frame grab — '1.jpg' | '2.jpg' | '3.jpg'
-    const t = ov.thumb ? (/^https?:|^assets\//.test(ov.thumb) ? ov.thumb : 'https://i.ytimg.com/vi/' + id + '/' + ov.thumb) : null;
-    return {
-      id: id, title: '', kind: '', year: '', clip: ov.clip || null,
-      media: t || 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg',
-      // YouTube frame grabs are only 480x360 — too soft for the case-study hero, so
-      // they stay on the grid tile; a local asset is full-res and can carry both.
-      hero: (t && /^assets\//.test(t)) ? t : 'https://i.ytimg.com/vi/' + id + '/maxresdefault.jpg',
-      fallback: t || 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg'
-    };
-  });
-}
-
-let DATA = buildData(VIDEO_IDS);
-
-const CLIENTS = [
-  { src: 'assets/clients/abc-news.webp', alt: 'ABC News', h: 26 },
-  { src: 'assets/clients/nyt-trim.png', alt: 'The New York Times', h: 20 },
-  { src: 'assets/clients/def-jam-trim.png', alt: 'Def Jam Recordings', h: 44 },
-  { src: 'assets/clients/capitol.svg', alt: 'Capitol Records', h: 40 },
-  { src: 'assets/clients/warner-records.png', alt: 'Warner Records', h: 44, mode: 'white' },
-  { src: 'assets/clients/nettwerk-trim.png', alt: 'Nettwerk', h: 44, mode: 'white' },
-  { src: 'assets/clients/whatmore.webp', alt: 'WHATMORE', h: 24, mode: 'white' },
-  { src: 'assets/clients/ogilvy.webp', alt: 'Ogilvy', h: 28 },
-  { src: 'assets/clients/cerave-trim.png', alt: 'CeraVe', h: 26 },
-  { src: 'assets/clients/oatly-clear.png', alt: 'Oatly', h: 26 },
-  { src: 'assets/clients/monte-cut.png', alt: 'Monte', h: 20 },
-  { src: 'assets/clients/polydor-cut.png', alt: 'Polydor', h: 34 },
-  { src: 'assets/clients/sony-music-cut.png', alt: 'Sony Music', h: 24 },
-  { src: 'assets/clients/marshall-cut.png', alt: 'Marshall', h: 30 },
-  { src: 'assets/clients/shure.webp', alt: 'Shure', h: 24 },
-  { src: 'assets/clients/artist-theory-cut.png', alt: 'Artist Theory', h: 40 },
-  { src: 'assets/clients/pigeons-planes-cut.png', alt: 'Pigeons and Planes', h: 34 },
-  { src: 'assets/clients/red-bull.svg', alt: 'Red Bull', h: 44 }
-];
-
-class CountStat extends React.Component {
-  state = { v: this.props.to };
-  run = () => {
-    if (this.raf) return;
-    const to = this.props.to, dur = 900, t0 = performance.now();
-    const step = (t) => {
-      const p = Math.min(1, (t - t0) / dur);
-      const e = 1 - Math.pow(1 - p, 3);
-      this.setState({ v: Math.round(to * e) });
-      if (p < 1) this.raf = requestAnimationFrame(step); else this.raf = null;
-    };
-    this.setState({ v: 0 });
-    this.raf = requestAnimationFrame(step);
+  const stage = document.getElementById('stage');
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d', { alpha: false });
+  const el = {
+    tc: document.getElementById('tc'), best: document.getElementById('best'),
+    take: document.getElementById('take'), spd: document.getElementById('spd'),
+    start: document.getElementById('startCard'), over: document.getElementById('overCard'),
+    oTake: document.getElementById('oTake'), oTc: document.getElementById('oTc'),
+    oNext: document.getElementById('oNext'), oPb: document.getElementById('oPb'),
+    oEntry: document.getElementById('oEntry'), oIn: document.getElementById('oIn'),
+    oSave: document.getElementById('oSave'), oBoard: document.getElementById('oBoard'),
+    sound: document.getElementById('sound'), hint: document.getElementById('focusHint')
   };
-  componentWillUnmount() { if (this.raf) cancelAnimationFrame(this.raf); }
-  render() {
-    const p = this.props;
-    return React.createElement('div', {
-      onMouseEnter: this.run,
-      style: {
-        background: p.accent ? '#ec3013' : '#201e1d', color: p.accent ? '#fff' : '#f3f2f2',
-        padding: '22px 26px', flex: '1 1 166px', cursor: 'default'
-      }
-    }, [
-      React.createElement('div', { key: 'n', style: { fontSize: '40px', fontWeight: 900, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' } }, (p.prefix || '') + this.state.v + (p.suffix || '')),
-      React.createElement('div', { key: 'l', style: { fontFamily: MONO, fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '6px' } }, p.label)
-    ]);
-  }
-}
 
-class TilePreview extends React.Component {
-  state = { zoom: 1, ready: false };
-  componentDidUpdate(prev) {
-    if (this.props.hovered && !prev.hovered) {
-      this.timer = setTimeout(() => this.setState({ ready: true }), 220);
-    } else if (!this.props.hovered && prev.hovered) {
-      clearTimeout(this.timer);
-      if (this.state.ready) this.setState({ ready: false });
-    }
-  }
-  componentWillUnmount() { clearTimeout(this.timer); }
-  render() {
-    const p = this.props, z = this.state.zoom;
-    const live = (p.hovered && this.state.ready) || p.auto;
-    const kids = [React.createElement(Thumb, {
-      key: 'thumb', src: p.src, alt: p.alt, hovered: p.hovered,
-      onZoom: (v) => { if (v !== this.state.zoom) this.setState({ zoom: v }); }
-    })];
-    if (live) {
-      kids.push(React.createElement('iframe', {
-        key: 'frame',
-        src: 'https://www.youtube.com/embed/' + p.id + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + p.id + '&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0&cc_load_policy=0&color=white',
-        title: p.alt || p.id, allow: 'autoplay; encrypted-media', frameBorder: '0',
-        style: {
-          // cover, not stretch: the player stays 16:9 and overflows the short axis,
-          // so a non-16:9 tile crops instead of letterboxing
-          position: 'absolute', top: '50%', left: '50%',
-          width: 'auto', height: 'auto', minWidth: '100%', minHeight: '100%',
-          aspectRatio: '16 / 9', border: '0', display: 'block', pointerEvents: 'none',
-          transform: 'translate(-50%, -50%)' + (z > 1 ? ' scale(' + z + ')' : ''),
-          transformOrigin: 'center center'
-        }
-      }));
-    }
-    return React.createElement('div', { style: { position: 'absolute', inset: 0, overflow: 'hidden', background: '#000' } }, kids);
-  }
-}
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TOUCH = matchMedia('(hover: none) and (pointer: coarse)').matches;
+  const COL = { red:'#ec3013', white:'#ffffff', ink:'#201e1d' };
 
-class HoverPlayer extends React.Component {
-  state = { hov: false, live: false, zoom: 1 };
-  render() {
-    const p = this.props, st = this.state;
-    const kids = [React.createElement(Thumb, { key: 'thumb', src: p.src, alt: p.alt, onZoom: (z) => { if (z !== this.state.zoom) this.setState({ zoom: z }); } })];
-    const z = st.zoom || 1;
-    if (st.hov || st.live) {
-      const q = st.live
-        ? '?autoplay=1&rel=0&modestbranding=1'
-        : '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + p.id + '&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0&cc_load_policy=0&color=white';
-      kids.push(React.createElement('iframe', {
-        key: 'frame',
-        src: 'https://www.youtube.com/embed/' + p.id + q,
-        title: p.alt || p.id, allow: 'autoplay; encrypted-media; picture-in-picture; fullscreen',
-        allowFullScreen: true, frameBorder: '0',
-        style: {
-          // muted preview covers the frame; once live it goes back to fit so the
-          // real player's controls and full picture are reachable
-          position: 'absolute', top: '50%', left: '50%', border: '0', display: 'block',
-          width: st.live ? '100%' : 'auto', height: st.live ? '100%' : 'auto',
-          minWidth: st.live ? 0 : '100%', minHeight: st.live ? 0 : '100%',
-          aspectRatio: st.live ? 'auto' : '16 / 9',
-          // while it's a muted preview, keep the cursor off the iframe so YouTube
-          // never paints its play/pause, captions or title chrome — the wrapper
-          // div takes the click and swaps in the real player
-          pointerEvents: st.live ? 'auto' : 'none',
-          transform: 'translate(-50%, -50%)' + (!st.live && z > 1 ? ' scale(' + z + ')' : ''),
-          transformOrigin: 'center center'
-        }
-      }));
-    }
-    if (!st.live) {
-      const inset = p.mob ? '18px' : '40px';
-      kids.push(React.createElement('div', {
-        key: 'cue',
-        style: {
-          position: 'absolute', left: inset, top: inset, background: '#ec3013', color: '#fff',
-          fontFamily: MONO, fontSize: '12px', letterSpacing: '0.14em', textTransform: 'uppercase',
-          padding: '8px 12px', pointerEvents: 'none', zIndex: 4
-        }
-      }, p.mob ? 'tap to play' : (st.hov ? 'click to play with sound' : 'hover to preview')));
-    }
-    return React.createElement('div', {
-      style: { position: 'relative', height: p.height, background: '#000', overflow: 'hidden', cursor: st.live ? 'default' : 'pointer' },
-      onMouseEnter: () => this.setState({ hov: true }),
-      onMouseLeave: () => this.setState({ hov: false }),
-      onClick: () => {
-        if (!this.state.live && this.props.onLive) this.props.onLive();
-        this.setState({ live: true });
-      }
-    }, kids);
+  // Tint a white-alpha mask into a solid colour once, and cache it.
+  const tintCache = new Map();
+  function tinted(img, colour) {
+    const key = img.src.slice(-24) + colour;
+    let c = tintCache.get(key);
+    if (c) return c;
+    c = document.createElement('canvas');
+    c.width = img.naturalWidth; c.height = img.naturalHeight;
+    const g = c.getContext('2d');
+    g.drawImage(img, 0, 0);
+    g.globalCompositeOperation = 'source-in';
+    g.fillStyle = colour;
+    g.fillRect(0, 0, c.width, c.height);
+    tintCache.set(key, c);
+    return c;
   }
-}
 
-class Thumb extends React.Component {
-  state = { zoom: 1 };
-  measure = (e) => {
-    const img = e.currentTarget;
-    if (this.done) return;
-    if (img.naturalWidth <= 121) {
-      const step = (this.fb || 0) + 1;
-      const alt = step === 1 ? 'sddefault' : step === 2 ? 'hqdefault' : null;
-      // the retry only applies to YouTube's *default.jpg names; anything else
-      // (frame grabs, local assets) has no ladder to climb — don't dead-end here
-      if (alt && /\/[a-z]+default\.jpg/.test(String(this.props.src))) {
-        this.fb = step;
-        img.src = String(this.props.src).replace(/\/[a-z]+default\.jpg/, '/' + alt + '.jpg');
-        return;
-      }
-      this.done = true;
-      return;
-    }
-    this.done = true;
-    const z = detectBars(img);
-    if (z > 1) {
-      this.setState({ zoom: z });
-      if (this.props.onZoom) this.props.onZoom(z);
-    }
-  };
-  render() {
-    const p = this.props, z = this.state.zoom * (p.hovered ? 1.06 : 1);
-    return React.createElement('img', {
-      src: p.src, alt: p.alt || '', crossOrigin: 'anonymous', onLoad: this.measure,
-      style: {
-        width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-        transform: 'scale(' + z + ')',
-        transition: 'transform 400ms cubic-bezier(.2,.8,.2,1)'
-      }
-    });
+  // ------------------------------------------------------------ world size
+  // On a wide screen the height fills and the extra width is free runway.
+  // On a phone that would leave barely 200 units of track — the asterisks would
+  // appear almost on top of the runner — so we hold a MINIMUM visible width and
+  // let the world zoom out instead. Whichever constraint bites, the runner keeps
+  // his real proportions; only the on-screen size changes.
+  const MOBILE_MAX = 760;  // the site's own mobile breakpoint — below this, mobile rules
+  const W_MIN = 560;   // never show less track than this, at any size
+  const H_MIN = 260;   // never show less sky than this
+  const W_REF = 685;   // the width a comfortable desktop embed gets
+  const BAND  = 360;   // the action band; extra height becomes sky, not stretch
+
+  let W = W_REF, H = H_MIN, GROUND_Y = 212, BAND_TOP = 0, ws = 1, DPR = 1, mobile = false;
+
+  function resize() {
+    const r = stage.getBoundingClientRect();
+    const cw = Math.max(240, r.width), ch = Math.max(160, r.height);
+
+    // The 760 breakpoint decides the mobile TREATMENT (band placement, touch copy,
+    // compact HUD, gesture handling). The minimum-track floor is not mobile-only:
+    // without it a tall desktop window collapses to ~300 units of track with a
+    // giant runner, which is worse than any phone. On a normal wide embed the
+    // height binds first and the floor never engages, so desktop is untouched.
+    mobile = cw <= MOBILE_MAX;
+    const scale = Math.min(cw / W_MIN, ch / H_MIN);
+    W = cw / scale;
+    H = ch / scale;
+
+    // Sit the action in a band rather than stranding it at the bottom of a tall
+    // phone screen. The ground is a touch below centre, which reads as grounded.
+    const bandH = Math.min(H, BAND);
+    BAND_TOP = (H - bandH) * (mobile ? 0.72 : 0.55);
+    GROUND_Y = BAND_TOP + bandH - 48;
+
+    // Everything moves proportionally to how much track is visible, so an
+    // asterisk takes the same wall-clock time to cross any screen size.
+    ws = W / W_REF;
+
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(cw * DPR);
+    cv.height = Math.round(ch * DPR);
+    ctx.setTransform(scale * DPR, 0, 0, scale * DPR, 0, 0);
+    ctx.imageSmoothingQuality = 'high';
+    if (clouds.length) placeClouds();
   }
-}
+  new ResizeObserver(resize).observe(stage);
 
-class Freeze extends React.Component {
-  state = { hov: false, poster: null };
-  capture = (e) => {
-    const img = e.currentTarget;
+  // ------------------------------------------------------------- constants
+  const GRAV = 2500, JUMP_V = -800, CUT = 0.62, FALL_BOOST = 1900;
+  // He faces left and runs on the left; the asterisks sweep past him right to left.
+  const RUN_H = 78, RUN_W = RUN_H * RUN_ASPECT, RUN_X = 92;
+  const HB = { x0:0.26, x1:0.55, y0:0.10, y1:0.98 };   // torso box inside the pose
+  const DUCK_S = 0.60;
+  const SPD0 = 330, SPD_MAX = 720, SPD_RAMP = 0.0055;
+  const FPS_TC = 24, UNITS_PER_FRAME = 14;
+
+  // --------------------------------------------------------------- state
+  let running = false, over = false, started = false;
+  let dist = 0, speed = SPD0, best = 0, take = 1;
+  let shake = 0, groundOff = 0;
+  const runner = { y:0, vy:0, ducking:false, held:false, dead:false };
+  let obstacles = [], nextGap = 420;
+
+  // best score persists per viewer; storage can be absent or throw.
+  try { best = parseInt(localStorage.getItem('plf.asteriskrun.best') || '0', 10) || 0; } catch (e) {}
+  function saveBest() { try { localStorage.setItem('plf.asteriskrun.best', String(best)); } catch (e) {} }
+
+  // ---------------------------------------------------------- leaderboard
+  // Paste the Worker URL here to make the board shared (see worker/README.md).
+  // Left empty, everything below still works — the board is just local.
+  const LB_API = 'https://asterisk-run-leaderboard.patrick-linehan-films.workers.dev';
+
+  let lbTop = [];        // [{ initials, frames }] best first
+  let lbMine = null;     // the row this session posted, so it can be highlighted
+  let lbPending = 0;     // frames awaiting initials
+
+  function lbLocal(read, write) {
     try {
-      const c = document.createElement('canvas');
-      c.width = img.naturalWidth; c.height = img.naturalHeight;
-      c.getContext('2d').drawImage(img, 0, 0);
-      this.setState({ poster: c.toDataURL('image/png') });
-    } catch (err) { /* leave unfrozen */ }
-  };
-  render() {
-    const p = this.props, st = this.state;
-    const box = {
-      position: 'relative', overflow: 'hidden', background: '#201e1d', cursor: 'pointer',
-      filter: st.hov ? 'grayscale(0) contrast(1.05)' : 'grayscale(1) contrast(1.08)',
-      transition: 'filter 300ms linear'
-    };
-    if (p.height) box.height = p.height;
-    return React.createElement('div', {
-      style: box,
-      onMouseEnter: () => this.setState({ hov: true }),
-      onMouseLeave: () => this.setState({ hov: false })
-    }, [
-      React.createElement('img', {
-        key: 'live', src: p.src, alt: p.alt || '', onLoad: this.capture,
-        style: { width: '100%', height: p.height ? '100%' : 'auto', objectFit: 'cover', display: 'block' }
-      }),
-      st.poster ? React.createElement('img', {
-        key: 'still', src: st.poster, alt: '',
-        style: {
-          position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
-          display: 'block', opacity: st.hov ? 0 : 1, transition: 'opacity 160ms linear', pointerEvents: 'none'
-        }
-      }) : null,
-      React.createElement('div', {
-        key: 'cue',
-        style: {
-          position: 'absolute', left: '12px', bottom: '12px', background: '#ec3013', color: '#fff',
-          fontFamily: MONO, fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase',
-          padding: '5px 8px', opacity: st.hov ? 0 : 1, transition: 'opacity 160ms linear', pointerEvents: 'none',
-          display: p.cue === false ? 'none' : 'block'
-        }
-      }, 'hover to play')
-    ]);
-  }
-}
-
-// self-hosted preview: a still until hover, then the local clip — no YouTube chrome
-// Letterbox/pillarbox detector. Scans at near-source resolution and uses the
-// brightest pixel per line (a bar is dark everywhere; one bright pixel is content),
-// then rounds the crop up a step so a single-line miss can't leave a band.
-function detectBars(img) {
-  try {
-    const SW = Math.min(img.naturalWidth || 320, 240);
-    const SH = Math.max(2, Math.round(SW * (img.naturalHeight / img.naturalWidth)));
-    const c = document.createElement('canvas');
-    c.width = SW; c.height = SH;
-    const ctx = c.getContext('2d');
-    ctx.drawImage(img, 0, 0, SW, SH);
-    const px = ctx.getImageData(0, 0, SW, SH).data;
-    const DARK = 34;
-    const rowMax = (y) => { let m = 0; for (let x = 0; x < SW; x++) { const i = (y * SW + x) * 4; const l = (px[i] + px[i + 1] + px[i + 2]) / 3; if (l > m) m = l; } return m; };
-    const colMax = (x) => { let m = 0; for (let y = 0; y < SH; y++) { const i = (y * SW + x) * 4; const l = (px[i] + px[i + 1] + px[i + 2]) / 3; if (l > m) m = l; } return m; };
-    let top = 0; while (top < SH * 0.45 && rowMax(top) < DARK) top++;
-    let bot = 0; while (bot < SH * 0.45 && rowMax(SH - 1 - bot) < DARK) bot++;
-    let left = 0; while (left < SW * 0.45 && colMax(left) < DARK) left++;
-    let right = 0; while (right < SW * 0.45 && colMax(SW - 1 - right) < DARK) right++;
-    const h = Math.min(top, bot), v = Math.min(left, right);
-    // a genuine bar is at least two lines; one line is noise
-    const hf = h > 1 ? (h + 1) / SH : 0;
-    const vf = v > 1 ? (v + 1) / SW : 0;
-    const bar = Math.max(hf, vf);
-    return bar > 0.008 ? Math.min(2.6, 1 / (1 - 2 * bar)) : 1;
-  } catch (err) { return 1; }
-}
-
-class ClipPreview extends React.Component {
-  vref = React.createRef();
-  state = { zoom: 1, inView: false };
-  // No autoplay on phones: a tile that never plays never downloads its clip,
-  // so a phone visitor pays for the poster still only.
-  componentDidMount() {
-    if (!this.props.auto) return;
-    const v = this.vref.current;
-    if (!v) return;
-    v.muted = true;
-    const p = v.play(); if (p && p.catch) p.catch(() => {});
-  }
-  // YouTube posters can carry baked-in letterbox bars; crop them like Thumb does
-  measure = (e) => {
-    const img = e.currentTarget;
-    if (this.done) return;
-    this.done = true;
-    const z = detectBars(img);
-    if (z > 1) this.setState({ zoom: z });
-  };
-  componentDidUpdate(prev) {
-    const v = this.vref.current;
-    if (!v) return;
-    // an auto tile keeps looping through any re-render
-    if (this.props.auto) { if (v.paused) { v.muted = true; const p = v.play(); if (p && p.catch) p.catch(() => {}); } return; }
-    if (prev.hovered === this.props.hovered) return;
-    v.muted = true;
-    if (this.props.hovered) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
-    else if (!this.props.auto) { v.pause(); v.currentTime = 0; }
-  }
-  render() {
-    const p = this.props;
-    const playing = p.mob ? false : p.hovered;
-    const cover = { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' };
-    return React.createElement('div', {
-      style: {
-        position: 'absolute', inset: 0, overflow: 'hidden', background: INK,
-        filter: 'contrast(1.05)'
-      }
-    }, [
-      React.createElement('video', {
-        key: 'v', ref: this.vref, src: p.clip, muted: true, loop: true,
-        playsInline: true, 'webkit-playsinline': 'true', disablePictureInPicture: true,
-        // 'none' means the clip is fetched only when it actually plays
-        preload: p.auto ? 'auto' : 'none', poster: p.src,
-        style: Object.assign({}, cover, { pointerEvents: 'none' })
-      }),
-      React.createElement('img', {
-        key: 'still', src: p.src, alt: p.alt || '',
-        crossOrigin: 'anonymous', onLoad: this.measure,
-        style: Object.assign({}, cover, {
-          opacity: playing ? 0 : 1, transition: 'opacity 200ms linear', pointerEvents: 'none',
-          transform: this.state.zoom > 1 ? 'scale(' + this.state.zoom + ')' : 'none'
-        })
-      })
-    ]);
-  }
-}
-
-class Component extends DCLogic {
-  state = {
-    routeA: 'home', projA: 0, hoverA: null, mx: 0, my: 0,
-    routeB: 'home', projB: 0, hoverB: null, heroHov: false, logoA: false, logoB: false, order: DATA.map((_, i) => i),
-    mob: typeof window !== 'undefined' && window.innerWidth <= 760, menu: false, heroFull: false, contactFull: false,
-    // two tiles play on their own each load, so the grid isn't wholly static
-    // picked by film id, not grid position — the grid can be shuffled
-    autoIds: (function () {
-      const pool = DATA.filter((d) => d.clip).map((d) => d.id);
-      for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
-      return pool.slice(0, 2);
-    })()
-  };
-
-  videoRef = React.createRef();
-  marqRef = React.createRef();
-  titleRef = React.createRef();
-  heroRef = React.createRef();
-  contactVidRef = React.createRef();
-  marq = { x: 0, vel: 0, target: 0, base: 30, ease: 0.03 };
-
-  componentDidMount() {
-    this.onScroll = () => {
-      const hero = this.heroRef.current;
-      const y = window.scrollY;
-      const heroBottom = hero ? hero.getBoundingClientRect().bottom + y : 620;
-      if (Math.abs(y - (this.state.scrollY || 0)) > 0.5 || Math.abs(heroBottom - (this.state.heroBottom || 0)) > 1) {
-        this.setState({ scrollY: y, heroBottom: heroBottom });
-      }
-    };
-    window.addEventListener('resize', () => this.onScroll());
-    window.addEventListener('scroll', this.onScroll, { passive: true });
-    this.onResize = () => {
-      const m = window.innerWidth <= 760;
-      if (m === this.state.mob) return;
-      // crossing back to desktop: hero returns to its hover-to-play resting state
-      if (!m) { const v = this.videoRef.current; if (v && !v.paused && !this.state.heroFull) v.pause(); }
-      this.setState({ mob: m, menu: false });
-    };
-    window.addEventListener('resize', this.onResize, { passive: true });
-    // the bar label and arrow are positioned off the hero's bottom edge, so any
-    // height change (expand toggle, window resize) has to re-measure it
-    if (typeof ResizeObserver !== 'undefined' && this.heroRef.current) {
-      this.heroObs = new ResizeObserver(() => this.onScroll());
-      this.heroObs.observe(this.heroRef.current);
-    }
-    this.onScroll();
-    this.primeVideo();
-    this.startMarquee();
-    this.syncData();
-    this.loadMeta();
-    this.pickAuto();
+      if (write) { localStorage.setItem('plf.asteriskrun.board', JSON.stringify(write)); return write; }
+      return read ? (JSON.parse(localStorage.getItem('plf.asteriskrun.board') || '[]') || []) : [];
+    } catch (e) { return []; }
   }
 
-  pickAuto() {
-    const pool = DATA.map((_, i) => i);
-    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
-    const go = () => setTimeout(() => this.setState({ autoPlay: pool.slice(0, 1) }), 400);
-    if (document.readyState === 'complete') go();
-    else window.addEventListener('load', go, { once: true });
+  function lbInitials() {
+    try { return localStorage.getItem('plf.asteriskrun.initials') || ''; } catch (e) { return ''; }
   }
 
-  componentDidUpdate() {
-    this.primeVideo();
-    this.syncData();
-    // don't let the page scroll behind the fixed menu overlay
-    document.body.style.overflow = (this.state.mob && this.state.menu) ? 'hidden' : '';
-    // iOS ignores the autoplay attribute often enough to need a nudge
-    const cv = this.contactVidRef.current;
-    if (cv) {
-      this.pinInline(cv);
-      if (cv.paused) { cv.muted = true; const p = cv.play(); if (p && p.catch) p.catch(() => {}); }
-    }
+  async function lbLoad() {
+    if (!LB_API) { lbTop = lbLocal(true); return; }
+    try {
+      const r = await fetch(LB_API + '/scores', { cache: 'no-store' });
+      const d = await r.json();
+      if (Array.isArray(d.top)) lbTop = d.top;
+    } catch (e) { lbTop = lbLocal(true); }   // offline or Worker down: show the local board
   }
 
-  syncData() {
-    const ids = parseIds(this.props.videoIds);
-    const same = ids.length === DATA.length && ids.every((id, i) => DATA[i].id === id);
-    if (same) {
-      if (this.state.order.length !== DATA.length) this.setState({ order: DATA.map((_, i) => i) });
+  async function lbPost(initials, frames) {
+    const entry = { initials: initials, frames: frames, at: Date.now() };
+    lbMine = entry;
+    try { localStorage.setItem('plf.asteriskrun.initials', initials); } catch (e) {}
+
+    if (!LB_API) {
+      const list = lbLocal(true).concat([entry]).sort((a, b) => b.frames - a.frames).slice(0, 20);
+      lbTop = lbLocal(false, list);
       return;
     }
-    DATA = buildData(ids);
-    this.setState({ order: DATA.map((_, i) => i), projA: 0, projB: 0 });
-    this.loadMeta();
-  }
-
-  loadMeta() {
-    DATA.forEach((d, i) => {
-      fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + d.id))
-        .then((r) => (r.ok ? r.json() : null))
-        .then((j) => {
-          if (!j || !j.title) return;
-          const raw = String(j.title);
-          const m = raw.match(/^(.+?)\s*[-–—|]\s*(.+)$/);
-          let artist = j.author_name || '';
-          let song = raw;
-          if (m) { artist = m[1].trim(); song = m[2].trim(); }
-          song = song.replace(/^\d{1,3}[_\-.\s]+/, '').replace(/\s+by\s+.+$/i, '');
-          song = song.replace(/\(\s*(a\s+)?short\s+film\s*\)/i, '(SHORT)');
-          song = song.replace(/\s*[\(\[](official|official video|official music video|music video|visualizer|live|lyric video)[^\)\]]*[\)\]]\s*/gi, '').trim();
-          const ov = OVERRIDES[d.id] || {};
-          d.title = ov.title || song || raw;
-          d.kind = ov.kind || artist;
-          this.forceUpdate();
-        })
-        .catch(() => {});
-    });
-  }
-  // iOS only honours inline playback when these sit on the element itself, and a
-  // remount (route change) can drop the React-set props — so stamp them directly
-  pinInline(v) {
-    if (!v) return;
-    v.setAttribute('playsinline', '');
-    v.setAttribute('webkit-playsinline', 'true');
-    v.setAttribute('disablepictureinpicture', '');
-    v.removeAttribute('controls');
-    v.controls = false;
-    v.disablePictureInPicture = true;
-    // last resort: if iOS still promotes it, drop straight back out
-    if (!v.__inlineGuard) {
-      v.__inlineGuard = true;
-      v.addEventListener('webkitbeginfullscreen', () => {
-        if (v.webkitExitFullscreen) v.webkitExitFullscreen();
+    try {
+      const r = await fetch(LB_API + '/scores', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ initials: initials, frames: frames })
       });
+      const d = await r.json();
+      if (Array.isArray(d.top)) lbTop = d.top;
+    } catch (e) {
+      lbTop = lbLocal(false, lbLocal(true).concat([entry]).sort((a, b) => b.frames - a.frames).slice(0, 20));
     }
   }
-  // section jump: waits a beat so a route change has painted, offsets for the fixed bar
-  scrollTo(sel) {
-    // the target's offset keeps moving while the route paints and media sizes,
-    // so re-measure over a few frames instead of trusting one early reading
-    const bar = () => (this.state.mob ? 46 : 26);
-    const go = (smooth) => {
-      const el = document.querySelector(sel);
-      if (!el) return false;
-      const top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - bar());
-      window.scrollTo({ top: top, behavior: smooth ? 'smooth' : 'auto' });
-      return true;
-    };
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      if (!go(true)) return;
-      // settle: silent corrections once layout stops shifting
-      [220, 420].forEach((t) => setTimeout(() => {
-        const el = document.querySelector(sel);
-        if (!el) return;
-        const want = Math.max(0, el.getBoundingClientRect().top + window.scrollY - bar());
-        if (Math.abs(want - window.scrollY) > 4) window.scrollTo({ top: want, behavior: 'auto' });
-      }, t));
-    }));
-  }
-  primeVideo() {
-    const v = this.videoRef.current;
-    if (!v) return;
-    this.pinInline(v);
-    v.muted = true;
-    v.defaultMuted = true;
-    // phones have no hover, so the hero just runs
-    if (this.state.mob) { const p = v.play(); if (p && p.catch) p.catch(() => {}); return; }
-    if (this.primed) return;
-    this.primed = true;
-    if (!v.paused) v.pause();
-  }
-  hoverVideo(on) {
-    if (this.state.mob) return;
-    this.setState({ heroHov: on });
-    const v = this.videoRef.current;
-    if (!v) return;
-    v.muted = true;
-    if (on) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
-    else if (!this.state.heroFull) v.pause();
+
+  function lbRender() {
+    // a short embed (mobile is 300px) only has room for a few rows
+    const room = (stage.clientHeight || 480) < 380 ? 3 : 5;
+    const rows = lbTop.slice(0, room);
+    if (!rows.length) { el.oBoard.hidden = true; return; }
+    const head = '<div class="lbhead">' + (LB_API ? 'Top takes' : 'Your takes') + '</div>';
+    el.oBoard.innerHTML = head + rows.map(function (r, i) {
+      const me = lbMine && r.initials === lbMine.initials && r.frames === lbMine.frames;
+      return '<div class="row' + (me ? ' me' : '') + '">' +
+        '<span class="rank">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<span class="who">' + r.initials + '</span>' +
+        '<span>' + timecode(r.frames) + '</span></div>';
+    }).join('');
+    el.oBoard.hidden = false;
   }
 
-  logoStrip(pass) {
-    return CLIENTS.map((c, i) => {
-      const img = React.createElement('img', {
-        src: c.src, alt: c.alt, decoding: 'async',
-        style: {
-          height: c.h + 'px', width: 'auto', display: 'block', flexShrink: 0,
-          filter: c.mode === 'knockout' || !c.mode ? 'brightness(0) invert(1)' : 'none',
-          opacity: c.mode === 'plate' ? 1 : 0.92
-        }
-      });
-      if (c.mode !== 'plate') return React.cloneElement(img, { key: pass + '-' + i });
-      return React.createElement('div', {
-        key: pass + '-' + i,
-        style: { background: '#f3f2f2', height: '54px', padding: '0 16px', display: 'flex', alignItems: 'center', flexShrink: 0 }
-      }, img);
+  function lbSubmit() {
+    if (!lbPending) return;
+    const v = (el.oIn.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 3);
+    if (!v) { el.oIn.focus(); return; }
+    const frames = lbPending;
+    lbPending = 0;
+    el.oEntry.hidden = true;
+    lbPost(v, frames).then(function () {
+      lbRender();
+      el.over.classList.toggle('compact', !el.oBoard.hidden);
     });
   }
 
-  num(i) { return String(i + 1).padStart(2, '0'); }
+  el.oSave.addEventListener('click', function (e) { e.stopPropagation(); lbSubmit(); });
+  el.oIn.addEventListener('keydown', function (e) {
+    e.stopPropagation();                       // don't let Space restart the game
+    if (e.code === 'Enter') { e.preventDefault(); lbSubmit(); }
+  });
+  el.oIn.addEventListener('keyup', function (e) { e.stopPropagation(); });
+  el.oIn.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+  el.oEntry.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
 
-  pitch(d) {
-    return (OVERRIDES[d.id] && OVERRIDES[d.id].pitch) || '';
+  lbLoad();
+
+  // ------------------------------------------------------------- timecode
+  function timecode(frames) {
+    const f = Math.max(0, Math.floor(frames));
+    const totalSec = Math.floor(f / FPS_TC);
+    const mm = Math.min(99, Math.floor(totalSec / 60));
+    const ss = totalSec % 60;
+    const ff = f % FPS_TC;
+    const p = n => String(n).padStart(2, '0');
+    return p(mm) + ':' + p(ss) + ':' + p(ff);
   }
+  const scoreFrames = () => Math.floor(dist / UNITS_PER_FRAME);
 
-  body(d) {
-    return (OVERRIDES[d.id] && OVERRIDES[d.id].desc) || '';
+  // ---------------------------------------------------------------- audio
+  let audioOn = false, actx = null;
+  function blip(freq, dur, type, gain) {
+    if (!audioOn) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type || 'square'; o.frequency.value = freq;
+      g.gain.setValueAtTime(gain || 0.035, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(); o.stop(actx.currentTime + dur);
+    } catch (e) {}
   }
+  el.sound.addEventListener('click', e => {
+    e.stopPropagation();
+    audioOn = !audioOn;
+    el.sound.textContent = audioOn ? 'Sound on' : 'Sound off';
+    el.sound.setAttribute('aria-pressed', String(audioOn));
+    if (audioOn) blip(660, 0.07);
+  });
 
-  startMarquee() {
-    const el = this.marqRef.current;
-    if (!el) return;
-    const half = el.scrollWidth / 2;
-    if (!half) { requestAnimationFrame(() => this.startMarquee()); return; }
-    this.marq.base = half / 40;
-    this.marq.vel = this.marq.base;
-    this.marq.target = this.marq.base;
-    let last = performance.now();
-    const tick = (now) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      const m = this.marq;
-      m.vel += (m.target - m.vel) * (1 - Math.pow(1 - m.ease, dt * 60));
-      m.x = (m.x + m.vel * dt) % half;
-      el.style.transform = 'translateX(' + (-m.x) + 'px)';
-      this.marqRAF = requestAnimationFrame(tick);
-    };
-    this.marqRAF = requestAnimationFrame(tick);
-  }
-
-  frames(d) {
-    if (!d.id) return null;
-    return React.createElement('div', {
-      style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px', background: INK, border: '2px solid ' + INK }
-    }, ['2', '3'].map((n) => React.createElement('div', {
-      key: 'fr' + n, style: { position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden', background: '#000' }
-    }, React.createElement(Thumb, { key: 't' + d.id + n, src: 'https://i.ytimg.com/vi/' + d.id + '/hq' + n + '.jpg', alt: d.title }))));
-  }
-
-  creditRows(d) {
-    const o = OVERRIDES[d.id] || {};
-    return [
-      { k: 'DIR', v: o.dir || 'P. Linehan' },
-      { k: 'SCRIPT', v: o.script },
-      { k: 'WRITTEN BY', v: o.written },
-      { k: 'DP', v: o.dp },
-      { k: 'EDIT', v: o.edit },
-      { k: 'COLOR', v: o.color },
-      { k: 'PROD', v: o.producer },
-      { k: 'YEAR', v: o.year ? String(o.year) : '' }
-    ].filter((r) => r.v).map((r, i, all) => ({
-      k: r.k, v: r.v, last: i === all.length - 1
-    }));
-  }
-
-  player(d, h) {
-    return React.createElement(HoverPlayer, {
-      key: 'hp-' + d.id, id: d.id, src: d.hero || d.media, alt: d.title, height: h,
-      mob: !!this.state.mob,
-      // sound on means the viewer wants the film, not the label over it
-      onLive: () => { if (!this.state.mob) this.setState({ caseLive: true }); }
-    });
-  }
-
-  thumbFallback = (e) => {
-    const el = e.currentTarget;
-    if (el.naturalWidth <= 121 && el.dataset.fb !== '1') { el.dataset.fb = '1'; el.src = el.dataset.fallback; }
-  };
-
-  tile(d, i) {
-    const hovered = this.state.hoverB === i;
-    if (d.media && /\.gif$/.test(d.media)) {
-      return React.createElement(Freeze, { key: 'f' + i, src: d.media, height: '100%' });
-    }
-    if (d.clip) {
-      const auto = !this.state.mob && (this.state.autoIds || []).indexOf(d.id) !== -1;
-      return React.createElement(ClipPreview, { key: 'c' + i, clip: d.clip, src: d.media, alt: d.title, hovered: hovered || auto, auto: auto, mob: !!this.state.mob });
-    }
-    if (d.id) {
-      // never auto-start a YouTube embed — autoplay is for local clips only
-      return React.createElement(TilePreview, { key: 't' + i, id: d.id, src: d.media, alt: d.title, hovered: hovered, auto: false });
-    }
-    if (d.media) {
-      return React.createElement(Thumb, { key: 'm' + i, src: d.media, alt: d.title, hovered: hovered });
-    }
-    return React.createElement('div', {
-      key: 'p' + i,
-      style: {
-        width: '100%', height: '100%', background: hovered ? RED : STRIPE,
-        backgroundSize: hovered ? undefined : (hovered ? '18px 18px' : 'auto'),
-        display: 'flex', alignItems: 'flex-end', padding: '14px',
-        boxSizing: 'border-box', transition: 'background 200ms linear'
+  // ------------------------------------------------------------ obstacles
+  function spawn() {
+    const t = scoreFrames();
+    const flying = t > 320 && Math.random() < 0.22;
+    if (flying) {
+      obstacles.push({ air:true, x:W + 40, size:38, rot:Math.random() * 6.28, spin:(Math.random() - 0.5) * 1.4,
+                       // low enough that a standing runner is caught, high enough that a duck clears it
+                       yc: GROUND_Y - 60 - Math.random() * 8 });
+    } else {
+      const n = Math.random() < 0.16 ? 3 : (Math.random() < 0.38 ? 2 : 1);
+      let x = W + 40;
+      for (let i = 0; i < n; i++) {
+        const size = 34 + Math.random() * (n === 1 ? 26 : 12);
+        obstacles.push({ air:false, x, size, rot:Math.random() * 6.28, spin:(Math.random() - 0.5) * 0.9 });
+        x += size * (n === 3 ? 0.70 : 0.92);
       }
-    }, React.createElement('span', {
-      style: { fontFamily: MONO, fontSize: '12px', letterSpacing: '0.1em', textTransform: 'uppercase', color: hovered ? '#fff' : '#6d6867' }
-    }, d.empty ? 'drop a frame' : 'still pending'));
-  }
-
-  motion(src, h, key) {
-    return React.createElement(Freeze, { key: key, src: src, height: h });
-  }
-
-  strip(cols, h) {
-    return React.createElement('div', {
-      style: { display: 'grid', gridTemplateColumns: 'repeat(' + cols.length + ', 1fr)', gap: '2px', background: INK }
-    }, cols.map((src, i) => this.motion(src, h, 's' + i)));
-  }
-
-  hero(d, h) {
-    if (d.id) return React.createElement('div', { style: { height: h, overflow: 'hidden', background: INK } },
-      React.createElement(Thumb, { key: 'hero-' + d.id, src: d.media, alt: d.title }));
-    if (d.media && /\.gif$/.test(d.media)) return this.motion(d.media, h, 'hero');
-    if (d.media) {
-      return React.createElement('div', { style: { filter: 'grayscale(1) contrast(1.08)', background: INK } },
-        React.createElement('img', { src: d.media, alt: d.title, style: { width: '100%', height: h, objectFit: 'cover', display: 'block' } }));
     }
-    return React.createElement('div', {
-      style: { height: h, background: STRIPE, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', padding: '0 40px' }
-    }, React.createElement('span', { style: { fontFamily: MONO, fontSize: '14px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6d6867' } }, 'hero frame — 16:9 — drop it here'));
+    const base = Math.min(SPD_MAX, SPD0 + dist * SPD_RAMP);
+    const tight = Math.max(0, Math.min(1, (base - SPD0) / (SPD_MAX - SPD0)));
+    // gaps scale with the track so the rhythm is the same everywhere
+    nextGap = ((340 - tight * 60) + Math.random() * (300 - tight * 110)) * ws;
   }
 
-  renderVals() {
-    const s = this.state;
-    const lerp = (a, b, t) => a + (b - a) * t;
-    const clamp = (v) => Math.max(0, Math.min(1, v));
-    const y = s.scrollY || 0;
-    const heroBottom = s.heroBottom || 620;
-    const labelPageY = heroBottom - 78;
-    const arrowPageY = heroBottom - 132;
-    const dock = labelPageY - 15;
-    const bp = s.routeB === 'home' ? clamp((y - (dock - 200)) / 200) : 1;
-    const labelTop = labelPageY - y;
-    const arrowTop = Math.max(8, arrowPageY - y);
-    const logoTop = Math.max(8, 40 - y);
-    const navTop = Math.max(16, 48 - y);
-    const setA = (i) => this.setState({ routeA: 'case', projA: i, hoverA: null });
-    const setB = (i) => {
-      this.setState({ routeB: 'case', projB: i, hoverB: null, caseLive: false });
-      window.scrollTo(0, 0);
-      setTimeout(() => {
-        const el = this.titleRef.current;
-        if (!el) return;
-        el.getAnimations().forEach((a) => a.cancel());
-        el.style.animation = 'none';
-        void el.offsetWidth;
-        el.style.animation = 'slidein 620ms cubic-bezier(.16,.84,.28,1) both';
-      }, 20);
-    };
+  const skyY = () => BAND_TOP + 20 + Math.random() * Math.max(30, (GROUND_Y - BAND_TOP) * 0.45);
+  function makeClouds() {
+    clouds = [];
+    for (let i = 0; i < 7; i++) {
+      clouds.push({ x: Math.random() * W, y: skyY(),
+                    s: 9 + Math.random() * 15, d: 0.05 + Math.random() * 0.14,
+                    rot: Math.random() * 6.28 });
+    }
+  }
+  // after a resize the old positions belong to a different sky
+  function placeClouds() {
+    for (const c of clouds) { if (c.x > W) c.x = Math.random() * W; c.y = skyY(); }
+  }
 
-    const projects = DATA.map((d, i) => ({
-      num: this.num(i), title: d.title || 'Loading…', kind: d.kind, year: d.year,
-      open: () => setA(i), enterA: () => this.setState({ hoverA: i }),
-      enterB: () => this.setState({ hoverB: i }), tile: this.tile(d, i)
-    }));
+  // ----------------------------------------------------------------- loop
+  function reset() {
+    dist = 0; speed = SPD0 * ws; obstacles = []; nextGap = 420 * ws;
+    runner.y = 0; runner.vy = 0; runner.ducking = false; runner.dead = false;
+    shake = 0;
+    makeClouds();
+  }
 
-    const order = s.order.length === DATA.length ? s.order : DATA.map((_, i) => i);
-    const shuffled = order.map((i) => {
-      const d = DATA[i];
-      return {
-        num: this.num(i), title: d.title || 'Loading…', kind: d.kind, year: d.year,
-        open: () => setB(i), enterB: () => this.setState({ hoverB: i }),
-        tile: this.tile(d, i)
-      };
-    });
+  function start() {
+    if (running) return;
+    reset();
+    running = true; over = false; started = true;
+    el.start.hidden = true; el.over.hidden = true;
+    el.take.textContent = 'Take ' + String(take).padStart(2, '0');
+    last = performance.now();
+    requestAnimationFrame(tick);
+  }
 
-    const hv = s.hoverA;
-    const hd = hv === null ? null : DATA[hv];
-    const peekStyle = {
-      position: 'absolute', left: (s.mx + 26) + 'px', top: (s.my - 90) + 'px',
-      width: '300px', height: '180px', pointerEvents: 'none', zIndex: 20,
-      opacity: hd ? 1 : 0, transition: 'opacity 140ms linear',
-      border: '2px solid ' + INK, background: BG, overflow: 'hidden'
-    };
-    const peekInner = hd
-      ? (hd.media
-        ? React.createElement(Thumb, { key: 'peek-' + hv, src: hd.media, alt: '' })
-        : React.createElement('div', { style: { width: '100%', height: '100%', background: STRIPE, display: 'flex', alignItems: 'center', justifyContent: 'center' } },
-            React.createElement('span', { style: { fontFamily: MONO, fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#6d6867' } }, 'no frame yet')))
-      : null;
+  function jump() {
+    if (!running) { start(); return; }
+    if (runner.y === 0 && !runner.dead) {
+      runner.vy = JUMP_V; runner.held = true;
+      blip(520, 0.06, 'square', 0.03);
+    }
+  }
+  function releaseJump() {
+    if (runner.held && runner.vy < 0) runner.vy *= CUT;
+    runner.held = false;
+  }
+  function duck(on) {
+    runner.ducking = on && !runner.dead;
+    if (on && runner.y < 0) runner.vy += FALL_BOOST * 0.016;   // fast-fall
+  }
 
-    const dA = DATA[s.projA], dB = DATA[s.projB];
-    const nA = (s.projA + 1) % DATA.length, nB = (s.projB + 1) % DATA.length;
-    const pA = (s.projA - 1 + DATA.length) % DATA.length, pB = (s.projB - 1 + DATA.length) % DATA.length;
+  function die() {
+    running = false; over = true; runner.dead = true; runner.ducking = false;
+    if (!REDUCED) shake = 1;
+    blip(180, 0.28, 'sawtooth', 0.05);
+    const f = scoreFrames();
+    const isPb = f > best;
+    if (isPb) { best = f; saveBest(); el.best.textContent = timecode(best); }
+    el.oTake.textContent = String(take).padStart(2, '0');
+    el.oTc.textContent = timecode(f);
+    el.oPb.hidden = !isPb;
+    // offer the board only for a run worth posting
+    const lowest = lbTop.length >= 5 ? lbTop[Math.min(4, lbTop.length - 1)].frames : 0;
+    if (f > 0 && (lbTop.length < 5 || f > lowest)) {
+      lbPending = f;
+      el.oIn.value = lbInitials();
+      el.oEntry.hidden = false;
+    } else {
+      lbPending = 0;
+      el.oEntry.hidden = true;
+    }
+    lbRender();
+    // the board and initials row need the vertical space the runner offset takes
+    el.over.classList.toggle('compact', !el.oEntry.hidden || !el.oBoard.hidden);
+    take++;
+    el.oNext.textContent = String(take).padStart(2, '0');
+    el.over.hidden = false;
+  }
 
+  function hitbox() {
+    const h = runner.ducking ? RUN_H * DUCK_S : RUN_H;
+    const w = runner.ducking ? RUN_W * 1.10 : RUN_W;
+    const top = GROUND_Y - h + runner.y;
+    return { x: RUN_X + HB.x0 * w, y: top + HB.y0 * h,
+             w: (HB.x1 - HB.x0) * w, h: (HB.y1 - HB.y0) * h };
+  }
 
-    const mob = !!s.mob;
-    const vals = {
-      projects, shuffled, peekStyle, peekInner, videoRef: this.videoRef, titleRef: this.titleRef, heroRef: this.heroRef,
-      barTrackStyle: {
-        position: 'fixed', left: 0, right: 0, top: 0, height: '46px', zIndex: 40, pointerEvents: 'none'
-      },
-      markBaseStyle: { width: '100%', height: '100%', display: 'block', opacity: bp > 0.5 ? 0 : 1 },
-      markTightStyle: { position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', opacity: bp > 0.5 ? 1 : 0 },
-      barLogoStyle: {
-        position: 'absolute', pointerEvents: 'auto',
-        left: '40px', top: logoTop + 'px',
-        display: 'flex', alignItems: 'center', gap: lerp(16, 12, bp) + 'px', cursor: 'pointer'
-      },
-      barMarkStyle: {
-        position: 'relative', width: lerp(62, 30, bp) + 'px', height: lerp(62, 30, bp) + 'px', flexShrink: 0
-      },
-      barWordStyle: {
-        fontSize: lerp(22, 11, bp) + 'px', fontWeight: 800, lineHeight: bp > 0.5 ? 1 : 1.02,
-        letterSpacing: bp > 0.5 ? '0.1em' : '0.01em', color: '#f3f2f2', whiteSpace: 'nowrap'
-      },
-      wordmark: bp > 0.5
-        ? 'PATRICK LINEHAN FILMS'
-        : React.createElement(React.Fragment, null, 'PATRICK', React.createElement('br'), 'LINEHAN', React.createElement('br'), 'FILMS'),
-      barLabelText: bp > 0.5 ? '' : 'Director · Music | Narrative | Commercial · Brooklyn',
-      barNavStyle: {
-        position: 'absolute', pointerEvents: 'auto',
-        right: lerp(40, 86, bp) + 'px', top: navTop + 'px',
-        display: 'flex', gap: lerp(26, 22, bp) + 'px',
-        fontFamily: "'IBM Plex Mono', monospace", fontSize: '13px', fontWeight: 600,
-        letterSpacing: '0.12em', textTransform: 'uppercase', perspective: '320px',
-        color: '#f3f2f2'
-      },
-      barFillStyle: {
-        position: 'absolute', inset: 0, background: '#ec3013',
-        transform: 'scaleX(' + bp + ')', transformOrigin: 'center center',
-        transition: 'transform 120ms linear'
-      },
-      barLabelStyle: {
-        position: 'absolute', whiteSpace: 'nowrap',
-        left: '40px',
-        top: labelTop + 'px',
-        opacity: clamp((labelTop - 20) / 90),
-        padding: '7px 12px',
-        background: '#ec3013', color: '#fff',
-        fontFamily: "'IBM Plex Mono', monospace", fontSize: '13px',
-        letterSpacing: '0.16em', textTransform: 'uppercase'
-      },
-      toggleHeroFull: () => {
-        const next = !this.state.heroFull;
-        this.setState({ heroFull: next });
-        if (next) window.scrollTo({ top: 0, behavior: 'smooth' });
-        // re-measure through the transition so the arrow and label track the edge
-        // (covers the case where ResizeObserver isn't available)
-        [0, 120, 260, 480].forEach((t) => setTimeout(() => this.onScroll(), t));
-        const v = this.videoRef.current;
-        if (v) { v.muted = true; if (next) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } }
-      },
-      barArrowStyle: {
-        position: 'absolute',
-        pointerEvents: 'auto', cursor: 'pointer',
-        right: '40px',
-        top: arrowTop + 'px',
-        width: lerp(76, 30, bp) + 'px',
-        aspectRatio: '208 / 215',
-        display: 'block',
-        // points down to expand, flips up once the hero is full height
-        transform: s.heroFull ? 'scaleX(-1) rotate(180deg)' : 'scaleX(-1)',
-        transition: 'transform 320ms cubic-bezier(.2,.8,.2,1), filter 200ms linear',
-        filter: bp > 0.55 ? 'brightness(0) invert(1)' : 'none'
-      },
-      logoMarquee: [].concat(this.logoStrip('a'), this.logoStrip('b')),
-      marqRef: this.marqRef,
-      pauseMarquee: () => { this.marq.target = 0; this.marq.ease = 0.045; },
-      resumeMarquee: () => { this.marq.target = this.marq.base; this.marq.ease = 0.045; },
-      runA: { position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', opacity: s.logoA ? 1 : 0, transition: 'opacity 120ms linear' },
-      runB: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', display: 'block', transform: 'scale(0.82)', transformOrigin: 'center center', opacity: s.logoB ? 1 : 0, transition: 'opacity 120ms linear' },
-      enterLogoA: () => this.setState({ logoA: true }), leaveLogoA: () => this.setState({ logoA: false }),
-      enterLogoB: () => this.setState({ logoB: true }), leaveLogoB: () => this.setState({ logoB: false }),
-      heroVideoStyle: {
-        position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
-        filter: s.heroHov ? 'grayscale(0) contrast(1.05) brightness(0.9)' : 'grayscale(1) contrast(1.15) brightness(0.75)',
-        transition: 'filter 320ms linear'
-      },
-      enterVideo: () => this.hoverVideo(true), leaveVideo: () => this.hoverVideo(false),
-      heroAutoPlay: mob,
-      contactVidRef: this.contactVidRef,
-      // hover-pause is desktop only: touch fires mouseenter with no matching
-      // mouseleave, which would leave the video stuck paused
-      pauseContactVid: () => { if (this.state.mob) return; const v = this.contactVidRef.current; if (v) v.pause(); },
-      playContactVid: () => { if (this.state.mob) return; const v = this.contactVidRef.current; if (v) { v.muted = true; v.play().catch(() => {}); } },
-      countLabel: DATA.length + ' films',
-      statRow: React.createElement('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '2px' } }, [
-        React.createElement(CountStat, { key: 's1', to: 200, suffix: '+', label: 'Projects' }),
-        React.createElement(CountStat, { key: 's2', to: 150, suffix: 'M', label: 'Views' }),
-        React.createElement(CountStat, { key: 's3', to: 16, suffix: '', label: 'Films', accent: true })
-      ]),
-      gridCols: 'repeat(' + (this.props.columns || 4) + ', 1fr)',
-      showNavB: true, showBurgerB: false, showTools: true, menuOpen: false,
-      toggleMenu: () => this.setState((p) => ({ menu: !p.menu })),
-      menuWork: () => { this.setState({ menu: false, routeB: 'home', hoverB: null }); this.scrollTo('[data-grid]'); },
-      menuContact: () => { this.setState({ menu: false, routeB: 'contact', hoverB: null }); window.scrollTo(0, 0); },
-      menuAbout: () => {
-        this.setState({ menu: false, routeB: 'home', hoverB: null });
-        setTimeout(() => {
-          const el = document.querySelector('[data-about]');
-          if (el) window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 20);
-        }, 60);
-      },
-      burgerStyle: { display: 'none' }, burgerBarStyle: { display: 'none' },
-      menuOverlayStyle: { display: 'none' }, menuItemStyle: {}, menuCloseStyle: {}, menuMetaStyle: {},
-      heroBoxStyle: {
-        position: 'relative', height: s.heroFull ? '100vh' : '620px',
-        background: INK, overflow: 'hidden',
-        transition: 'height 460ms cubic-bezier(.2,.8,.2,1)'
-      },
-      sheetBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 40px', borderBottom: '2px solid ' + INK },
-      tileMediaStyle: { position: 'relative', height: '190px', overflow: 'hidden' },
-      tileMetaStyle: { display: 'flex', flexDirection: 'column', gap: '8px', padding: '14px 16px 16px', flex: 1 },
-      tileTitleStyle: { fontSize: '22px', fontWeight: 800, letterSpacing: '-0.015em', textTransform: 'uppercase', lineHeight: 1.05 },
-      aboutGridStyle: { display: 'grid', gridTemplateColumns: '420px minmax(0, 1fr)', borderBottom: '2px solid ' + INK },
-      aboutPicStyle: { borderRight: '2px solid ' + INK },
-      aboutImgStyle: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
-      aboutPadStyle: { padding: '54px 40px' },
-      aboutTitleStyle: { fontSize: '30px', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '22px', maxWidth: '24ch' },
-      aboutBodyStyle: { fontSize: '18px', lineHeight: 1.55, maxWidth: '60ch', marginBottom: '34px' },
-      ctaStyle: { background: RED, color: '#fff', padding: '60px 40px', display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', columnGap: '40px', rowGap: '44px' },
-      ctaTitleStyle: { fontSize: '64px', fontWeight: 900, letterSpacing: '-0.035em', lineHeight: 0.95, textTransform: 'uppercase', flex: '1 1 auto', minWidth: 0, cursor: 'pointer', transition: 'opacity 200ms linear' },
-      ctaMetaWrapStyle: { display: 'flex', alignItems: 'flex-end', gap: '36px', flex: '0 0 auto' },
-      ctaMetaStyle: { fontFamily: MONO, fontSize: '14px', lineHeight: 2.1, letterSpacing: '0.08em', textTransform: 'uppercase', textAlign: 'right' },
-      marksHomeStyle: { background: RED, padding: '30px 40px 34px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '44px', borderTop: '2px solid rgba(255,255,255,0.35)' },
-      playOpen: !!s.playOpen,
-      togglePlay: () => {
-        const next = !this.state.playOpen;
-        this.setState({ playOpen: next });
-        if (next) setTimeout(() => {
-          const el = document.querySelector('[data-play]');
-          if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 20, behavior: 'smooth' });
-        }, 220);
-      },
-      ctaArrowStyle: {
-        width: '80px', aspectRatio: '208 / 215', display: 'block', flexShrink: 0, cursor: 'pointer',
-        filter: 'brightness(0) invert(1)',
-        transform: s.playOpen ? 'scaleX(-1) rotate(180deg)' : 'scaleX(-1)',
-        transition: 'transform 380ms cubic-bezier(.2,.8,.2,1), opacity 200ms linear'
-      },
-      // the game owns its own canvas loop, so it stays sandboxed in an iframe
-      playPanelStyle: {
-        background: RED, overflow: 'hidden',
-        // the game's HUD sits proportional to its width, so the box has to grow with it
-        height: s.playOpen ? (mob ? '300px' : 'clamp(480px, 34vw, 760px)') : '0px',
-        borderTop: s.playOpen ? '2px solid rgba(255,255,255,0.35)' : '0px solid transparent',
-        transition: 'height 460ms cubic-bezier(.2,.8,.2,1)'
-      },
-      playFrameStyle: { display: 'block', width: '100%', height: mob ? '300px' : 'clamp(480px, 34vw, 760px)', border: 0 },
-      marksStyle: { background: RED, padding: '30px 40px 34px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '44px' },
-      pageBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 40px', borderBottom: '2px solid ' + INK, fontFamily: MONO, fontSize: '13px', letterSpacing: '0.12em', textTransform: 'uppercase' },
-      pageBarNavStyle: { display: 'flex', alignItems: 'center', gap: '28px', whiteSpace: 'nowrap' },
-      backLabel: '← Back to the work',
-      backLinkStyle: { cursor: 'pointer', color: RED, whiteSpace: 'nowrap' },
-      caseCountStyle: { color: '#6d6867', whiteSpace: 'nowrap' },
-      contactHeadStyle: {
-        background: RED, color: '#fff', padding: '90px 40px 80px', display: 'flex', flexWrap: 'wrap',
-        alignItems: 'flex-end', justifyContent: 'space-between', columnGap: '40px', rowGap: '44px',
-        position: 'relative', overflow: 'hidden', isolation: 'isolate',
-        minHeight: s.contactFull ? '100vh' : 0, boxSizing: 'border-box',
-        transition: 'min-height 460ms cubic-bezier(.2,.8,.2,1)'
-      },
-      contactTitleStyle: { fontSize: '72px', fontWeight: 900, letterSpacing: '-0.035em', lineHeight: 0.92, textTransform: 'uppercase' },
-      toggleContactFull: () => {
-        const next = !this.state.contactFull;
-        this.setState({ contactFull: next });
-        if (next) window.scrollTo({ top: 0, behavior: 'smooth' });
-      },
-      contactArrowStyle: {
-        width: '88px', aspectRatio: '208 / 215', display: 'block', flexShrink: 0,
-        transform: s.contactFull ? 'scaleX(-1) rotate(180deg)' : 'scaleX(-1)',
-        transition: 'transform 320ms cubic-bezier(.2,.8,.2,1), opacity 200ms linear',
-        filter: 'brightness(0) invert(1)', position: 'relative', zIndex: 1, cursor: 'pointer'
-      },
-      contactGridStyle: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', borderBottom: '2px solid ' + INK },
-      contactLeftStyle: { padding: '56px 40px', borderRight: '2px solid ' + INK, display: 'flex', flexDirection: 'column', gap: '40px' },
-      contactRightStyle: { padding: '56px 32px', display: 'flex', flexDirection: 'column', gap: '36px', fontFamily: MONO, fontSize: '13px', letterSpacing: '0.04em' },
-      caseArrowStyle: {
-        position: 'absolute', right: '40px', bottom: '40px', width: '68px',
-        aspectRatio: '208 / 215', display: 'block', zIndex: 3, pointerEvents: 'none',
-        transform: 'scaleX(-1)',
-        opacity: s.caseLive ? 0 : 1, transition: 'opacity 300ms linear'
-      },
-      caseTitleBoxStyle: {
-        position: 'absolute', left: 0, bottom: 0, background: RED, color: '#fff',
-        padding: '26px 36px', overflow: 'hidden', maxWidth: '78%', zIndex: 3,
-        // slides straight down past the hero's clipped bottom edge — no fade, so it
-        // reads as passing behind the section below
-        transform: s.caseLive ? 'translateY(100%)' : 'translateY(0)',
-        pointerEvents: s.caseLive ? 'none' : 'auto',
-        transition: 'transform 560ms cubic-bezier(.5,0,.2,1)'
-      },
-      caseTitleStyle: { margin: 0, fontSize: '78px', lineHeight: 0.88, fontWeight: 900, letterSpacing: '-0.035em', textTransform: 'uppercase', willChange: 'transform', animation: 'slidein 620ms cubic-bezier(.16,.84,.28,1) both' },
-      caseCreditsStyle: { padding: '48px 32px', borderRight: '2px solid ' + INK, fontFamily: MONO, fontSize: '13px', letterSpacing: '0.04em' },
-      caseCopyStyle: { padding: '48px 40px', display: 'flex', flexDirection: 'column', gap: '34px', alignItems: 'flex-start' },
-      caseBodyStyle: { fontSize: '24px', fontWeight: 600, lineHeight: 1.45, maxWidth: '52ch', textWrap: 'pretty' },
-      caseNavStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '40px', borderTop: '2px solid ' + INK, background: RED, color: '#fff', gap: '40px' },
-      caseNavTitleStyle: { fontSize: '40px', fontWeight: 900, letterSpacing: '-0.03em', textTransform: 'uppercase', lineHeight: 1 },
-      caseNavNextStyle: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px', cursor: 'pointer', flex: 1, textAlign: 'right' },
-      isHomeA: s.routeA === 'home', isCaseA: s.routeA === 'case',
-      isHomeB: s.routeB === 'home', isCaseB: s.routeB === 'case',
-      isContactB: s.routeB === 'contact',
-      goContactB: () => { this.setState({ routeB: 'contact', hoverB: null }); window.scrollTo(0, 0); },
-      goWorkB: () => { this.setState({ routeB: 'home', hoverB: null }); this.scrollTo('[data-grid]'); },
-      goAboutB: () => {
-        this.setState({ routeB: 'home', hoverB: null });
-        setTimeout(() => {
-          const el = document.querySelector('[data-about]');
-          if (el) window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 20);
-        }, 60);
-      },
-      total: String(DATA.length).padStart(2, '0'),
-      entriesLabel: DATA.length + ' entries — hover to peek',
-      caseA: { num: this.num(s.projA), title: dA.title || 'Loading…', kind: [dA.kind, dA.year].filter(Boolean).join(' · ') || 'Music video', year: dA.year || '—', pitch: this.pitch(dA), body: this.body(dA) },
-      caseB: { num: this.num(s.projB), title: dB.title || 'Loading…', kind: [dB.kind, dB.year].filter(Boolean).join(' · ') || 'Music video', year: dB.year || '—', pitch: this.pitch(dB), body: this.body(dB) },
-      creditRowsB: this.creditRows(dB),
-      hasCopyB: !!(this.pitch(dB) || this.body(dB)),
-      caseColsB: '300px 1fr',
-      caseHeroA: this.player(dA, '560px'),
-      caseHeroB: this.player(dB, '620px'),
-      caseStripA: null,
-      caseStripB: null,
-      nextTitleA: DATA[nA].title || 'Next film', nextTitleB: DATA[nB].title || 'Next film',
-      prevTitleA: DATA[pA].title || 'Previous film', prevTitleB: DATA[pB].title || 'Previous film',
-      nextA: () => setA(nA), nextB: () => setB(nB),
-      prevA: () => setA(pA), prevB: () => setB(pB),
-      goHomeA: () => this.setState({ routeA: 'home', hoverA: null }),
-      goHomeB: () => {
-        this.setState({ routeB: 'home', hoverB: null, caseLive: false, heroFull: false, contactFull: false, menu: false });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      },
-      clearHoverA: () => this.setState({ hoverA: null }),
-      clearHoverB: () => this.setState({ hoverB: null }),
-      trackA: (e) => {
-        const r = e.currentTarget.getBoundingClientRect();
-        this.setState({ mx: e.clientX - r.left, my: e.clientY - r.top });
-      },
-      shuffle: () => {
-        const o = this.state.order.slice();
-        for (let i = o.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = o[i]; o[i] = o[j]; o[j] = t; }
-        this.setState({ order: o });
+  function update(dt) {
+    // dist is in reference units so score and difficulty are identical on every
+    // screen; only the on-screen speed is scaled to the visible track.
+    const base = Math.min(SPD_MAX, SPD0 + dist * SPD_RAMP);
+    dist += base * dt;
+    speed = base * ws;
+    groundOff = (groundOff + speed * dt) % 24;
+
+    runner.vy += GRAV * dt * (runner.ducking && runner.y < 0 ? 1.7 : 1);
+    runner.y += runner.vy * dt;
+    if (runner.y > 0) { runner.y = 0; runner.vy = 0; }
+
+    for (const o of obstacles) { o.x -= speed * dt; o.rot += o.spin * dt; }
+    obstacles = obstacles.filter(o => o.x > -140);
+
+    nextGap -= speed * dt;
+    if (nextGap <= 0) spawn();
+
+    for (const c of clouds) {
+      c.x -= speed * c.d * dt;
+      c.rot += 0.12 * dt;
+      if (c.x < -60) { c.x = W + 40; c.y = skyY(); }
+    }
+
+    const hb = hitbox();
+    for (const o of obstacles) {
+      const pad = o.air ? 0.30 : 0.26;               // asterisk arms are sparse — be fair
+      const ow = o.size * (1 - pad * 2), oh = o.size * (1 - pad * 2);
+      const ox = o.x + o.size * pad;
+      const oy = (o.air ? o.yc - o.size / 2 : GROUND_Y - o.size) + o.size * pad;
+      if (hb.x < ox + ow && hb.x + hb.w > ox && hb.y < oy + oh && hb.y + hb.h > oy) { die(); return; }
+    }
+  }
+
+  // ----------------------------------------------------------------- draw
+  let grain = null, grainPat = null;
+  function makeGrain() {
+    const c = document.createElement('canvas');
+    c.width = c.height = 96;
+    const g = c.getContext('2d');
+    const im = g.createImageData(96, 96);
+    for (let i = 0; i < im.data.length; i += 4) {
+      const v = 128 + (Math.random() - 0.5) * 255;
+      im.data[i] = im.data[i+1] = im.data[i+2] = v;
+      im.data[i+3] = 15;
+    }
+    g.putImageData(im, 0, 0);
+    grain = c;
+    grainPat = ctx.createPattern(c, 'repeat');
+  }
+
+  function draw() {
+    ctx.save();
+    if (shake > 0) {
+      const m = shake * 5;
+      ctx.translate((Math.random() - 0.5) * m, (Math.random() - 0.5) * m);
+    }
+
+    ctx.fillStyle = COL.red;
+    ctx.fillRect(-20, -20, W + 40, H + 40);
+
+    // parallax asterisks
+    if (astImg) {
+      const faint = tinted(astImg, COL.white);
+      for (const c of clouds) {
+        ctx.save();
+        ctx.globalAlpha = 0.22;
+        ctx.translate(c.x, c.y); ctx.rotate(c.rot);
+        ctx.drawImage(faint, -c.s / 2, -c.s / 2, c.s, c.s);
+        ctx.restore();
       }
-    };
+    }
 
-    if (!mob) return vals;
+    // ground: solid rule + ticks travelling with the world
+    ctx.fillStyle = COL.white;
+    ctx.fillRect(0, GROUND_Y, W, 2);
+    ctx.globalAlpha = 0.45;
+    for (let x = -24 - groundOff; x < W + 24; x += 24) ctx.fillRect(x, GROUND_Y + 7, 10, 2);
+    ctx.globalAlpha = 1;
 
-    // ---- phone layout: one film per row, burger nav, no hover affordances ----
-    const PAD = '18px';
-    return Object.assign(vals, {
-      showNavB: false, showBurgerB: true, showTools: false, menuOpen: !!s.menu,
-      // taller than desktop's 46px so the 44px burger clears the bar's bottom edge
-      barTrackStyle: { position: 'fixed', left: 0, right: 0, top: 0, height: '66px', zIndex: 40, pointerEvents: 'none' },
-      gridCols: '1fr',
-      // no hover on touch: tiles stay on their still and a tap opens the case study
-      shuffled: shuffled.map((p) => Object.assign({}, p, { enterB: () => {} })),
-      barLogoStyle: {
-        position: 'absolute', pointerEvents: 'auto',
-        left: '50%', top: '33px', transform: 'translate(-50%, -50%)',
-        display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer'
-      },
-      barMarkStyle: { position: 'relative', width: lerp(40, 26, bp) + 'px', height: lerp(40, 26, bp) + 'px', flexShrink: 0 },
-      barWordStyle: { fontSize: lerp(13, 10, bp) + 'px', fontWeight: 800, lineHeight: bp > 0.5 ? 1 : 1.05, letterSpacing: bp > 0.5 ? '0.08em' : '0.01em', color: '#f3f2f2', whiteSpace: 'nowrap' },
-      barLabelStyle: { display: 'none' },
-      barArrowStyle: { display: 'none' },
-      burgerStyle: {
-        position: 'absolute', pointerEvents: 'auto', right: PAD, top: Math.max(11, 30 - y) + 'px',
-        width: '44px', height: '44px', display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        gap: '5px', padding: '0 9px', cursor: 'pointer', zIndex: 50
-      },
-      burgerBarStyle: { height: '2px', background: bp > 0.5 ? '#fff' : '#f3f2f2', display: 'block' },
-      menuOverlayStyle: {
-        position: 'fixed', inset: 0, zIndex: 60, background: RED, color: '#fff',
-        display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center',
-        gap: '4px', padding: '0 ' + PAD,
-        // the bar track above sets pointerEvents:none — taps need it back
-        pointerEvents: 'auto'
-      },
-      menuCloseStyle: {
-        position: 'absolute', top: '18px', right: PAD, fontFamily: MONO, fontSize: '13px',
-        letterSpacing: '0.16em', textTransform: 'uppercase', cursor: 'pointer', padding: '12px 0'
-      },
-      menuItemStyle: {
-        fontSize: '46px', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1.1,
-        textTransform: 'uppercase', cursor: 'pointer', padding: '6px 0'
-      },
-      menuMetaStyle: {
-        marginTop: '28px', color: '#fff', fontFamily: MONO, fontSize: '13px',
-        letterSpacing: '0.16em', textTransform: 'uppercase', padding: '12px 0'
-      },
-      heroBoxStyle: {
-        position: 'relative', height: s.heroFull ? '100vh' : '60vh',
-        minHeight: s.heroFull ? 0 : '360px', background: INK, overflow: 'hidden',
-        transition: 'height 460ms cubic-bezier(.2,.8,.2,1)'
-      },
-      // always running, so it doesn't need the dimmed resting state
-      heroVideoStyle: {
-        position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
-        filter: 'contrast(1.05) brightness(0.92)',
-        // a tap must never reach the element — that's what promotes it to fullscreen
-        pointerEvents: 'none'
-      },
-      sheetBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '15px ' + PAD, borderBottom: '2px solid ' + INK },
-      tileMediaStyle: { position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden' },
-      tileMetaStyle: { display: 'flex', flexDirection: 'column', gap: '7px', padding: '14px ' + PAD + ' 18px', flex: 1 },
-      tileTitleStyle: { fontSize: '26px', fontWeight: 800, letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 1.02 },
-      aboutGridStyle: { display: 'grid', gridTemplateColumns: '1fr', borderBottom: '2px solid ' + INK },
-      aboutPicStyle: { borderBottom: '2px solid ' + INK },
-      aboutImgStyle: { width: '100%', height: '54vw', maxHeight: '340px', objectFit: 'cover', display: 'block' },
-      aboutPadStyle: { padding: '38px ' + PAD },
-      aboutTitleStyle: { fontSize: '28px', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.12, marginBottom: '18px' },
-      aboutBodyStyle: { fontSize: '17px', lineHeight: 1.55, marginBottom: '28px', textWrap: 'pretty' },
-      ctaStyle: { background: RED, color: '#fff', padding: '44px ' + PAD, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '30px' },
-      ctaTitleStyle: { fontSize: '40px', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 0.98, textTransform: 'uppercase', cursor: 'pointer' },
-      ctaMetaWrapStyle: { display: 'flex', alignItems: 'flex-end', gap: '18px', width: '100%' },
-      ctaMetaStyle: { fontFamily: MONO, fontSize: '13px', lineHeight: 2.2, letterSpacing: '0.08em', textTransform: 'uppercase', textAlign: 'left' },
-      marksHomeStyle: { background: RED, padding: '24px ' + PAD + ' 28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '30px', borderTop: '2px solid rgba(255,255,255,0.35)' },
-      marksStyle: { background: RED, padding: '24px ' + PAD + ' 28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '30px' },
-      pageBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px', padding: '14px ' + PAD, borderBottom: '2px solid ' + INK, fontFamily: MONO, fontSize: '12px', letterSpacing: '0.1em', textTransform: 'uppercase' },
-      // the nav's own Work item replaces the back label, and the counter would
-      // otherwise force the bar to wrap on every phone
-      pageBarNavStyle: { display: 'flex', alignItems: 'center', gap: '18px', whiteSpace: 'nowrap' },
-      backLabel: '←',
-      backLinkStyle: { cursor: 'pointer', color: RED, whiteSpace: 'nowrap', fontSize: '15px' },
-      caseCountStyle: { display: 'none' },
-      contactHeadStyle: {
-        background: RED, color: '#fff', padding: '48px ' + PAD + ' 44px', display: 'flex',
-        flexDirection: 'column', alignItems: 'flex-start', gap: '26px',
-        position: 'relative', overflow: 'hidden', isolation: 'isolate',
-        minHeight: s.contactFull ? '100vh' : 0, boxSizing: 'border-box',
-        transition: 'min-height 460ms cubic-bezier(.2,.8,.2,1)'
-      },
-      contactTitleStyle: { fontSize: '40px', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 0.96, textTransform: 'uppercase' },
-      contactArrowStyle: { width: '52px', aspectRatio: '208 / 215', display: 'block', transform: 'scaleX(-1)', filter: 'brightness(0) invert(1)', position: 'relative', zIndex: 1 },
-      contactGridStyle: { display: 'grid', gridTemplateColumns: '1fr', borderBottom: '2px solid ' + INK },
-      contactLeftStyle: { padding: '34px ' + PAD, borderBottom: '2px solid ' + INK, display: 'flex', flexDirection: 'column', gap: '30px' },
-      contactRightStyle: { padding: '34px ' + PAD, display: 'flex', flexDirection: 'column', gap: '30px', fontFamily: MONO, fontSize: '13px', letterSpacing: '0.04em' },
-      caseArrowStyle: { display: 'none' },
-      caseTitleBoxStyle: { position: 'relative', background: RED, color: '#fff', padding: '22px ' + PAD + ' 24px', overflow: 'hidden', maxWidth: '100%' },
-      caseTitleStyle: { margin: 0, fontSize: '36px', lineHeight: 0.95, fontWeight: 900, letterSpacing: '-0.03em', textTransform: 'uppercase', willChange: 'transform', animation: 'slidein 620ms cubic-bezier(.16,.84,.28,1) both' },
-      caseColsB: '1fr',
-      caseCreditsStyle: { padding: '30px ' + PAD, borderBottom: '2px solid ' + INK, fontFamily: MONO, fontSize: '13px', letterSpacing: '0.04em' },
-      caseCopyStyle: { padding: '30px ' + PAD, display: 'flex', flexDirection: 'column', gap: '26px', alignItems: 'flex-start' },
-      caseBodyStyle: { fontSize: '18px', fontWeight: 500, lineHeight: 1.5, textWrap: 'pretty' },
-      caseNavStyle: { display: 'flex', flexDirection: 'column', alignItems: 'stretch', padding: '30px ' + PAD, borderTop: '2px solid ' + INK, background: RED, color: '#fff', gap: '26px' },
-      caseNavTitleStyle: { fontSize: '26px', fontWeight: 900, letterSpacing: '-0.025em', textTransform: 'uppercase', lineHeight: 1.05 },
-      caseNavNextStyle: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px', cursor: 'pointer', textAlign: 'left' },
-      caseHeroB: this.player(dB, '46vh'),
-      caseHeroA: this.player(dA, '46vh')
-    });
+    // obstacles
+    if (astImg) {
+      const ast = tinted(astImg, COL.white);
+      for (const o of obstacles) {
+        const cx = o.x + o.size / 2;
+        const cy = o.air ? o.yc : GROUND_Y - o.size / 2;
+        ctx.save();
+        ctx.translate(cx, cy); ctx.rotate(o.rot);
+        ctx.drawImage(ast, -o.size / 2, -o.size / 2, o.size, o.size);
+        ctx.restore();
+      }
+    }
+
+    // runner
+    if (runImg) {
+      const sprite = tinted(runImg, COL.white);
+      const h = runner.ducking ? RUN_H * DUCK_S : RUN_H;
+      const w = runner.ducking ? RUN_W * 1.10 : RUN_W;
+      const top = GROUND_Y - h + runner.y;
+      ctx.save();
+      if (runner.dead) ctx.globalAlpha = 0.72;
+      ctx.drawImage(sprite, RUN_X, top, w, h);
+      ctx.restore();
+    }
+
+    ctx.restore();
+
+    if (grainPat && !REDUCED) {
+      ctx.save();
+      ctx.globalAlpha = 0.4;
+      const ox = -(Math.random() * 96) | 0, oy = -(Math.random() * 96) | 0;
+      ctx.fillStyle = grainPat;
+      ctx.translate(ox, oy);
+      ctx.fillRect(0, 0, W + 96, H + 96);
+      ctx.restore();
+    }
   }
-}
 
+  // ---------------------------------------------------------------- ticks
+  let last = 0;
+  function tick(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (paused) return;
+    if (running) update(dt);
+    if (shake > 0) shake = Math.max(0, shake - dt * 3.4);
+    draw();
+    el.tc.textContent = timecode(scoreFrames());
+    if (running || shake > 0) requestAnimationFrame(tick);
+  }
 
+  // --------------------------------------------------------------- input
+  // Only claim the keyboard when this game is actually the thing in focus —
+  // otherwise Space would hijack scrolling on the page that embeds it.
+  const EMBEDDED = window.self !== window.top;
+  let hovered = false, focused = false;
+  const armed = () => focused || (hovered && !EMBEDDED);
+
+  stage.addEventListener('pointerenter', () => { hovered = true; });
+  stage.addEventListener('pointerleave', () => { hovered = false; duck(false); });
+  stage.addEventListener('focus', () => { focused = true; el.hint.classList.remove('show'); });
+  stage.addEventListener('blur', () => { focused = false; });
+
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Tab') stage.classList.remove('ptr');
+    if (!armed()) return;
+    if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+      e.preventDefault();
+      if (over) { start(); return; }
+      jump();
+    } else if (e.code === 'ArrowDown' || e.code === 'KeyS') {
+      e.preventDefault(); duck(true);
+    } else if (e.code === 'KeyR') {
+      e.preventDefault(); if (!running) start();
+    }
+  });
+  window.addEventListener('keyup', e => {
+    if (!armed()) return;
+    if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') releaseJump();
+    if (e.code === 'ArrowDown' || e.code === 'KeyS') duck(false);
+  });
+
+  stage.addEventListener('pointerdown', e => {
+    if (e.target === el.sound) return;
+    stage.classList.add('ptr');
+    stage.focus({ preventScroll: true });
+    const r = stage.getBoundingClientRect();
+    const lower = (e.clientY - r.top) > r.height * 0.70;
+    if (over) { start(); return; }
+    if (lower && running) duck(true); else jump();
+  });
+  window.addEventListener('pointerup', () => { releaseJump(); duck(false); });
+  stage.addEventListener('contextmenu', e => e.preventDefault());
+
+  let paused = false;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { paused = true; return; }
+    if (paused) { paused = false; last = performance.now(); if (running) requestAnimationFrame(tick); }
+  });
+
+  // in an iframe the page can't type until the frame has focus — say so
+  if (EMBEDDED) {
+    setTimeout(() => { if (!focused && !started) el.hint.classList.add('show'); }, 1200);
+  } else {
+    stage.classList.add('solo');
+  }
+
+  // On a phone there is no Space bar and no arrow keys — say what actually works.
+  if (TOUCH) {
+    el.start.querySelector('.keys').innerHTML =
+      'Tap to jump · hold the bottom of the screen to duck';
+    el.over.querySelector('.keys').innerHTML =
+      'Tap for take <span id="oNext">02</span>';
+    el.oNext = el.over.querySelector('#oNext');
+    stage.setAttribute('aria-label',
+      'Asterisk Run — tap to jump the running mark over the asterisks, hold the bottom of the screen to duck.');
+  }
+
+  // ---------------------------------------------------------------- boot
+  let runImg = null, astImg = null, loaded = 0;
+  function ready() {
+    if (++loaded < 2) return;
+    resize(); makeGrain();
+    el.best.textContent = timecode(best);
+    el.spd.textContent = '24 fps';
+    draw();
+    // idle attract: the mark runs on the spot until the first input
+    (function idle() {
+      if (started) return;
+      groundOff = (groundOff + 2.2) % 24;
+      for (const c of clouds) { c.x -= c.d * 2.2; c.rot += 0.004; if (c.x < -60) c.x = W + 40; }
+      draw();
+      requestAnimationFrame(idle);
+    })();
+  }
+  runImg = new Image(); runImg.onload = ready; runImg.src = RUNNER_SRC;
+  astImg = new Image(); astImg.onload = ready; astImg.src = AST_SRC;
+  makeClouds();
+})();
 </script>
+
 </body>
 </html>
