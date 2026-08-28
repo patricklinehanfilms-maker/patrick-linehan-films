@@ -396,8 +396,10 @@
   }
 
   function lbRender() {
-    // a short embed (mobile is 300px) only has room for a few rows
-    const room = (stage.clientHeight || 480) < 380 ? 3 : 5;
+    // a short embed (mobile is 300px) only has room for a few rows, and the
+    // initials row eats one of them when it's up
+    const short = (stage.clientHeight || 480) < 380;
+    const room = short ? (el.oEntry.hidden ? 3 : 2) : 5;
     const rows = lbTop.slice(0, room);
     if (!rows.length) { el.oBoard.hidden = true; return; }
     const head = '<div class="lbhead">' + (LB_API ? 'Top scores' : 'Your scores') + '</div>';
@@ -549,9 +551,9 @@
     el.oTake.textContent = String(take).padStart(2, '0');
     el.oTc.textContent = points(f);
     el.oPb.hidden = !isPb;
-    // offer the board only for a run worth posting
-    const lowest = lbTop.length >= 5 ? lbTop[Math.min(4, lbTop.length - 1)].frames : 0;
-    if (f > 0 && (lbTop.length < 5 || f > lowest)) {
+    // offer to post any run at all. Gating this on beating the visible top five
+    // meant that once the board filled up almost nobody was ever shown the field.
+    if (f > 0) {
       lbPending = f;
       el.oIn.value = lbInitials();
       el.oEntry.hidden = false;
