@@ -53,7 +53,7 @@
                     <img src="assets/mark-tight.png" alt="" style="{{ markTightStyle }}">
                     <img src="assets/running-mark.gif" alt="" style="{{ runB }}">
                   </div>
-                  <div style="{{ barWordStyle }}">{{ wordmark }}</div>
+                  <h1 style="{{ barWordStyle }}">{{ wordmark }}</h1>
                 </div>
                 <sc-if value="{{ showNavB }}" hint-placeholder-val="{{ true }}">
                 <div style="{{ barNavStyle }}">
@@ -103,7 +103,7 @@
                 <div style="{{ tileMediaStyle }}">{{ p.tile }}<div style="{{ p.badgeStyle }}">{{ p.kind }}</div></div>
                 <div style="{{ tileMetaStyle }}">
                   <div style="display: flex; alignItems: baseline; justifyContent: space-between; gap: 10px; flex: 1;">
-                    <div style="{{ tileTitleStyle }}">{{ p.title }}</div>
+                    <h2 style="{{ tileTitleStyle }}">{{ p.title }}</h2>
                     <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 12px; letterSpacing: 0.08em; color: #6d6867; whiteSpace: nowrap;">{{ p.num }}</div>
                   </div>
                   <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 11px; letterSpacing: 0.14em; textTransform: uppercase; color: #6d6867; minHeight: 14px;">{{ p.artist }}</div>
@@ -277,6 +277,8 @@ const VIDEO_IDS = ["wl7VscNbwAw","5NsMIXv0gRs","nG3rHSOug5c","JhwyMiCH-Mc","w_6r
 // Anything omitted falls back to YouTube's data / P. Linehan.
 const OVERRIDES = {
   "5NsMIXv0gRs": {
+    "slug": "but-they-were-kissing",
+    "date": "2025-12-17",
     "title": "but they were kissing",
     "kind": "Short Film",
     "clip": "assets/clip-kissing.mp4",
@@ -286,6 +288,8 @@ const OVERRIDES = {
     "desc": "Two guys on a late night subway car spend the whole ride inventing a history for the couple sitting across from them. Where they met, how long it's been, whether it's real. I cut their conversation against the night it might have come from, a dark bar in purple light, a dance floor, an exit sign. Kevin and I wrote it together and I shot and cut it myself."
   },
   "JhwyMiCH-Mc": {
+    "slug": "jackson-august",
+    "date": "2025-09-19",
     "title": "Jackson August",
     "kind": "Short Film",
     "artist": "WHATMORE",
@@ -298,6 +302,8 @@ const OVERRIDES = {
     "desc": "The fourth in a series of portraits I've been shooting for WHATMORE. I followed Jackson through a shift at one of the oldest bars in New York, handheld and close in, while he talks about quitting the job and feeling like an imposter. It cuts against the live show and lands on the release of “jenny’s”."
   },
   "w_6r2iEur3g": {
+    "slug": "yoshi-t",
+    "date": "2025-07-18",
     "title": "Yoshi T.",
     "kind": "Short Film",
     "artist": "WHATMORE",
@@ -310,6 +316,8 @@ const OVERRIDES = {
     "desc": "The second WHATMORE portrait. Yoshi works at his dad's sushi restaurant, so I shot him and his father in the kitchen wearing their whites and cut it against home video, the studio and the stage. He talks about how scary starting something new is. Jackson, Yoshi, and I wrote it, I shot it."
   },
   "wl7VscNbwAw": {
+    "slug": "dominic-fike-interview",
+    "date": "2026-04-07",
     "title": "Dominic Fike Interview",
     "kind": "Interview",
     "artist": "Dominic Fike",
@@ -323,6 +331,8 @@ const OVERRIDES = {
     "desc": "A long sit down with Dominic Fike for Pigeons and Planes, shot in the wood panelled lounge at Electric Lady. One warm lamp, one bench, and enough room to let him talk. He gets into growing up in Florida, the label bidding war, Euphoria, the second life of “Babydoll” and becoming a dad. I was DP, director and editor on it."
   },
   "V_OSd1Al7Bc": {
+    "slug": "reclusive",
+    "date": "2026-01-15",
     "title": "Reclusive",
     "kind": "Music Video",
     "thumb": "assets/thumb-reclusive.jpg",
@@ -334,6 +344,8 @@ const OVERRIDES = {
     "desc": "An Elmiene video that lives almost entirely inside one elevator. He rides it in a yellow lined suit while the car keeps filling up with people until there is nowhere left to stand. We shot it in London with Untold Studios for Def Jam and Polydor."
   },
   "mq-5QnSmwLo": {
+    "slug": "last-call",
+    "date": "2026-08-20",
     "title": "Last Call",
     "kind": "Music Video",
     "clip": "assets/clip-lastcall.mp4",
@@ -344,6 +356,8 @@ const OVERRIDES = {
     "desc": "Vacations close out a karaoke bar in New York City, ending with a bar fight that gets them thrown out onto the streets. They run away from the bar and across the bridge at sunrise."
   },
   "rIgKZS8-HuY": {
+    "slug": "aperol-spritz",
+    "date": "2025-10-24",
     "title": "Aperol Spritz",
     "kind": "Music Video",
     "year": 2025,
@@ -356,15 +370,20 @@ const OVERRIDES = {
     "desc": "A LAUNDRY DAY video that runs from a bright tailor shop in the afternoon to behind a bar at 2am. Our guy gets fitted for a suit, walks out into the night and ends up pouring spritzes for a room full of people. Big cast, mostly friends. Lola came up with the concept, I directed it and cut it."
   },
   "wskTMjUOiBM": {
+    "slug": "thebandfriday",
+    "date": "2026-08-28",
     "title": "THEBANDFRIDAY",
     "kind": "Short Film",
-    "thumb": "assets/thumb-bandfriday.jpg",
+    "year": 2026,
+    "thumb": "assets/thumb-bandfriday-1600.jpg",
     "desc": "Two kids met on a playground in an LA suburb on March 25th, 2007, and the film counts every Friday since. 714 of them by the time we catch up. I ran the whole thing on that count, cutting between the boys at the picnic table and the band they turned into: garage practice and studio sessions. It ends at their show just three miles from where it all started.",
     "artist": "thebandfriday",
     "clip": "assets/clip-bandfriday.mp4",
     "edit": "P. Linehan"
   },
   "SizhMPbjEk8": {
+    "slug": "know-you",
+    "date": "2025-11-19",
     "title": "Know You",
     "kind": "Short Film",
     "clip": "assets/clip-knowyou.mp4",
@@ -374,6 +393,8 @@ const OVERRIDES = {
     "desc": "The other short I made with Kevin Atwater off Blush Red. Two people sit next to each other and barely speak, and the whole relationship plays underneath it. Birthday candles, a backyard, a kiss, a bedroom. I shot it to feel found rather than made."
   },
   "L-9QwatubPo": {
+    "slug": "jackie-chan",
+    "date": "2025-11-14",
     "title": "jackie chan",
     "kind": "Music Video",
     "clip": "assets/clip-jackiechan.mp4",
@@ -384,6 +405,8 @@ const OVERRIDES = {
     "desc": "Wide lens, all handheld, moving with the cast from a jewelry robbery out into a night that keeps escalating. Getaway cars, a bodega, a photobooth, and it ends in a police lineup. Everyone on screen is playing the female doppelganger of the band. Jackson and I directed it together."
   },
   "wxLGzYsTBhg": {
+    "slug": "whatmore-album-trailer",
+    "date": "2025-10-13",
     "title": "WHATMORE Album Trailer",
     "kind": "Short Film",
     "clip": "assets/clip-albumtrailer.mp4",
@@ -393,8 +416,11 @@ const OVERRIDES = {
     "desc": "A trailer for the debut WHATMORE record, played as a scene instead of a montage. The whole band sits in a red booth in an old New York restaurant getting talked at by a man in a grey suit and a red tie. Comedy first, record second."
   },
   "DmpCKe1DYqo": {
+    "slug": "meet-me-after-practice",
+    "date": "2025-02-27",
     "title": "Meet Me After Practice",
     "kind": "Short Film",
+    "artist": "Boys Go to Jupiter",
     "clip": "assets/clip-meetme.mp4",
     "year": 2025,
     "dp": "P. Linehan",
@@ -402,6 +428,8 @@ const OVERRIDES = {
     "desc": "A five minute short for Boys Go To Jupiter that runs alongside their debut LP. It follows one friendship from a high school classroom to a dorm room to a highway at night to the part where she cancels and moves away. Home video texture with diagrams drawn over the top. I directed, shot and cut it."
   },
   "zhkoGDcNnc0": {
+    "slug": "i-see-myself-in-you",
+    "date": "2026-07-09",
     "title": "I See Myself In You",
     "kind": "Music Video",
     "clip": "assets/clip-ismiy.mp4",
@@ -411,6 +439,8 @@ const OVERRIDES = {
     "desc": "Vacations in a New York park in the dead of winter, playing chess against progressively older versions of his father. As we progress through the game, the man ages drastically. Bare trees, a chess clock, a crowd of regulars gathering to watch it happen. Shot with Cityisland."
   },
   "7E9ZXITzgcc": {
+    "slug": "comets-and-gold",
+    "date": "2026-06-19",
     "title": "Comets + Gold",
     "kind": "Music Video",
     "clip": "assets/clip-comets.mp4",
@@ -422,10 +452,16 @@ const OVERRIDES = {
     "desc": "Elmiene and Fujii Kaze on a black stage with a single rectangle of light standing in it. He walks toward the portal, Kaze plays a grand piano, and fog rolls across the floor until the two of them perform together. Gold and black and almost nothing else. Untold Studios, VFX by S4."
   },
   "59EJ_paMewk": {
+    "slug": "a-side-trailer",
+    "date": "2026-02-25",
+    "title": "A-Side",
     "kind": "Short Film",
+    "year": 2026,
     "clip": "assets/clip-aside.mp4"
   },
   "nG3rHSOug5c": {
+    "slug": "if-our-love-is-dead-live",
+    "date": "2024-10-29",
     "title": "If Our Love Is Dead (Live)",
     "kind": "Concert Film",
     "year": 2024,
@@ -455,6 +491,7 @@ function buildData(ids) {
     const t = ov.thumb ? (/^https?:|^assets\//.test(ov.thumb) ? ov.thumb : 'https://i.ytimg.com/vi/' + id + '/' + ov.thumb) : null;
     return {
       id: id, title: '', kind: '', artist: ov.artist || '', year: '', clip: ov.clip || null, pos: ov.pos || 'center',
+      slug: ov.slug || id, date: ov.date || '',
       media: t || 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg',
       // YouTube frame grabs are only 480x360 — too soft for the case-study hero, so
       // they stay on the grid tile; a local asset is full-res and can carry both.
@@ -465,6 +502,32 @@ function buildData(ids) {
 }
 
 let DATA = buildData(VIDEO_IDS);
+// ---- routes: one path per film, keyed on the slug in OVERRIDES ------------
+// BASE is whatever directory the page is served from, so the same code works at
+// the domain root and inside a preview path.
+const BASE = (function () {
+  if (typeof location === 'undefined') return '/';
+  let p = location.pathname.replace(/[^/]*$/, '');
+  p = p.replace(/work\/$/, '');
+  return p || '/';
+})();
+function slugPath(i) { return BASE + 'work/' + (DATA[i] && DATA[i].slug ? DATA[i].slug : ''); }
+function filmFromPath() {
+  if (typeof location === 'undefined') return -1;
+  const m = location.pathname.match(/work\/([^/]+)\/?$/);
+  if (!m) return -1;
+  const s = decodeURIComponent(m[1]).toLowerCase();
+  for (let i = 0; i < DATA.length; i++) if (DATA[i].slug === s) return i;
+  return -1;
+}
+function fmtDate(iso) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return '';
+  const MO = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+    'August', 'September', 'October', 'November', 'December'];
+  return MO[+m[2] - 1] + ' ' + (+m[3]) + ', ' + m[1];
+}
+
 
 const CLIENTS = [
   { src: 'assets/clients/abc-news.webp', alt: 'ABC News', h: 26 },
@@ -831,6 +894,26 @@ class Component extends DCLogic {
     this.syncData();
     this.loadMeta();
     this.pickAuto();
+    this.onPop = () => this.syncRoute();
+    window.addEventListener('popstate', this.onPop);
+    const i0 = filmFromPath();
+    if (i0 >= 0) this.setState({ routeA: 'case', projA: i0, routeB: 'case', projB: i0, caseLive: false });
+  }
+
+  // history <-> route, both directions
+  pushFilm(i) {
+    if (typeof history === 'undefined' || !history.pushState) return;
+    const p = slugPath(i);
+    if (location.pathname !== p) history.pushState({ film: i }, '', p);
+  }
+  pushRoot() {
+    if (typeof history === 'undefined' || !history.pushState) return;
+    if (location.pathname !== BASE) history.pushState({}, '', BASE);
+  }
+  syncRoute() {
+    const i = filmFromPath();
+    if (i >= 0) this.setState({ routeA: 'case', projA: i, routeB: 'case', projB: i, hoverA: null, hoverB: null, caseLive: false });
+    else this.setState({ routeA: 'home', routeB: 'home', hoverA: null, hoverB: null, caseLive: false });
   }
 
   pickAuto() {
@@ -1023,7 +1106,7 @@ class Component extends DCLogic {
       { k: 'EDIT', v: o.edit },
       { k: 'COLOR', v: o.color },
       { k: 'PROD', v: o.producer },
-      { k: 'YEAR', v: o.year ? String(o.year) : '' }
+      { k: 'RELEASED', v: o.date ? fmtDate(o.date) : (o.year ? String(o.year) : '') }
     ].filter((r) => r.v).map((r, i, all) => ({
       k: r.k, v: r.v, last: i === all.length - 1
     }));
@@ -1109,8 +1192,12 @@ class Component extends DCLogic {
     const arrowTop = Math.max(8, arrowPageY - y);
     const logoTop = Math.max(8, 40 - y);
     const navTop = Math.max(16, 48 - y);
-    const setA = (i) => this.setState({ routeA: 'case', projA: i, hoverA: null });
-    const setB = (i) => {
+    const setA = (i) => {
+      this.pushFilm(i);
+      this.setState({ routeA: 'case', projA: i, hoverA: null });
+    };
+    const setB = (i, push) => {
+      if (push !== false) this.pushFilm(i);
       this.setState({ routeB: 'case', projB: i, hoverB: null, caseLive: false });
       window.scrollTo(0, 0);
       setTimeout(() => {
@@ -1185,7 +1272,8 @@ class Component extends DCLogic {
       },
       barWordStyle: {
         fontSize: lerp(22, 11, bp) + 'px', fontWeight: 800, lineHeight: bp > 0.5 ? 1 : 1.02,
-        letterSpacing: bp > 0.5 ? '0.1em' : '0.01em', color: '#f3f2f2', whiteSpace: 'nowrap'
+        letterSpacing: bp > 0.5 ? '0.1em' : '0.01em', color: '#f3f2f2', whiteSpace: 'nowrap',
+        margin: '2px 0 0'
       },
       wordmark: bp > 0.5
         ? 'PATRICK LINEHAN FILMS'
@@ -1267,9 +1355,10 @@ class Component extends DCLogic {
       gridCols: 'repeat(' + (this.props.columns || 4) + ', minmax(0, 1fr))',
       showNavB: true, showBurgerB: false, showTools: true, menuOpen: false,
       toggleMenu: () => this.setState((p) => ({ menu: !p.menu })),
-      menuWork: () => { this.setState({ menu: false, routeB: 'home', hoverB: null }); this.scrollTo('[data-grid]'); },
-      menuContact: () => { this.setState({ menu: false, routeB: 'contact', hoverB: null }); window.scrollTo(0, 0); },
+      menuWork: () => { this.pushRoot(); this.setState({ menu: false, routeB: 'home', hoverB: null }); this.scrollTo('[data-grid]'); },
+      menuContact: () => { this.pushRoot(); this.setState({ menu: false, routeB: 'contact', hoverB: null }); window.scrollTo(0, 0); },
       menuAbout: () => {
+        this.pushRoot();
         this.setState({ menu: false, routeB: 'home', hoverB: null });
         setTimeout(() => {
           const el = document.querySelector('[data-about]');
@@ -1286,7 +1375,7 @@ class Component extends DCLogic {
       sheetBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 40px', borderBottom: '2px solid ' + INK },
       tileMediaStyle: { position: 'relative', height: '190px', overflow: 'hidden' },
       tileMetaStyle: { display: 'flex', flexDirection: 'column', gap: '8px', padding: '14px 16px 16px', flex: 1 },
-      tileTitleStyle: { fontSize: '22px', fontWeight: 800, letterSpacing: '-0.015em', textTransform: 'uppercase', lineHeight: 1.05, overflowWrap: 'anywhere' },
+      tileTitleStyle: { fontSize: '22px', fontWeight: 800, letterSpacing: '-0.015em', textTransform: 'uppercase', lineHeight: 1.05, overflowWrap: 'anywhere', margin: 0 },
       aboutGridStyle: { display: 'grid', gridTemplateColumns: '420px minmax(0, 1fr)', borderBottom: '2px solid ' + INK },
       aboutPicStyle: { borderRight: '2px solid ' + INK },
       aboutImgStyle: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
@@ -1375,9 +1464,10 @@ class Component extends DCLogic {
       isHomeA: s.routeA === 'home', isCaseA: s.routeA === 'case',
       isHomeB: s.routeB === 'home', isCaseB: s.routeB === 'case',
       isContactB: s.routeB === 'contact',
-      goContactB: () => { this.setState({ routeB: 'contact', hoverB: null }); window.scrollTo(0, 0); },
-      goWorkB: () => { this.setState({ routeB: 'home', hoverB: null }); this.scrollTo('[data-grid]'); },
+      goContactB: () => { this.pushRoot(); this.setState({ routeB: 'contact', hoverB: null }); window.scrollTo(0, 0); },
+      goWorkB: () => { this.pushRoot(); this.setState({ routeB: 'home', hoverB: null }); this.scrollTo('[data-grid]'); },
       goAboutB: () => {
+        this.pushRoot();
         this.setState({ routeB: 'home', hoverB: null });
         setTimeout(() => {
           const el = document.querySelector('[data-about]');
@@ -1401,6 +1491,7 @@ class Component extends DCLogic {
       prevA: () => setA(pA), prevB: () => setB(pB),
       goHomeA: () => this.setState({ routeA: 'home', hoverA: null }),
       goHomeB: () => {
+        this.pushRoot();
         this.setState({ routeB: 'home', hoverB: null, caseLive: false, heroFull: false, contactFull: false, menu: false });
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
@@ -1434,7 +1525,7 @@ class Component extends DCLogic {
         display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer'
       },
       barMarkStyle: { position: 'relative', width: lerp(40, 26, bp) + 'px', height: lerp(40, 26, bp) + 'px', flexShrink: 0 },
-      barWordStyle: { fontSize: lerp(13, 10, bp) + 'px', fontWeight: 800, lineHeight: bp > 0.5 ? 1 : 1.05, letterSpacing: bp > 0.5 ? '0.08em' : '0.01em', color: '#f3f2f2', whiteSpace: 'nowrap' },
+      barWordStyle: { fontSize: lerp(13, 10, bp) + 'px', fontWeight: 800, lineHeight: bp > 0.5 ? 1 : 1.05, letterSpacing: bp > 0.5 ? '0.08em' : '0.01em', color: '#f3f2f2', whiteSpace: 'nowrap', margin: '1px 0 0' },
       barLabelStyle: { display: 'none' },
       barArrowStyle: { display: 'none' },
       burgerStyle: {
@@ -1480,7 +1571,7 @@ class Component extends DCLogic {
       sheetBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '15px ' + PAD, borderBottom: '2px solid ' + INK },
       tileMediaStyle: { position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden' },
       tileMetaStyle: { display: 'flex', flexDirection: 'column', gap: '7px', padding: '14px ' + PAD + ' 18px', flex: 1 },
-      tileTitleStyle: { fontSize: '26px', fontWeight: 800, letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 1.02, overflowWrap: 'anywhere' },
+      tileTitleStyle: { fontSize: '26px', fontWeight: 800, letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 1.02, overflowWrap: 'anywhere', margin: 0 },
       aboutGridStyle: { display: 'grid', gridTemplateColumns: '1fr', borderBottom: '2px solid ' + INK },
       aboutPicStyle: { borderBottom: '2px solid ' + INK },
       aboutImgStyle: { width: '100%', height: '54vw', maxHeight: '340px', objectFit: 'cover', display: 'block' },
