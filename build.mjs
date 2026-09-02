@@ -386,7 +386,14 @@ for (const f of routed) {
   }).replace(/</g, '\\u003c');
 
   const problems = [];
-  let doc = html;
+  // Everything in the export is addressed relative to the site root — './support.js',
+  // '_ds/…/styles.css', 'assets/…'. Served from /work/<slug>/ those resolve one
+  // directory deeper and 404, so the page arrives as raw {{ template }} text. Make
+  // them root-absolute for the route copies only; the homepage keeps its own paths.
+  let doc = html
+    .replace(/(\ssrc=")\.\/(?!\/)/g, '$1/')
+    .replace(/(\s(?:src|href)=")(_ds\/)/g, '$1/$2')
+    .replace(/"(assets\/)/g, '"/$1');
   doc = retag(doc, /<title>[\s\S]*?<\/title>/i, `<title>${esc(title)}</title>`, 'title', problems);
   doc = retag(doc, /<link rel="canonical" href="[^"]*">/i,
               `<link rel="canonical" href="${url}">`, 'canonical', problems);
