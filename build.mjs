@@ -266,6 +266,21 @@ function readFilms(src) {
   } catch { return null; }
 }
 
+function videoObject(f) {
+  return {
+    '@type': 'VideoObject',
+    name: f.title,
+    ...(f.date ? { uploadDate: f.date } : {}),
+    ...(f.desc ? { description: f.desc } : {}),
+    ...(f.kind ? { genre: f.kind } : {}),
+    ...(f.year ? { copyrightYear: f.year } : {}),
+    thumbnailUrl: `https://i.ytimg.com/vi/${f.id}/maxresdefault.jpg`,
+    embedUrl: `https://www.youtube.com/embed/${f.id}`,
+    url: `https://www.youtube.com/watch?v=${f.id}`,
+    director: { '@type': 'Person', name: 'Patrick Linehan' },
+  };
+}
+
 const films = readFilms(html);
 if (!films) {
   warn('could not read VIDEO_IDS/OVERRIDES from the export — skipping film structured data');
@@ -286,8 +301,9 @@ if (!films) {
     item: {
       '@type': 'VideoObject',
       name: f.title,
-      // year alone is not a valid ISO date, so uploadDate is deliberately absent
-      // rather than invented. Add real dates and Google can show video results.
+      // uploadDate is what Google needs for video results. It is only ever the
+      // real date from the export — never derived from the year.
+      ...(f.date ? { uploadDate: f.date } : {}),
       ...(f.desc ? { description: f.desc } : {}),
       ...(f.kind ? { genre: f.kind } : {}),
       ...(f.year ? { copyrightYear: f.year } : {}),
@@ -319,6 +335,97 @@ if (!films) {
 
 await writeFile(indexPath, html);
 log(injected.length ? `injected: ${injected.join(', ')}` : 'no injections needed');
+
+// ------------------------------------------- 7b. a real page per film route
+
+// Design's routing serves /work/<slug> through a _redirects wildcard, which hands
+// back this same index.html at every film URL — same title, same description and,
+// worst of all, the same canonical pointing at the homepage. That tag tells Google
+// each film URL is a duplicate of '/', so every one of them would drop out of the
+// index. These files fix that: Pages serves a matching static file before it ever
+// consults _redirects, so a real page wins and the wildcard stays as the fallback
+// for slugs that don't exist.
+const routed = (films || []).filter(f => f.slug && /^[a-z0-9][a-z0-9-]*$/.test(f.slug));
+const routePaths = [];
+
+if (!films) {
+  log('no film data — no route pages');
+} else if (!routed.length) {
+  log('no slugs in the export yet — route pages skipped (nothing else changes)');
+} else if (routed.length !== films.length) {
+  warn(`${films.length - routed.length} of ${films.length} films have no usable slug — ` +
+       `those get no page. Route pages written for the rest.`);
+}
+
+// Only rewrite tags this build put there itself; anything else is left alone.
+function retag(doc, re, replacement, label, problems) {
+  if (!re.test(doc)) { problems.push(label); return doc; }
+  return doc.replace(re, replacement);
+}
+
+for (const f of routed) {
+  const url = `${SITE_URL}/work/${f.slug}/`;
+  const title = `${f.title} — Patrick Linehan Films`;
+  // a film with no blurb still needs a description a human would accept
+  const desc = (f.desc && f.desc.trim())
+    ? (f.desc.length > 300 ? f.desc.slice(0, 297).trimEnd() + '…' : f.desc)
+    : `${f.title}${f.kind ? ' — ' + f.kind : ''}, directed by Patrick Linehan.`;
+  const image = f.thumb ? `${SITE_URL}/${f.thumb.replace(/^\.?\//, '')}` : `${SITE_URL}/og-image.jpg`;
+  const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  const ld = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      videoObject(f),
+      { '@type': 'BreadcrumbList', itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Work', item: `${SITE_URL}/` },
+        { '@type': 'ListItem', position: 2, name: f.title, item: url },
+      ] },
+    ],
+  }).replace(/</g, '\\u003c');
+
+  const problems = [];
+  let doc = html;
+  doc = retag(doc, /<title>[\s\S]*?<\/title>/i, `<title>${esc(title)}</title>`, 'title', problems);
+  doc = retag(doc, /<link rel="canonical" href="[^"]*">/i,
+              `<link rel="canonical" href="${url}">`, 'canonical', problems);
+  doc = retag(doc, /<meta name="description" content="[^"]*">/i,
+              `<meta name="description" content="${esc(desc)}">`, 'description', problems);
+  doc = retag(doc, /<meta property="og:title" content="[^"]*">/i,
+              `<meta property="og:title" content="${esc(title)}">`, 'og:title', problems);
+  doc = retag(doc, /<meta property="og:description" content="[^"]*">/i,
+              `<meta property="og:description" content="${esc(desc)}">`, 'og:description', problems);
+  doc = retag(doc, /<meta property="og:url" content="[^"]*">/i,
+              `<meta property="og:url" content="${url}">`, 'og:url', problems);
+  doc = retag(doc, /<meta property="og:type" content="[^"]*">/i,
+              `<meta property="og:type" content="video.other">`, 'og:type', problems);
+  doc = doc.replace(/<meta property="og:image" content="[^"]*">/i,
+                    `<meta property="og:image" content="${image}">`);
+  doc = doc.replace(/<meta name="twitter:image" content="[^"]*">/i,
+                    `<meta name="twitter:image" content="${image}">`);
+  doc = retag(doc, /<meta name="twitter:title" content="[^"]*">/i,
+              `<meta name="twitter:title" content="${esc(title)}">`, 'twitter:title', problems);
+  doc = retag(doc, /<meta name="twitter:description" content="[^"]*">/i,
+              `<meta name="twitter:description" content="${esc(desc)}">`, 'twitter:description', problems);
+  doc = doc.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/i,
+                    `<script type="application/ld+json">${ld}</script>`);
+  // the heading should name the film, not the site, on a film's own page
+  doc = doc.replace(/(<h1 style="position:absolute[^>]*>)[\s\S]*?(<\/h1>)/i,
+                    (m, a, b) => a + esc(f.title) + b);
+
+  if (problems.length) {
+    warn(`/work/${f.slug}: could not rewrite ${problems.join(', ')} — ` +
+         `page written anyway, but check those tags`);
+  }
+
+  const dir = path.join(OUT, 'work', f.slug);
+  await mkdir(dir, { recursive: true });
+  await writeFile(path.join(dir, 'index.html'), doc);
+  routePaths.push(`/work/${f.slug}/`);
+}
+
+if (routePaths.length) log(`wrote ${routePaths.length} film pages under /work/`);
 
 // ---------------------------------------------- 8. play/ head + 9. sitemap
 
@@ -360,7 +467,9 @@ const today = new Date().toISOString().slice(0, 10);
 const sitemap =
   `<?xml version="1.0" encoding="UTF-8"?>\n` +
   `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  [[`${SITE_URL}/`, '1.0'], [`${SITE_URL}/play/`, '0.3']]
+  [[`${SITE_URL}/`, '1.0'],
+   ...routePaths.map(p => [`${SITE_URL}${p}`, '0.8']),
+   [`${SITE_URL}/play/`, '0.3']]
     .map(([loc, pri]) =>
       `  <url><loc>${loc}</loc><lastmod>${today}</lastmod><priority>${pri}</priority></url>`)
     .join('\n') +
