@@ -31,17 +31,13 @@
     position:relative;width:100%;height:100%;min-height:220px;
     background:var(--red);overflow:hidden;cursor:pointer;
     -webkit-tap-highlight-color:transparent;
-    /* a tap is a jump, never a text selection: without these, tapping or
-       holding on mobile highlights the score, the title and the key hints */
+    /* a tap is a jump, not a text selection */
     -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
   }
   #stage:focus{outline:none}
   #stage.ptr:focus-visible{outline:none}
   #stage:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
   #cv{display:block;width:100%;height:100%}
-  /* Grain used to be a full-canvas pattern fill every frame, which on a large
-     display is millions of pixels of alpha compositing per frame. As its own
-     layer it costs the compositor a translate and nothing else. */
   #grain{
     position:absolute;top:-96px;left:-96px;right:-96px;bottom:-96px;
     pointer-events:none;opacity:.4;will-change:transform;
@@ -149,13 +145,13 @@
     letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
   }
   .initials input{
+    -webkit-user-select:text;user-select:text;   /* opt back out of the stage rule */
     font-family:var(--mono);font-size:clamp(16px,2.4vw,22px);font-weight:500;
     letter-spacing:.3em;text-transform:uppercase;
     width:4.2em;padding:6px 0 6px 8px;
     background:transparent;color:var(--white);
     border:0;border-bottom:2px solid var(--white);border-radius:0;
     outline:none;
-    -webkit-user-select:text;user-select:text;   /* opt back out of the stage rule */
   }
   .initials button{
     font-family:var(--mono);font-size:clamp(9px,1.2vw,11px);letter-spacing:.18em;
@@ -404,8 +400,8 @@
   }
 
   function lbRender() {
-    // a short embed (mobile is 300px) only has room for a few rows, and the
-    // initials row eats one of them when it's up
+    // a short embed (mobile is 300px) only has room for a few rows, and fewer
+    // still when the initials row is up
     const short = (stage.clientHeight || 480) < 380;
     const room = short ? (el.oEntry.hidden ? 3 : 2) : 5;
     const rows = lbTop.slice(0, room);
@@ -515,8 +511,6 @@
 
   // ----------------------------------------------------------------- loop
   function reset() {
-    // elapsed is the score's only input, so it has to go back to zero here or
-    // every take after the first starts on the previous take's total
     dist = 0; elapsed = 0; speed = SPD0 * ws; obstacles = []; nextGap = 420 * ws;
     runner.y = 0; runner.vy = 0; runner.ducking = false; runner.dead = false;
     shake = 0;
@@ -559,8 +553,8 @@
     el.oTake.textContent = String(take).padStart(2, '0');
     el.oTc.textContent = points(f);
     el.oPb.hidden = !isPb;
-    // offer to post any run at all. Gating this on beating the visible top five
-    // meant that once the board filled up almost nobody was ever shown the field.
+    // any finished run can post — gating on the 5th place score meant the field
+    // never appeared once the board had real entries on it
     if (f > 0) {
       lbPending = f;
       el.oIn.value = lbInitials();
@@ -635,9 +629,11 @@
     }
     g.putImageData(im, 0, 0);
     grain = c;
-    const layer = document.getElementById('grain');
-    if (layer) { layer.style.backgroundImage = 'url(' + c.toDataURL() + ')';
-                 layer.style.backgroundRepeat = 'repeat'; }
+    // the grain rides as a CSS layer, not a per-frame canvas fill
+    if (grainEl) {
+      grainEl.style.backgroundImage = 'url(' + c.toDataURL() + ')';
+      grainEl.style.backgroundRepeat = 'repeat';
+    }
   }
 
   function draw() {
@@ -696,8 +692,6 @@
 
     ctx.restore();
 
-    // jitter the grain layer instead of repainting it: transform only, so this
-    // never touches the canvas and stays on the compositor
     if (grainEl && !REDUCED) {
       const ox = -(Math.random() * 96) | 0, oy = -(Math.random() * 96) | 0;
       grainEl.style.transform = 'translate3d(' + ox + 'px,' + oy + 'px,0)';
