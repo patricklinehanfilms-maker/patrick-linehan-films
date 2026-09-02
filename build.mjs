@@ -213,6 +213,34 @@ if (Object.keys(resourceMap).length) {
 // will usually render it on a second pass, but nothing else will. Structured data
 // is static text, so it says who this is and what the work is without any JS.
 
+// The document a crawler downloads has no heading in it — not an h1, not
+// anything. Every title on the page is a div built by React after Babel runs. This
+// is the wordmark's own text marked up as the page heading, positioned off-screen
+// the standard accessible way (the same clip technique a screen-reader-only
+// heading uses). It says nothing the page doesn't already say visibly, so it is a
+// fallback for machines that don't run JS, not hidden keyword text.
+const H1 =
+  '<h1 style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;' +
+  'overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;' +
+  'border:0">' + TITLE + '</h1>';
+
+// The export does contain an <h1>, but it lives inside the <x-dc> template as
+// '<h1 ...>{{ caseB.title }}</h1>' — the case-study heading, which only becomes
+// real once React renders. A crawler that doesn't run JS sees the interpolation
+// braces, not a title. So strip the template and script bodies before asking
+// whether the delivered document has a usable heading, and put ours ahead of
+// <x-dc> where React will never touch it.
+const shell = html
+  .replace(/<script[\s\S]*?<\/script>/gi, '')
+  .replace(/<x-dc[\s\S]*?<\/x-dc>/gi, '');
+
+if (!/<h1[\s>]/i.test(shell)) {
+  html = html.replace(/<body([^>]*)>/i, (m, attrs) => `<body${attrs}>\n${H1}`);
+  injected.push('h1');
+} else {
+  log('the export already has an h1 — leaving headings alone');
+}
+
 if (!/<html[^>]*\blang=/i.test(html)) {
   html = html.replace(/<html(\s|>)/i, '<html lang="en"$1');
   injected.push('lang="en"');
