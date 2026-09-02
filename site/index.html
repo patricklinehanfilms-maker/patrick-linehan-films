@@ -100,13 +100,13 @@
           <div style="display: grid; gridTemplateColumns: {{ gridCols }}; gap: 2px; background: #201e1d; borderBottom: 2px solid #201e1d;">
             <sc-for list="{{ shuffled }}" as="p" hint-placeholder-count="8">
               <div style="background: #f3f2f2; padding: 0; cursor: pointer; position: relative; display: flex; flexDirection: column;" onClick="{{ p.open }}" onMouseEnter="{{ p.enterB }}" onMouseLeave="{{ clearHoverB }}">
-                <div style="{{ tileMediaStyle }}">{{ p.tile }}</div>
+                <div style="{{ tileMediaStyle }}">{{ p.tile }}<div style="{{ p.badgeStyle }}">{{ p.kind }}</div></div>
                 <div style="{{ tileMetaStyle }}">
                   <div style="display: flex; alignItems: baseline; justifyContent: space-between; gap: 10px; flex: 1;">
                     <div style="{{ tileTitleStyle }}">{{ p.title }}</div>
                     <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 12px; letterSpacing: 0.08em; color: #6d6867; whiteSpace: nowrap;">{{ p.num }}</div>
                   </div>
-                  <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 11px; letterSpacing: 0.14em; textTransform: uppercase; color: #6d6867;">{{ p.kind }}</div>
+                  <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 11px; letterSpacing: 0.14em; textTransform: uppercase; color: #6d6867; minHeight: 14px;">{{ p.artist }}</div>
                 </div>
               </div>
             </sc-for>
@@ -119,7 +119,7 @@
             <div style="{{ aboutPadStyle }}">
               <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; marginBottom: 24px;">About</div>
               <div style="{{ aboutTitleStyle }}">Authentic filmmaking, pointed at your brand.</div>
-              <div style="{{ aboutBodyStyle }}">Patrick Linehan is an Emmy and Clio-award winning director specializing in commercial, branded content, narrative, and music videos. He's worked with brands like Red Bull, Oatly, and Marshall, and directed for hundreds of musical artists from around the world including WHATMORE, Elmiene, Mark Ambor, Kevin Atwater, Royel Otis, Calum Scott, Ayumu Imazu, and Maggie Rogers across narrative pieces, live sets, and music videos.<br><br>He got his start producing documentaries for ABC News, where he won an Emmy for <em>Uvalde: 365</em>, a year-long look into the aftermath of the 2022 school shooting in south Texas. Since redirecting his focus onto directing in 2023, he has worked on over 200 projects, amassing more than 150 million views across YouTube, TikTok, and Instagram. The scripted-doc series he made alongside WHATMORE won a Clio award for outstanding music marketing.</div>
+              <div style="{{ aboutBodyStyle }}">Patrick Linehan is an Emmy and Clio-award winning director specializing in commercial, branded content, narrative, and music videos. He's worked with brands like Red Bull, Oatly, and Marshall, and directed for hundreds of musical artists from around the world including WHATMORE, Elmiene, Mark Ambor, Kevin Atwater, Royel Otis, Calum Scott, Ayumu Imazu, and Dominic Fike across narrative pieces, live sets, and music videos.<br><br>He got his start producing documentaries for ABC News, where he won an Emmy for <em>Uvalde: 365</em>, a year-long look into the aftermath of the 2022 school shooting in south Texas. Since redirecting his focus onto directing in 2023, he has worked on over 200 projects, amassing more than 150 million views across YouTube, TikTok, and Instagram. The scripted-doc series he made alongside WHATMORE won a Clio award for outstanding music marketing.</div>
               <div>{{ statRow }}</div>
             </div>
           </div>
@@ -260,9 +260,18 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;videoIds&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;,&quot;label&quot;:&quot;YouTube links or IDs (space or comma separated) — leave blank to use the built-in list&quot;},&quot;columns&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:4,&quot;min&quot;:2,&quot;max&quot;:6,&quot;step&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Layout&quot;,&quot;label&quot;:&quot;Contact-sheet columns&quot;}}">
 const RED = '#ec3013', INK = '#201e1d', BG = '#f3f2f2', MONO = "'IBM Plex Mono', monospace";
+// one random clip-bearing tile per row of the grid, in the order shown
+function rowAutoIds(order, cols) {
+  const out = [];
+  for (let r = 0; r < order.length; r += cols) {
+    const row = order.slice(r, r + cols).map((i) => DATA[i]).filter((d) => d && d.clip);
+    if (row.length) out.push(row[Math.floor(Math.random() * row.length)].id);
+  }
+  return out;
+}
 const STRIPE = 'repeating-linear-gradient(135deg, #dcdad9 0 9px, #f3f2f2 9px 18px)';
 
-const VIDEO_IDS = ["5NsMIXv0gRs","JhwyMiCH-Mc","w_6r2iEur3g","wl7VscNbwAw","V_OSd1Al7Bc","mq-5QnSmwLo","rIgKZS8-HuY","e4WFFY8JzgI","SizhMPbjEk8","L-9QwatubPo","wxLGzYsTBhg","DmpCKe1DYqo","zhkoGDcNnc0","7E9ZXITzgcc","59EJ_paMewk","nG3rHSOug5c"];
+const VIDEO_IDS = ["wl7VscNbwAw","5NsMIXv0gRs","nG3rHSOug5c","JhwyMiCH-Mc","w_6r2iEur3g","V_OSd1Al7Bc","mq-5QnSmwLo","rIgKZS8-HuY","wskTMjUOiBM","SizhMPbjEk8","L-9QwatubPo","wxLGzYsTBhg","DmpCKe1DYqo","zhkoGDcNnc0","7E9ZXITzgcc","59EJ_paMewk"];
 
 // Per-film overrides. Any of: title, kind, year, dp, edit, color, producer.
 // Anything omitted falls back to YouTube's data / P. Linehan.
@@ -277,8 +286,9 @@ const OVERRIDES = {
     "desc": "Two guys on a late night subway car spend the whole ride inventing a history for the couple sitting across from them. Where they met, how long it's been, whether it's real. I cut their conversation against the night it might have come from, a dark bar in purple light, a dance floor, an exit sign. Kevin and I wrote it together and I shot and cut it myself."
   },
   "JhwyMiCH-Mc": {
-    "title": "Jackson August (Short)",
+    "title": "Jackson August",
     "kind": "Short Film",
+    "artist": "WHATMORE",
     "clip": "assets/clip-jackson.mp4",
     "year": 2025,
     "dir": "P. Linehan + J. August",
@@ -288,8 +298,9 @@ const OVERRIDES = {
     "desc": "The fourth in a series of portraits I've been shooting for WHATMORE. I followed Jackson through a shift at one of the oldest bars in New York, handheld and close in, while he talks about quitting the job and feeling like an imposter. It cuts against the live show and lands on the release of “jenny’s”."
   },
   "w_6r2iEur3g": {
-    "title": "Yoshi T. (Short)",
+    "title": "Yoshi T.",
     "kind": "Short Film",
+    "artist": "WHATMORE",
     "clip": "assets/clip-yoshi.mp4",
     "year": 2025,
     "dir": "P. Linehan, J. August + Yoshi T.",
@@ -301,6 +312,8 @@ const OVERRIDES = {
   "wl7VscNbwAw": {
     "title": "Dominic Fike Interview",
     "kind": "Interview",
+    "artist": "Dominic Fike",
+    "pos": "50% 0%",
     "year": 2026,
     "thumb": "assets/thumb-fike.jpg",
     "clip": "assets/clip-domfike.mp4",
@@ -342,17 +355,14 @@ const OVERRIDES = {
     "color": "Cam McCutcheon",
     "desc": "A LAUNDRY DAY video that runs from a bright tailor shop in the afternoon to behind a bar at 2am. Our guy gets fitted for a suit, walks out into the night and ends up pouring spritzes for a room full of people. Big cast, mostly friends. Lola came up with the concept, I directed it and cut it."
   },
-  "e4WFFY8JzgI": {
-    "title": "Cry Against The Wind",
-    "kind": "Music Video",
-    "thumb": "assets/thumb-cry.jpg",
-    "clip": "assets/clip-cry.mp4",
-    "year": 2025,
-    "dp": "Ujjwal Chande",
-    "edit": "P. Linehan",
-    "producer": "Ade Macalinao + Caroline Gluck",
-    "color": "Brian Charles",
-    "desc": "Elmiene aged up in prosthetics, grey bearded and in a long dark coat, walking a narrow wood corridor for the length of the song. The camera stays with him the whole way and the space never opens up. Malina built the make up, Ujjwal shot it, and I directed and cut it for Untold Studios."
+  "wskTMjUOiBM": {
+    "title": "THEBANDFRIDAY",
+    "kind": "Short Film",
+    "thumb": "assets/thumb-bandfriday.jpg",
+    "desc": "Two kids met on a playground in an LA suburb on March 25th, 2007, and the film counts every Friday since. 714 of them by the time we catch up. I ran the whole thing on that count, cutting between the boys at the picnic table and the band they turned into: garage practice and studio sessions. It ends at their show just three miles from where it all started.",
+    "artist": "thebandfriday",
+    "clip": "assets/clip-bandfriday.mp4",
+    "edit": "P. Linehan"
   },
   "SizhMPbjEk8": {
     "title": "Know You",
@@ -383,7 +393,7 @@ const OVERRIDES = {
     "desc": "A trailer for the debut WHATMORE record, played as a scene instead of a montage. The whole band sits in a red booth in an old New York restaurant getting talked at by a man in a grey suit and a red tie. Comedy first, record second."
   },
   "DmpCKe1DYqo": {
-    "title": "Meet Me After Practice (Short)",
+    "title": "Meet Me After Practice",
     "kind": "Short Film",
     "clip": "assets/clip-meetme.mp4",
     "year": 2025,
@@ -412,7 +422,7 @@ const OVERRIDES = {
     "desc": "Elmiene and Fujii Kaze on a black stage with a single rectangle of light standing in it. He walks toward the portal, Kaze plays a grand piano, and fog rolls across the floor until the two of them perform together. Gold and black and almost nothing else. Untold Studios, VFX by S4."
   },
   "59EJ_paMewk": {
-    "kind": "Music Video",
+    "kind": "Short Film",
     "clip": "assets/clip-aside.mp4"
   },
   "nG3rHSOug5c": {
@@ -444,7 +454,7 @@ function buildData(ids) {
     // ov.thumb: a project asset path, or a YouTube frame grab — '1.jpg' | '2.jpg' | '3.jpg'
     const t = ov.thumb ? (/^https?:|^assets\//.test(ov.thumb) ? ov.thumb : 'https://i.ytimg.com/vi/' + id + '/' + ov.thumb) : null;
     return {
-      id: id, title: '', kind: '', year: '', clip: ov.clip || null,
+      id: id, title: '', kind: '', artist: ov.artist || '', year: '', clip: ov.clip || null, pos: ov.pos || 'center',
       media: t || 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg',
       // YouTube frame grabs are only 480x360 — too soft for the case-study hero, so
       // they stay on the grid tile; a local asset is full-res and can carry both.
@@ -747,7 +757,7 @@ class ClipPreview extends React.Component {
   render() {
     const p = this.props;
     const playing = p.mob ? false : p.hovered;
-    const cover = { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' };
+    const cover = { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: p.pos || 'center', display: 'block' };
     return React.createElement('div', {
       style: {
         position: 'absolute', inset: 0, overflow: 'hidden', background: INK,
@@ -778,13 +788,9 @@ class Component extends DCLogic {
     routeA: 'home', projA: 0, hoverA: null, mx: 0, my: 0,
     routeB: 'home', projB: 0, hoverB: null, heroHov: false, logoA: false, logoB: false, order: DATA.map((_, i) => i),
     mob: typeof window !== 'undefined' && window.innerWidth <= 760, menu: false, heroFull: false, contactFull: false,
-    // two tiles play on their own each load, so the grid isn't wholly static
-    // picked by film id, not grid position — the grid can be shuffled
-    autoIds: (function () {
-      const pool = DATA.filter((d) => d.clip).map((d) => d.id);
-      for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
-      return pool.slice(0, 2);
-    })()
+    // one tile per grid row plays on its own each load, picked by film id so the
+    // grid can still be shuffled
+    autoIds: rowAutoIds(DATA.map((_, i) => i), 4)
   };
 
   videoRef = React.createRef();
@@ -872,11 +878,15 @@ class Component extends DCLogic {
           let song = raw;
           if (m) { artist = m[1].trim(); song = m[2].trim(); }
           song = song.replace(/^\d{1,3}[_\-.\s]+/, '').replace(/\s+by\s+.+$/i, '');
-          song = song.replace(/\(\s*(a\s+)?short\s+film\s*\)/i, '(SHORT)');
+          song = song.replace(/\(\s*(a\s+)?short\s+film\s*\)/i, '').trim();
           song = song.replace(/\s*[\(\[](official|official video|official music video|music video|visualizer|live|lyric video)[^\)\]]*[\)\]]\s*/gi, '').trim();
           const ov = OVERRIDES[d.id] || {};
           d.title = ov.title || song || raw;
           d.kind = ov.kind || artist;
+          // the oEmbed title split is a weak source: only trust a short name that
+          // isn't just the title echoed back
+          const derived = m && artist.length <= 30 && artist.toLowerCase() !== String(d.title).toLowerCase() ? artist : '';
+          d.artist = ov.artist || derived;
           this.forceUpdate();
         })
         .catch(() => {});
@@ -1040,7 +1050,7 @@ class Component extends DCLogic {
     }
     if (d.clip) {
       const auto = !this.state.mob && (this.state.autoIds || []).indexOf(d.id) !== -1;
-      return React.createElement(ClipPreview, { key: 'c' + i, clip: d.clip, src: d.media, alt: d.title, hovered: hovered || auto, auto: auto, mob: !!this.state.mob });
+      return React.createElement(ClipPreview, { key: 'c' + i, clip: d.clip, src: d.media, alt: d.title, pos: d.pos, hovered: hovered || auto, auto: auto, mob: !!this.state.mob });
     }
     if (d.id) {
       // never auto-start a YouTube embed — autoplay is for local clips only
@@ -1114,7 +1124,7 @@ class Component extends DCLogic {
     };
 
     const projects = DATA.map((d, i) => ({
-      num: this.num(i), title: d.title || 'Loading…', kind: d.kind, year: d.year,
+      num: this.num(i), title: d.title || 'Loading…', kind: d.kind, artist: d.artist, year: d.year,
       open: () => setA(i), enterA: () => this.setState({ hoverA: i }),
       enterB: () => this.setState({ hoverB: i }), tile: this.tile(d, i)
     }));
@@ -1123,7 +1133,15 @@ class Component extends DCLogic {
     const shuffled = order.map((i) => {
       const d = DATA[i];
       return {
-        num: this.num(i), title: d.title || 'Loading…', kind: d.kind, year: d.year,
+        num: this.num(i), title: d.title || 'Loading…', kind: d.kind, artist: d.artist, year: d.year,
+        badgeStyle: {
+          position: 'absolute', top: 0, left: 0, zIndex: 3, background: RED, color: BG,
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', letterSpacing: '0.14em',
+          textTransform: 'uppercase', padding: '7px 11px', pointerEvents: 'none',
+          opacity: s.hoverB === i ? 1 : 0,
+          transform: s.hoverB === i ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 460ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 240ms linear'
+        },
         open: () => setB(i), enterB: () => this.setState({ hoverB: i }),
         tile: this.tile(d, i)
       };
@@ -1245,7 +1263,8 @@ class Component extends DCLogic {
         React.createElement(CountStat, { key: 's2', to: 150, suffix: 'M', label: 'Views' }),
         React.createElement(CountStat, { key: 's3', to: 16, suffix: '', label: 'Films', accent: true })
       ]),
-      gridCols: 'repeat(' + (this.props.columns || 4) + ', 1fr)',
+      // minmax(0,1fr) so one long title can't widen its whole column
+      gridCols: 'repeat(' + (this.props.columns || 4) + ', minmax(0, 1fr))',
       showNavB: true, showBurgerB: false, showTools: true, menuOpen: false,
       toggleMenu: () => this.setState((p) => ({ menu: !p.menu })),
       menuWork: () => { this.setState({ menu: false, routeB: 'home', hoverB: null }); this.scrollTo('[data-grid]'); },
@@ -1267,7 +1286,7 @@ class Component extends DCLogic {
       sheetBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 40px', borderBottom: '2px solid ' + INK },
       tileMediaStyle: { position: 'relative', height: '190px', overflow: 'hidden' },
       tileMetaStyle: { display: 'flex', flexDirection: 'column', gap: '8px', padding: '14px 16px 16px', flex: 1 },
-      tileTitleStyle: { fontSize: '22px', fontWeight: 800, letterSpacing: '-0.015em', textTransform: 'uppercase', lineHeight: 1.05 },
+      tileTitleStyle: { fontSize: '22px', fontWeight: 800, letterSpacing: '-0.015em', textTransform: 'uppercase', lineHeight: 1.05, overflowWrap: 'anywhere' },
       aboutGridStyle: { display: 'grid', gridTemplateColumns: '420px minmax(0, 1fr)', borderBottom: '2px solid ' + INK },
       aboutPicStyle: { borderRight: '2px solid ' + INK },
       aboutImgStyle: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
@@ -1394,7 +1413,7 @@ class Component extends DCLogic {
       shuffle: () => {
         const o = this.state.order.slice();
         for (let i = o.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = o[i]; o[i] = o[j]; o[j] = t; }
-        this.setState({ order: o });
+        this.setState({ order: o, autoIds: rowAutoIds(o, this.props.columns || 4) });
       }
     };
 
@@ -1444,8 +1463,11 @@ class Component extends DCLogic {
         letterSpacing: '0.16em', textTransform: 'uppercase', padding: '12px 0'
       },
       heroBoxStyle: {
-        position: 'relative', height: s.heroFull ? '100vh' : '60vh',
-        minHeight: s.heroFull ? 0 : '360px', background: INK, overflow: 'hidden',
+        position: 'relative', height: s.heroFull ? '100vh' : 'min(52vh, 460px)',
+        // never a full screen at rest: the grid's top edge has to peek in under it
+        // so a phone visitor can see there's more page below
+        minHeight: s.heroFull ? 0 : '260px', maxHeight: s.heroFull ? 'none' : '58vh',
+        background: INK, overflow: 'hidden',
         transition: 'height 460ms cubic-bezier(.2,.8,.2,1)'
       },
       // always running, so it doesn't need the dimmed resting state
@@ -1458,7 +1480,7 @@ class Component extends DCLogic {
       sheetBarStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '15px ' + PAD, borderBottom: '2px solid ' + INK },
       tileMediaStyle: { position: 'relative', aspectRatio: '16 / 9', overflow: 'hidden' },
       tileMetaStyle: { display: 'flex', flexDirection: 'column', gap: '7px', padding: '14px ' + PAD + ' 18px', flex: 1 },
-      tileTitleStyle: { fontSize: '26px', fontWeight: 800, letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 1.02 },
+      tileTitleStyle: { fontSize: '26px', fontWeight: 800, letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 1.02, overflowWrap: 'anywhere' },
       aboutGridStyle: { display: 'grid', gridTemplateColumns: '1fr', borderBottom: '2px solid ' + INK },
       aboutPicStyle: { borderBottom: '2px solid ' + INK },
       aboutImgStyle: { width: '100%', height: '54vw', maxHeight: '340px', objectFit: 'cover', display: 'block' },
