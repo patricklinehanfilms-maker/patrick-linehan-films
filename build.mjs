@@ -321,6 +321,40 @@ for (const id of Object.keys(DATE_FIXES)) {
   }
 }
 
+// Correcting the parsed copy above only fixes what this build emits itself — the
+// structured data. The credit row a visitor reads is rendered by Design's own code
+// from the OVERRIDES literal, so that has to be corrected in the document too or
+// the page shows one year and tells Google another.
+function patchEntry(doc, id, fix) {
+  const start = doc.indexOf(`"${id}": {`, doc.indexOf('const OVERRIDES'));
+  if (start === -1) return { doc, changed: [] };
+  const open = doc.indexOf('{', start);
+  let depth = 0, end = -1;
+  for (let i = open; i < doc.length; i++) {
+    if (doc[i] === '{') depth++;
+    else if (doc[i] === '}' && --depth === 0) { end = i; break; }
+  }
+  if (end === -1) return { doc, changed: [] };
+
+  let block = doc.slice(open, end + 1);
+  const changed = [];
+  if (fix.date !== undefined) {
+    const re = /("date"\s*:\s*)"[^"]*"/;
+    if (re.test(block)) { block = block.replace(re, `$1${JSON.stringify(fix.date)}`); changed.push('date'); }
+  }
+  if (fix.year !== undefined) {
+    const re = /("year"\s*:\s*)\d+/;
+    if (re.test(block)) { block = block.replace(re, `$1${fix.year}`); changed.push('year'); }
+  }
+  return { doc: doc.slice(0, open) + block + doc.slice(end + 1), changed };
+}
+
+for (const [id, fix] of Object.entries(DATE_FIXES)) {
+  const res = patchEntry(html, id, fix);
+  html = res.doc;
+  if (res.changed.length) log(`corrected ${res.changed.join(' and ')} in the page data for ${id}`);
+}
+
 if (!films) {
   warn('could not read VIDEO_IDS/OVERRIDES from the export — skipping film structured data');
 } else if (!/application\/ld\+json/.test(html)) {
