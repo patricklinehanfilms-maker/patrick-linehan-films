@@ -282,6 +282,45 @@ function videoObject(f) {
 }
 
 const films = readFilms(html);
+
+// ------------------------------------------- 7a. verified corrections (TEMPORARY)
+// v17 replaced the Know You entry with Blush Red in place and left the old date and
+// year behind, so the film declared itself about ten months older than it is and the
+// wrong value went into uploadDate. These are the publish dates YouTube reports for
+// the video ids, checked against the watch page rather than guessed.
+//
+// This exists only until Design's export carries the right values. Each entry drops
+// itself automatically once the export agrees, and says so in the build log — when
+// every one reports 'no longer needed', delete the whole block.
+const DATE_FIXES = {
+  // Blush Red — YouTube publishDate for DWF3NZPX9VQ
+  'DWF3NZPX9VQ': { date: '2026-09-03T16:00:06-07:00', year: 2026 },
+};
+
+for (const f of films || []) {
+  const fix = DATE_FIXES[f.id];
+  if (!fix) continue;
+  const changed = [];
+  for (const key of ['date', 'year']) {
+    if (fix[key] !== undefined && f[key] !== fix[key]) {
+      changed.push(`${key} ${JSON.stringify(f[key])} -> ${JSON.stringify(fix[key])}`);
+      f[key] = fix[key];
+    }
+  }
+  if (changed.length) {
+    warn(`correcting "${f.title}" from the export: ${changed.join(', ')}. ` +
+         `Remove it from DATE_FIXES once Design ships the fix.`);
+  } else {
+    log(`DATE_FIXES entry for "${f.title}" is no longer needed — the export already agrees`);
+  }
+}
+
+for (const id of Object.keys(DATE_FIXES)) {
+  if (!(films || []).some(f => f.id === id)) {
+    warn(`DATE_FIXES has an entry for ${id}, which is not in the export any more — drop it`);
+  }
+}
+
 if (!films) {
   warn('could not read VIDEO_IDS/OVERRIDES from the export — skipping film structured data');
 } else if (!/application\/ld\+json/.test(html)) {
