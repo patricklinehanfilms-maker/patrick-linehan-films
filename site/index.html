@@ -84,7 +84,7 @@
           </div>
 
           <div onMouseEnter="{{ pauseMarquee }}" onMouseLeave="{{ resumeMarquee }}" style="background: #201e1d; color: #f3f2f2; padding: 34px 0; overflow: hidden; borderBottom: 2px solid #201e1d;">
-            <div ref="{{ marqRef }}" style="display: flex; gap: 70px; width: max-content; alignItems: center; willChange: transform;">{{ logoMarquee }}</div>
+            <div data-marquee ref="{{ marqRef }}" style="display: flex; gap: 70px; width: max-content; alignItems: center; willChange: transform;">{{ logoMarquee }}</div>
           </div>
 
           <div data-grid style="{{ sheetBarStyle }}">
@@ -155,7 +155,7 @@
           </div>
 
           <div style="{{ contactHeadStyle }}" onMouseEnter="{{ pauseContactVid }}" onMouseLeave="{{ playContactVid }}">
-            <video src="{{ contactBgSrc }}" ref="{{ contactVidRef }}" preload="none" autoPlay="{{ bgReady }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" style="position: absolute; inset: 0; width: 100%; height: 100%; objectFit: cover; zIndex: 0; filter: grayscale(1) contrast(1.2); mixBlendMode: multiply; opacity: 0.55; pointerEvents: none;"></video>
+            <video src="assets/contact-bg.mp4" ref="{{ contactVidRef }}" preload="none" autoPlay="{{ bgReady }}" muted="{{ true }}" loop="{{ true }}" playsInline="{{ true }}" style="position: absolute; inset: 0; width: 100%; height: 100%; objectFit: cover; zIndex: 0; filter: grayscale(1) contrast(1.2); mixBlendMode: multiply; opacity: 0.55; pointerEvents: none;"></video>
             <div style="flex: 1 1 auto; minWidth: 0; position: relative; zIndex: 1;">
               <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; opacity: 0.85; marginBottom: 22px;">Available for work worldwide</div>
               <div style="{{ contactTitleStyle }}">Tell me what<br>you're making</div>
@@ -271,7 +271,7 @@ function rowAutoIds(order, cols) {
 }
 const STRIPE = 'repeating-linear-gradient(135deg, #dcdad9 0 9px, #f3f2f2 9px 18px)';
 
-const VIDEO_IDS = ["wl7VscNbwAw","5NsMIXv0gRs","nG3rHSOug5c","JhwyMiCH-Mc","w_6r2iEur3g","V_OSd1Al7Bc","mq-5QnSmwLo","rIgKZS8-HuY","wskTMjUOiBM","SizhMPbjEk8","L-9QwatubPo","wxLGzYsTBhg","DmpCKe1DYqo","zhkoGDcNnc0","7E9ZXITzgcc","59EJ_paMewk"];
+const VIDEO_IDS = ["wl7VscNbwAw","5NsMIXv0gRs","nG3rHSOug5c","JhwyMiCH-Mc","w_6r2iEur3g","V_OSd1Al7Bc","mq-5QnSmwLo","rIgKZS8-HuY","wskTMjUOiBM","DWF3NZPX9VQ","L-9QwatubPo","wxLGzYsTBhg","DmpCKe1DYqo","zhkoGDcNnc0","7E9ZXITzgcc","59EJ_paMewk"];
 
 // Per-film overrides. Any of: title, kind, year, dp, edit, color, producer.
 // Anything omitted falls back to YouTube's data / P. Linehan.
@@ -381,16 +381,22 @@ const OVERRIDES = {
     "clip": "assets/clip-bandfriday.mp4",
     "edit": "P. Linehan"
   },
-  "SizhMPbjEk8": {
-    "slug": "know-you",
+  "DWF3NZPX9VQ": {
+    "slug": "blush-red",
     "date": "2025-11-19T09:01:46-08:00",
-    "title": "Know You",
+    "title": "Blush Red",
     "kind": "Short Film",
-    "clip": "assets/clip-knowyou.mp4",
+    "clip": "assets/clip-blushred.mp4",
+    "thumb": "assets/thumb-blushred.jpg",
     "year": 2025,
-    "dp": "P. Linehan",
-    "edit": "P. Linehan",
-    "desc": "The other short I made with Kevin Atwater off Blush Red. Two people sit next to each other and barely speak, and the whole relationship plays underneath it. Birthday candles, a backyard, a kiss, a bedroom. I shot it to feel found rather than made."
+    "dir": "Patrick Linehan",
+    "written": "Kevin Atwater",
+    "producer": "Luis Valencia",
+    "dp": "Karl Somerville",
+    "music": "Kevin Atwater",
+    "cast": "Kevin Atwater + David Kopriva",
+    "runtime": "13:30",
+    "desc": "I directed this as a companion piece to Kevin Atwater's album Blush Red, built around the record rather than laid on top of it. It starts near closing time at a bar on the Lower East Side, where two strangers end up talking longer than either of them planned. The rest of the film is the walk home. No plot arrives to complicate it. They cross the city on foot and something settles between them on the way, in the gaps between blocks and the things they decide to say out loud.\n\nWe shot on real streets at real hours, which is most of what gives it its texture. Kevin plays one of the two men and wrote the film as well as the music. David Kopriva plays the other."
   },
   "L-9QwatubPo": {
     "slug": "jackie-chan",
@@ -510,8 +516,11 @@ function buildData(ids) {
 // the domain root and inside a preview path.
 const BASE = (function () {
   if (typeof location === 'undefined') return '/';
-  let p = location.pathname.replace(/[^/]*$/, '');
-  p = p.replace(/work\/$/, '');
+  // strip the whole work/<slug> tail, with or without a trailing slash, so a
+  // case-study URL resolves to the same base as the home route
+  let p = location.pathname.replace(/work\/[^/]*\/?$/, '');
+  if (p === location.pathname) p = p.replace(/[^/]*$/, '');
+  if (!/\/$/.test(p)) p += '/';
   return p || '/';
 })();
 // A case-study URL (/work/<slug>) sits one directory deeper than the assets, so
@@ -632,7 +641,7 @@ class HoverPlayer extends React.Component {
   state = { hov: false, live: false, zoom: 1 };
   render() {
     const p = this.props, st = this.state;
-    const kids = [React.createElement(Thumb, { key: 'thumb', src: p.src, alt: p.alt, onZoom: (z) => { if (z !== this.state.zoom) this.setState({ zoom: z }); } })];
+    const kids = [React.createElement(Thumb, { key: 'thumb', src: p.src, alt: p.alt, pos: p.pos, onZoom: (z) => { if (z !== this.state.zoom) this.setState({ zoom: z }); } })];
     const z = st.zoom || 1;
     if (st.hov || st.live) {
       const q = st.live
@@ -712,7 +721,7 @@ class Thumb extends React.Component {
     return React.createElement('img', {
       src: p.src, alt: p.alt || '', crossOrigin: 'anonymous', onLoad: this.measure,
       style: {
-        width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+        width: '100%', height: '100%', objectFit: 'cover', objectPosition: p.pos || 'center', display: 'block',
         transform: 'scale(' + z + ')',
         transition: 'transform 400ms cubic-bezier(.2,.8,.2,1)'
       }
@@ -1095,22 +1104,37 @@ class Component extends DCLogic {
     return (OVERRIDES[d.id] && OVERRIDES[d.id].desc) || '';
   }
 
+  // The banner unmounts on a case-study route and comes back as a NEW node when
+  // you return home, so the loop resolves the ref every frame instead of closing
+  // over one element — otherwise it keeps driving the detached original and the
+  // visible banner sits still.
   startMarquee() {
-    const el = this.marqRef.current;
-    if (!el) return;
-    const half = el.scrollWidth / 2;
-    if (!half) { requestAnimationFrame(() => this.startMarquee()); return; }
-    this.marq.base = half / 40;
-    this.marq.vel = this.marq.base;
-    this.marq.target = this.marq.base;
-    let last = performance.now();
+    const gen = (this.marqGen = (this.marqGen || 0) + 1);
+    let el = null, half = 0, last = performance.now();
     const tick = (now) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
+      // a later start supersedes this loop
+      if (gen !== this.marqGen) return;
+      // the banner unmounts on a case-study route and returns as a NEW node, so
+      // look it up every frame rather than closing over one element; the ref is
+      // only wired in some renders, so fall back to the marked node
+      const node = this.marqRef.current || document.querySelector('[data-marquee]');
+      if (node && node !== el) {
+        const w = node.scrollWidth / 2;
+        if (w) {
+          el = node; half = w; last = now;
+          this.marq.base = half / 40;
+          if (!this.marq.vel) this.marq.vel = this.marq.base;
+          if (!this.marq.hold) this.marq.target = this.marq.base;
+        }
+      }
+      if (el && half) {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        const m = this.marq;
+        m.vel += (m.target - m.vel) * (1 - Math.pow(1 - m.ease, dt * 60));
+        const x = (m.x + m.vel * dt) % half;
+        if (isFinite(x)) { m.x = x; el.style.transform = 'translateX(' + (-x) + 'px)'; }
+      }
       last = now;
-      const m = this.marq;
-      m.vel += (m.target - m.vel) * (1 - Math.pow(1 - m.ease, dt * 60));
-      m.x = (m.x + m.vel * dt) % half;
-      el.style.transform = 'translateX(' + (-m.x) + 'px)';
       this.marqRAF = requestAnimationFrame(tick);
     };
     this.marqRAF = requestAnimationFrame(tick);
@@ -1135,6 +1159,9 @@ class Component extends DCLogic {
       { k: 'EDIT', v: o.edit },
       { k: 'COLOR', v: o.color },
       { k: 'PROD', v: o.producer },
+      { k: 'MUSIC', v: o.music },
+      { k: 'CAST', v: o.cast },
+      { k: 'RUNTIME', v: o.runtime },
       { k: 'RELEASED', v: o.date ? fmtDate(o.date) : (o.year ? String(o.year) : '') }
     ].filter((r) => r.v).map((r, i, all) => ({
       k: r.k, v: r.v, last: i === all.length - 1
@@ -1143,7 +1170,7 @@ class Component extends DCLogic {
 
   player(d, h) {
     return React.createElement(HoverPlayer, {
-      key: 'hp-' + d.id, id: d.id, src: d.hero || d.media, alt: d.title, height: h,
+      key: 'hp-' + d.id, id: d.id, src: d.hero || d.media, alt: d.title, height: h, pos: d.pos,
       mob: !!this.state.mob,
       // sound on means the viewer wants the film, not the label over it
       onLive: () => { if (!this.state.mob) this.setState({ caseLive: true }); }
@@ -1356,8 +1383,8 @@ class Component extends DCLogic {
       },
       logoMarquee: [].concat(this.logoStrip('a'), this.logoStrip('b')),
       marqRef: this.marqRef,
-      pauseMarquee: () => { this.marq.target = 0; this.marq.ease = 0.045; },
-      resumeMarquee: () => { this.marq.target = this.marq.base; this.marq.ease = 0.045; },
+      pauseMarquee: () => { this.marq.hold = true; this.marq.target = 0; this.marq.ease = 0.045; },
+      resumeMarquee: () => { this.marq.hold = false; this.marq.target = this.marq.base; this.marq.ease = 0.045; },
       runA: { position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', opacity: s.logoA ? 1 : 0, transition: 'opacity 120ms linear' },
       runB: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', display: 'block', transform: 'scale(0.82)', transformOrigin: 'center center', opacity: s.logoB ? 1 : 0, transition: 'opacity 120ms linear' },
       enterLogoA: () => this.setState({ logoA: true }), leaveLogoA: () => this.setState({ logoA: false }),
@@ -1407,7 +1434,6 @@ class Component extends DCLogic {
       tileTitleStyle: { fontSize: '22px', fontWeight: 800, letterSpacing: '-0.015em', textTransform: 'uppercase', lineHeight: 1.05, overflowWrap: 'anywhere', margin: 0 },
       aboutGridStyle: { display: 'grid', gridTemplateColumns: '420px minmax(0, 1fr)', borderBottom: '2px solid ' + INK },
       aboutPicStyle: { borderRight: '2px solid ' + INK },
-      contactBgSrc: this.state.bgReady ? A('assets/contact-bg.mp4') : undefined,
       aboutImgStyle: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
       aboutPadStyle: { padding: '54px 40px' },
       aboutTitleStyle: { fontSize: '30px', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '22px', maxWidth: '24ch' },
@@ -1487,7 +1513,7 @@ class Component extends DCLogic {
       caseTitleStyle: { margin: 0, fontSize: '78px', lineHeight: 0.88, fontWeight: 900, letterSpacing: '-0.035em', textTransform: 'uppercase', willChange: 'transform', animation: 'slidein 620ms cubic-bezier(.16,.84,.28,1) both' },
       caseCreditsStyle: { padding: '48px 32px', borderRight: '2px solid ' + INK, fontFamily: MONO, fontSize: '13px', letterSpacing: '0.04em' },
       caseCopyStyle: { padding: '48px 40px', display: 'flex', flexDirection: 'column', gap: '34px', alignItems: 'flex-start' },
-      caseBodyStyle: { fontSize: '24px', fontWeight: 600, lineHeight: 1.45, maxWidth: '52ch', textWrap: 'pretty' },
+      caseBodyStyle: { fontSize: '24px', fontWeight: 600, lineHeight: 1.45, maxWidth: '52ch', textWrap: 'pretty', whiteSpace: 'pre-line' },
       caseNavStyle: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '40px', borderTop: '2px solid ' + INK, background: RED, color: '#fff', gap: '40px' },
       caseNavTitleStyle: { fontSize: '40px', fontWeight: 900, letterSpacing: '-0.03em', textTransform: 'uppercase', lineHeight: 1 },
       caseNavNextStyle: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px', cursor: 'pointer', flex: 1, textAlign: 'right' },
@@ -1604,7 +1630,6 @@ class Component extends DCLogic {
       tileTitleStyle: { fontSize: '26px', fontWeight: 800, letterSpacing: '-0.02em', textTransform: 'uppercase', lineHeight: 1.02, overflowWrap: 'anywhere', margin: 0 },
       aboutGridStyle: { display: 'grid', gridTemplateColumns: '1fr', borderBottom: '2px solid ' + INK },
       aboutPicStyle: { borderBottom: '2px solid ' + INK },
-      contactBgSrc: this.state.bgReady ? A('assets/contact-bg.mp4') : undefined,
       aboutImgStyle: { width: '100%', height: '80vw', maxHeight: '470px', objectFit: 'cover', objectPosition: '50% 32%', display: 'block' },
       aboutPadStyle: { padding: '38px ' + PAD },
       aboutTitleStyle: { fontSize: '28px', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.12, marginBottom: '18px' },
@@ -1640,7 +1665,7 @@ class Component extends DCLogic {
       caseColsB: '1fr',
       caseCreditsStyle: { padding: '30px ' + PAD, borderBottom: '2px solid ' + INK, fontFamily: MONO, fontSize: '13px', letterSpacing: '0.04em' },
       caseCopyStyle: { padding: '30px ' + PAD, display: 'flex', flexDirection: 'column', gap: '26px', alignItems: 'flex-start' },
-      caseBodyStyle: { fontSize: '18px', fontWeight: 500, lineHeight: 1.5, textWrap: 'pretty' },
+      caseBodyStyle: { fontSize: '18px', fontWeight: 500, lineHeight: 1.5, textWrap: 'pretty', whiteSpace: 'pre-line' },
       caseNavStyle: { display: 'flex', flexDirection: 'column', alignItems: 'stretch', padding: '30px ' + PAD, borderTop: '2px solid ' + INK, background: RED, color: '#fff', gap: '26px' },
       caseNavTitleStyle: { fontSize: '26px', fontWeight: 900, letterSpacing: '-0.025em', textTransform: 'uppercase', lineHeight: 1.05 },
       caseNavNextStyle: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px', cursor: 'pointer', textAlign: 'left' },
