@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Citi Bike Surfer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&display=swap">
+<style>
+  :root { --ground:#f2f0ea; --ink:#141416; --muted:#6c6a66; --sign:#0f6b3d; --cab:#f5bf1a; --warn:#e2402c; }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body { margin:0; background:var(--ground); color:var(--ink); overflow:hidden; touch-action:none; user-select:none;
+         font-family:"Archivo","Helvetica Neue",Helvetica,Arial,sans-serif; padding-inline:16px;
+         display:flex; align-items:center; justify-content:center; }
+  #wrap { position:relative; box-shadow:0 24px 60px rgba(20,20,22,.25); }
+  canvas { display:block; }
+  #hud { position:absolute; left:0; right:0; top:0; display:flex; justify-content:space-between; align-items:flex-start; padding:10px; pointer-events:none; }
+  #sign { background:var(--sign); color:#fff; font-weight:700; font-size:17px; padding:5px 10px 6px; border-radius:4px;
+          border:2px solid #fff; box-shadow:0 0 0 1px var(--sign); letter-spacing:.01em; white-space:nowrap; }
+  #stats { background:var(--ink); color:#fff; border-radius:4px; padding:6px 10px; font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+           display:flex; gap:12px; align-items:center; font-variant-numeric:tabular-nums; }
+  #stats b { font-size:16px; letter-spacing:0; }
+  .life { display:inline-block; width:9px; height:9px; border-radius:50%; background:#ff6a3d; margin-left:3px; }
+  .life.gone { background:transparent; box-shadow:inset 0 0 0 1.5px #77767a; }
+  #overlay { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; padding:22px; cursor:pointer;
+             background:linear-gradient(to top, rgba(20,20,22,.94) 55%, rgba(20,20,22,.35)); color:#fff; }
+  #overlay .kicker { display:inline-block; align-self:flex-start; background:var(--sign); border:2px solid #fff; border-radius:4px; padding:3px 8px; font-weight:700; font-size:13px; }
+  #overlay h1 { font-size:46px; line-height:.95; font-weight:800; letter-spacing:-.03em; margin:14px 0 12px; text-wrap:balance; }
+  #overlay p { margin:0 0 10px; color:#cfcdc7; font-size:14px; line-height:1.5; max-width:34em; }
+  #overlay .go { margin-top:10px; color:var(--cab); font-weight:700; letter-spacing:.1em; text-transform:uppercase; font-size:13px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+
+<div id="wrap">
+  <canvas id="c"></canvas>
+  <div id="hud">
+    <div id="sign">Central Park S</div>
+    <div id="stats"><span><b id="mph">11</b> mph</span></div>
+  </div>
+  <div id="overlay">
+    <span class="kicker" id="ovKick">7 Av southbound</span>
+    <h1 id="ovTitle">Citi Bike Surfer</h1>
+    <p id="ovText">Ride 7th Avenue from Central Park South down to 14th St. Cars and cabs come up fast from behind (watch for the arrows at the bottom), crosstown traffic cuts across at every street, parked car doors swing open across the bike lane, and people park wherever they want. It gets faster and busier the further downtown you go.</p>
+    <p id="ovHelp">On a phone, tilt left and right to steer. On a computer, use the arrow keys. One crash and the ride is over.</p>
+    <p class="go" id="ovGo">Tap to ride</p>
+  </div>
+</div>
+
+<script>
+// ---------- layout (logical px) ----------
+const W = 420, H = 760, PY = H * 0.74, BLOCK = 560, STREET = 84, LAST = 45, TOP = 59;
+const Z = { bldL: [0, 30], walkL: [30, 50], bike: [50, 82], buf: [82, 96], park: [96, 124], lanes: [124, 324], bus: [324, 368], walkR: [368, 390], bldR: [390, 420] };
+const LANES = [149, 199, 249, 299], BUS_X = 346, BL = 66, MINX = 56, MAXX = 362, DOOR = 48;
+const C = { asphalt: '#2a2a2e', asphalt2: '#232326', line: '#e9e6dc', bike: '#2f8a55', bus: '#9e3129', walk: '#b9b5ac', roof: ['#4a4a50', '#56555c', '#3f3f45', '#605d63'],
+  tower: '#8b5a3a', cab: '#f5bf1a', cars: ['#e8e6e1', '#a3a8b0', '#4fa39f', '#5b86bd', '#c9503f'], rider: '#ff6a3d', ped: '#e9e6dc' };
+
+const cvs = document.getElementById('c'), ctx = cvs.getContext('2d'), wrap = document.getElementById('wrap');
+const dpr = Math.min(2, window.devicePixelRatio || 1);
+function fit() {
+  const s = Math.min((innerWidth - 32) / W, (innerHeight - 24) / H);
+  wrap.style.width = W * s + 'px'; wrap.style.height = H * s + 'px';
+  cvs.style.width = W * s + 'px'; cvs.style.height = H * s + 'px';
+  cvs.width = W * dpr; cvs.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  scale = s;
+}
+let scale = 1; addEventListener('resize', fit); fit();
+
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+let best = 0; try { best = +localStorage.getItem('downtown7-best') || 0; } catch (e) {}
+
+// ---------- state ----------
+let S, motionMsg = '';
+function newGame() {
+  S = { dist: 0, speed: 220, x: BL, vx: 0, lives: 1, inv: 0, crashFlash: 0, over: false, running: false,
+        roofs: [], statics: [], streets: [], traffic: [], cross: [], peds: [], genTo: -1, spawnT: 3, busT: 6, maxStreet: 0 };
+  genBlock(-1);
+}
+const street = n => n <= 0 ? 'Central Park S' : `W ${TOP - n} St`;
+// even streets run east (screen left when heading downtown), odd streets run west
+const crossDir = n => (TOP - n) % 2 === 0 ? -1 : 1;
+const diffAt = n => clamp(n / 38, 0, 1);
+
+function genBlock(n) {
+  const y0 = n * BLOCK + STREET / 2, y1 = (n + 1) * BLOCK - STREET / 2, d = diffAt(n);
+  for (const side of [0, 1]) {
+    let y = y0;
+    while (y < y1 - 20) {
+      const h = Math.min(y1 - y, rnd(60, 180));
+      S.roofs.push({ side, y, h, shade: pick(C.roof), tower: Math.random() < .35, tx: rnd(.3, .7), ty: rnd(.25, .75) });
+      y += h + (Math.random() < .3 ? 5 : 0);
+    }
+  }
+  if (n >= LAST) { S.genTo = n; return; }
+  let y = y0 + 12;
+  while (y < y1 - 50) {
+    if (Math.random() < .8 && n >= 1) S.statics.push({ kind: 'parked', x: 110, wy: y + 22, w: 24, h: 44, color: Math.random() < .2 ? C.cab : pick(C.cars),
+      door: n > 1 && Math.random() < .07 + .2 * d, open: 0 });
+    y += rnd(54, 72);
+  }
+  const clearParked = (a, b) => { S.statics = S.statics.filter(o => !(o.kind === 'parked' && o.wy > a && o.wy < b && o.wy > y0 - 1)); };
+  // doors: leave an escape gap in the parked row just before each one
+  for (const o of S.statics) if (o.kind === 'parked' && o.door && o.wy > y0) o.gapBefore = true;
+  for (const o of S.statics.filter(o => o.gapBefore)) { clearParked(o.wy - 80, o.wy - 10); o.gapBefore = false; }
+  // cars and trucks parked in the bike lane
+  if (n > 1) {
+    const k = Math.floor(rnd(0.3, 1.3 + 2 * d));
+    for (let i = 0; i < k; i++) {
+      const truck = Math.random() < .35, h = truck ? 72 : 44, wy = rnd(y0 + 90, y1 - 50);
+      if (S.statics.some(o => (o.kind === 'blocked' || o.kind === 'truck') && Math.abs(o.wy - wy) < 130)) continue;
+      clearParked(wy - h / 2 - 70, wy - h / 2 + 4); clearParked(wy + h / 2 - 4, wy + h / 2 + 60);
+      S.statics.push({ kind: truck ? 'truck' : 'blocked', x: BL, wy, w: truck ? 28 : 24, h, color: Math.random() < .3 ? C.cab : pick(C.cars), hazard: true });
+    }
+  }
+  // double parked in the right lane of traffic
+  if (n > 1) {
+    const k = Math.floor(rnd(0.2, 1 + 1.8 * d));
+    for (let i = 0; i < k; i++) {
+      const truck = Math.random() < .3, h = truck ? 72 : 44, wy = rnd(y0 + 50, y1 - 50);
+      if (S.statics.some(o => o.kind === 'dbl' && Math.abs(o.wy - wy) < 120)) continue;
+      S.statics.push({ kind: 'dbl', truck, x: LANES[0], wy, w: truck ? 28 : 26, h, color: Math.random() < .35 ? C.cab : pick(C.cars), hazard: true });
+    }
+  }
+  const holes = n > 0 && Math.random() < .3 + .5 * d ? (Math.random() < d ? 2 : 1) : 0;
+  for (let i = 0; i < holes; i++) S.statics.push({ kind: 'hole', x: pick([...LANES, BUS_X, BL]) + rnd(-10, 10), wy: rnd(y0 + 30, y1 - 30), r: 10 });
+  // the street at the top of this block
+  const sn = n + 1, sy = sn * BLOCK, dir = crossDir(sn), ev = [];
+  if (sn > 1 && sn < LAST) {
+    const cars = Math.floor(rnd(0, 1.2 + 2.6 * d));
+    for (let i = 0; i < cars; i++) ev.push({ type: 'car', trig: rnd(220, 820), v: rnd(190, 300) + 80 * d, lane: pick([-14, 14]) });
+    const peds = Math.floor(rnd(0.3, 1.6 + 1.4 * d));
+    for (let i = 0; i < peds; i++) ev.push({ type: 'ped', trig: rnd(120, 900), v: rnd(36, 64), off: pick([-36, 36]) + rnd(-4, 4) });
+  }
+  S.streets.push({ n: sn, wy: sy, dir, ev });
+  S.genTo = n;
+}
+
+// ---------- input ----------
+let keys = { l: 0, r: 0 }, tiltIn = null, motionOn = false, raw = null, zero = 0;
+addEventListener('keydown', e => { if (e.key === 'ArrowLeft' || e.key === 'a') keys.l = 1; if (e.key === 'ArrowRight' || e.key === 'd') keys.r = 1; if ((e.key === ' ' || e.key === 'Enter') && !overlay.hidden) startRide(); });
+addEventListener('keyup', e => { if (e.key === 'ArrowLeft' || e.key === 'a') keys.l = 0; if (e.key === 'ArrowRight' || e.key === 'd') keys.r = 0; });
+addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+
+function onOrient(e) {
+  if (e.gamma == null) return;
+  const a = (((screen.orientation && screen.orientation.angle) ?? window.orientation ?? 0) % 360 + 360) % 360;
+  const x = a === 90 ? e.beta : a === 270 ? -e.beta : a === 180 ? -e.gamma : e.gamma;
+  if (raw === null) zero = x;
+  raw = x; motionOn = true;
+  tiltIn = clamp((x - zero) / 18, -1, 1);
+}
+async function enableMotion() {
+  if (motionOn || typeof DeviceOrientationEvent === 'undefined') return;
+  try {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      if (await DeviceOrientationEvent.requestPermission() !== 'granted') { motionMsg = 'Motion access was denied. Allow it in your browser settings to steer by tilting.'; return; }
+    }
+    addEventListener('deviceorientation', onOrient);
+  } catch (e) {}
+}
+
+// ---------- overlay ----------
+const overlay = document.getElementById('overlay');
+const $ = id => document.getElementById(id);
+function startRide() {
+  if (S.over) newGame();
+  if (raw !== null) zero = raw;
+  S.vx = 0;
+  S.running = true; overlay.hidden = true; last = performance.now();
+}
+overlay.addEventListener('click', async () => {
+  await enableMotion();
+  if (motionMsg) { $('ovHelp').textContent = motionMsg; motionMsg = ''; return; }
+  startRide();
+});
+
+const CAUSES = {
+  cab: 'Clipped by a cab coming up from behind.', car: 'Clipped by a car coming up from behind.', bus: 'The bus did not see you.',
+  cross: 'T-boned by crosstown traffic.', door: 'Doored.', truck: 'Rode straight into a delivery truck parked in the bike lane.', blocked: 'Rode into a car parked in the bike lane.', dbl: 'Rear-ended a double-parked car.',
+  parked: 'Rode into a parked car.', hole: 'Pothole. Classic.', ped: 'Swerved into a pedestrian in the crosswalk.'
+};
+function crash(cause) {
+  if (S.inv > 0) return;
+  S.lives--; S.inv = 1.8; S.crashFlash = 1; S.lastCause = cause;
+  updateLives();
+  if (S.lives <= 0) {
+    S.running = false; S.over = true;
+    const reached = S.maxStreet;
+    const isBest = reached > best; if (isBest) { best = reached; try { localStorage.setItem('downtown7-best', best); } catch (e) {} }
+    $('ovKick').textContent = street(reached);
+    $('ovTitle').textContent = isBest && reached > 0 ? 'New best' : 'Ride over';
+    $('ovText').textContent = `${CAUSES[cause]} You made it ${reached} block${reached === 1 ? '' : 's'} downtown.`;
+    $('ovHelp').textContent = `Best: ${street(best)}.`;
+    $('ovGo').textContent = 'Tap to ride again';
+    overlay.hidden = false;
+  }
+}
+function win() {
+  S.running = false; S.over = true; best = LAST; try { localStorage.setItem('downtown7-best', best); } catch (e) {}
+  $('ovKick').textContent = 'W 14 St'; $('sign').textContent = 'W 14 St';
+  $('ovTitle').textContent = 'You made it downtown';
+  $('ovText').textContent = 'Central Park South to 14th St without a scratch.';
+  $('ovHelp').textContent = '';
+  $('ovGo').textContent = 'Tap to ride again';
+  overlay.hidden = false;
+}
+function updateLives() {
+
+}
+
+// ---------- update ----------
+const sy = wy => PY - (wy - S.dist);           // world y (north) to screen y
+const hit = (ax, ay, aw, ah, bx, by, bw, bh) => Math.abs(ax - bx) * 2 < aw + bw && Math.abs(ay - by) * 2 < ah + bh;
+
+function spawnTraffic(d) {
+  const lane = Math.floor(Math.random() * 4), x = LANES[lane];
+  const ahead = Math.random() < .22;
+  const h = rnd(44, 52), cab = Math.random() < .42;
+  const wy = ahead ? S.dist + PY + 70 : S.dist - (H - PY) - 60;
+  const v = ahead ? S.speed * rnd(.35, .6) : S.speed + rnd(90, 200) + 60 * d;
+  if (S.traffic.some(c => c.lane === lane && Math.abs(c.wy - wy) < 90) || (lane === 0 && S.statics.some(o => o.kind === 'dbl' && Math.abs(o.wy - wy) < 90))) return;
+  S.traffic.push({ x, lane, wy, v, v0: v, w: 26, h, color: cab ? C.cab : pick(C.cars), kind: cab ? 'cab' : 'car' });
+}
+
+function update(dt) {
+  const n = Math.floor(S.dist / BLOCK), d = diffAt(n);
+  S.speed = Math.min(580, 220 + (S.dist / BLOCK) * 8.5);
+  S.dist += S.speed * dt;
+  S.maxStreet = Math.max(S.maxStreet, Math.floor((S.dist + 0.001) / BLOCK));
+  if (S.dist >= LAST * BLOCK) { win(); return; }
+  while ((S.genTo + 1) * BLOCK < S.dist + PY + 400) genBlock(S.genTo + 1);
+
+  // steering
+  let want = 0;
+  if (motionOn && tiltIn !== null) want = tiltIn * 300;
+  else if (keys.l || keys.r) want = (keys.r - keys.l) * 280;
+  S.vx += (want - S.vx) * Math.min(1, dt * 12);
+  S.x = clamp(S.x + S.vx * dt, MINX, MAXX);
+  S.inv = Math.max(0, S.inv - dt); S.crashFlash = Math.max(0, S.crashFlash - dt * 2.5);
+
+  const bx = S.x, by = S.dist, BW = 9, BH = 24;
+
+  // spawn traffic from behind (and a few slow ones ahead)
+  S.spawnT -= dt;
+  if (S.spawnT <= 0 && n >= 0 && n < LAST - 1) { spawnTraffic(d); S.spawnT = rnd(.6, 1.3) * (2.2 - 1.5 * d); }
+  S.busT -= dt;
+  if (S.busT <= 0 && n < LAST - 1) {
+    S.traffic.push({ x: BUS_X, lane: 'bus', wy: S.dist - (H - PY) - 90, v: 0, v0: S.speed + rnd(60, 130), w: 30, h: 110, color: '#dfe3ea', kind: 'bus' });
+    S.busT = rnd(7, 14) - 4 * d;
+  }
+  // traffic movement: keep distance to the car ahead in the lane
+  S.traffic.sort((a, b) => a.wy - b.wy);
+  const dbls = S.statics.filter(o => o.kind === 'dbl');
+  for (let i = 0; i < S.traffic.length; i++) {
+    const c = S.traffic[i];
+    c.v = c.v0;
+    // yield to pedestrians and crosstown cars in the lane ahead
+    const front = c.wy + c.h / 2;
+    for (const p of S.peds) { const g = p.wy - 7 - front; if (g > -3 && g < 70 && Math.abs(p.x - c.x) < c.w / 2 + 12) c.v = 0; }
+    for (const x of S.cross) { const g = x.wy - x.w / 2 - front; if (g > -3 && g < 70 && Math.abs(x.x - c.x) < c.w / 2 + x.h / 2 + 14) c.v = 0; }
+    for (let j = i + 1; j < S.traffic.length; j++) {
+      const o = S.traffic[j];
+      if (o.lane === c.lane) { if (o.wy - c.wy < (o.h + c.h) / 2 + 24) c.v = Math.min(c.v, o.v, Math.max(0, (o.wy - c.wy - (o.h + c.h) / 2 - 8) * 6 + o.v)); break; }
+    }
+    if (c.lane === 0) {
+      const block = dbls.find(o => o.wy > c.wy && o.wy - c.wy < 220);
+      if (block) {
+        const free = !S.traffic.some(o => o !== c && o.lane === 1 && Math.abs(o.wy - c.wy) < 90);
+        if (free) c.lane = 1;
+        else if (block.wy - c.wy < (block.h + c.h) / 2 + 12) c.v = 0;
+      }
+    }
+    if (typeof c.lane === 'number') c.x += (LANES[c.lane] - c.x) * Math.min(1, dt * 5);
+    c.wy += c.v * dt;
+    if (hit(bx, by, BW, BH, c.x, c.wy, c.w, c.h)) crash(c.kind);
+  }
+  S.traffic = S.traffic.filter(c => sy(c.wy) > -200 && sy(c.wy) < H + 700);
+
+  // crosstown events
+  for (const st of S.streets) {
+    const gap = st.wy - S.dist;
+    for (const e of st.ev) {
+      if (e.done || gap > e.trig) continue;
+      e.done = true;
+      if (e.type === 'car') {
+        const cab = Math.random() < .4;
+        S.cross.push({ x: st.dir > 0 ? -40 : W + 40, wy: st.wy + e.lane * st.dir * -1, v: e.v, dir: st.dir, w: 48, h: 24, color: cab ? C.cab : pick(C.cars) });
+      } else {
+        const fromLeft = Math.random() < .5;
+        S.peds.push({ x: Math.random() < .2 ? rnd(60, 360) : (fromLeft ? 40 : 380), wy: st.wy + e.off, v: e.v * (fromLeft ? 1 : -1), phase: Math.random() * 6 });
+      }
+    }
+  }
+  S.streets = S.streets.filter(st => sy(st.wy) < H + 100);
+  for (const c of S.cross) {
+    const nose = c.x + c.dir * c.h / 2;
+    const blocked = S.traffic.some(o => Math.abs(o.wy - c.wy) < o.h / 2 + c.w / 2 + 4 && (o.x - c.dir * o.w / 2 - nose) * c.dir < 26 && (o.x + c.dir * o.w / 2 - nose) * c.dir > -4);
+    if (!blocked) c.x += c.dir * c.v * dt; if (hit(bx, by, BW, BH, c.x, c.wy, c.w, c.h)) crash('cross'); }
+  S.cross = S.cross.filter(c => c.x > -80 && c.x < W + 80 && sy(c.wy) < H + 60);
+  for (const p of S.peds) {
+    const pd = Math.sign(p.v), pn = p.x + pd * 6;
+    const wait = S.traffic.some(o => Math.abs(o.wy - p.wy) < o.h / 2 + 10 && (o.x - pd * o.w / 2 - pn) * pd < 12 && (o.x + pd * o.w / 2 - pn) * pd > -2);
+    if (!wait) p.x += p.v * dt; p.phase += dt * 9; if (hit(bx, by, BW, BH, p.x, p.wy, 12, 12)) crash('ped'); }
+  S.peds = S.peds.filter(p => p.x > 20 && p.x < 400 && sy(p.wy) < H + 40);
+
+  // statics
+  for (const o of S.statics) {
+    if (o.kind === 'hole') { if (Math.abs(o.x - bx) < o.r + 2 && Math.abs(o.wy - by) < o.r + 8) crash('hole'); continue; }
+    if (o.kind === 'parked' && o.door) {
+      const gap = o.wy - S.dist;
+      if (gap < 200 + S.speed * .45 && gap > -40) o.open = Math.min(1, o.open + dt * 3);
+      if (o.open > .25 && hit(bx, by, BW, BH, 98 - DOOR / 2 * o.open, o.wy + 10, DOOR * o.open, 6)) crash('door');
+    }
+    if (o.kind !== 'hole' && hit(bx, by, BW, BH, o.x, o.wy, o.w, o.h)) crash(o.kind);
+  }
+  S.statics = S.statics.filter(o => sy(o.wy) < H + 120);
+  S.roofs = S.roofs.filter(r => sy(r.y + r.h) < H + 20);
+
+  $('sign').textContent = street(S.maxStreet);
+  $('mph').textContent = Math.round(S.speed / 20);
+}
+
+// ---------- draw ----------
+function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function strip([a, b], col) { ctx.fillStyle = col; ctx.fillRect(a, 0, b - a, H); }
+
+function drawCar(x, y, w, h, color, kind, horizontal) {
+  ctx.save(); ctx.translate(x, y); if (horizontal) ctx.rotate(horizontal > 0 ? Math.PI / 2 : -Math.PI / 2);
+  ctx.fillStyle = 'rgba(0,0,0,.35)'; rrect(-w / 2 + 2, -h / 2 + 3, w, h, 5); ctx.fill();
+  ctx.fillStyle = color; rrect(-w / 2, -h / 2, w, h, kind === 'bus' ? 3 : 6); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1.5; ctx.stroke();
+  if (kind === 'bus') {
+    ctx.fillStyle = '#2d5fb0'; ctx.fillRect(-w / 2, -h / 2 + 14, w, 6);
+    ctx.fillStyle = 'rgba(0,0,0,.2)'; for (let i = 0; i < 3; i++) ctx.fillRect(-w / 2 + 5, -h / 2 + 28 + i * 24, w - 10, 12);
+  } else if (kind === 'truck') {
+    ctx.fillStyle = '#6b4a2e'; ctx.fillRect(-w / 2, -h / 2 + 16, w, h - 16);
+    ctx.fillStyle = 'rgba(255,255,255,.12)'; ctx.fillRect(-w / 2 + 3, -h / 2 + 20, w - 6, h - 24);
+  } else {
+    ctx.fillStyle = 'rgba(10,12,18,.55)'; ctx.fillRect(-w / 2 + 3, -h / 2 + 8, w - 6, 8); ctx.fillRect(-w / 2 + 3, h / 2 - 12, w - 6, 6);
+    if (kind === 'cab') { ctx.fillStyle = '#141416'; ctx.fillRect(-4, -2, 8, 5); }
+  }
+  ctx.restore();
+}
+
+function draw(t) {
+  const dist = S.dist;
+  strip([0, W], C.asphalt);
+  strip(Z.bike, C.bike); strip(Z.bus, C.bus);
+  strip(Z.walkL, C.walk); strip(Z.walkR, C.walk);
+  ctx.fillStyle = '#1f1f23'; ctx.fillRect(Z.buf[0], 0, Z.park[1] - Z.buf[0], H);
+  ctx.strokeStyle = 'rgba(233,230,220,.35)'; ctx.lineWidth = 2;
+  for (let y = -28 + (dist % 28); y < H; y += 28) { ctx.beginPath(); ctx.moveTo(Z.buf[0] + 2, y + 12); ctx.lineTo(Z.buf[1] - 2, y); ctx.stroke(); }
+  ctx.fillStyle = '#e9e6dc'; ctx.fillRect(Z.buf[0], 0, 2, H); ctx.fillRect(Z.buf[1], 0, 2, H);
+  // lane dashes
+  ctx.fillStyle = C.line;
+  const off = (dist % 48);
+  for (const lx of [174, 224, 274]) for (let y = -48 + off; y < H; y += 48) ctx.fillRect(lx - 1.5, y, 3, 24);
+  ctx.fillRect(Z.lanes[1], 0, 3, H);
+  // bike lane chevrons
+  ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 3;
+  for (let y = -(BLOCK / 2) + (dist % (BLOCK / 2)); y < H + 40; y += BLOCK / 2) {
+    ctx.beginPath(); ctx.moveTo(BL - 7, y + 8); ctx.lineTo(BL, y); ctx.lineTo(BL + 7, y + 8); ctx.stroke();
+  }
+
+  // cross streets
+  const first = Math.floor((dist - (H - PY)) / BLOCK) - 1, lastS = Math.ceil((dist + PY) / BLOCK) + 1;
+  for (let n = first; n <= lastS; n++) {
+    const y = sy(n * BLOCK);
+    if (y < -STREET || y > H + STREET) continue;
+    ctx.fillStyle = C.asphalt2; ctx.fillRect(0, y - STREET / 2, W, STREET);
+    if (n === 0 || n === LAST) { ctx.fillStyle = n === LAST ? '#f5bf1a' : '#e9e6dc'; ctx.fillRect(Z.bike[0], y - 3, Z.bus[1] - Z.bike[0], 6); }
+    ctx.fillStyle = 'rgba(233,230,220,.85)';
+    for (const cy of [y - STREET / 2 + 4, y + STREET / 2 - 16]) for (let x = Z.walkL[0]; x < Z.walkR[1]; x += 14) ctx.fillRect(x, cy, 8, 12);
+    // stop bar
+    ctx.fillRect(Z.bike[0], y + STREET / 2 + 4, Z.bus[1] - Z.bike[0], 4);
+    // one-way arrow painted on the cross street
+    if (n > 0 && n < LAST) {
+      const dir = crossDir(n), ax = 395, ay = y;
+      ctx.fillStyle = 'rgba(233,230,220,.45)';
+      ctx.beginPath(); ctx.moveTo(ax + dir * 12, ay); ctx.lineTo(ax - dir * 4, ay - 7); ctx.lineTo(ax - dir * 4, ay + 7); ctx.fill();
+      ctx.fillRect(dir > 0 ? ax - 20 : ax + 4, ay - 2, 16, 4);
+      ctx.font = '700 11px Archivo, Helvetica, sans-serif'; ctx.textAlign = 'left'; ctx.fillStyle = 'rgba(233,230,220,.55)';
+      ctx.fillText(street(n).toUpperCase(), 6, y + 4);
+    }
+  }
+
+  // rooftops
+  for (const r of S.roofs) {
+    const top = sy(r.y + r.h), h = r.h;
+    if (top > H || top + h < 0) continue;
+    const [a, b] = r.side ? Z.bldR : Z.bldL;
+    ctx.fillStyle = r.shade; ctx.fillRect(a, top, b - a, h);
+    if (r.tower && h > 50) {
+      const tx = a + (b - a) * r.tx, ty = top + h * r.ty;
+      ctx.fillStyle = C.tower; ctx.beginPath(); ctx.arc(tx, ty, 8, 0, 7); ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(tx, ty, 5, 0, 7); ctx.stroke();
+    }
+  }
+
+  // statics
+  for (const o of S.statics) {
+    const y = sy(o.wy); if (y < -80 || y > H + 80) continue;
+    if (o.kind === 'hole') {
+      // spray-painted marking, broken pavement rim, dark hole
+      ctx.strokeStyle = '#ff7a1a'; ctx.lineWidth = 2.5; ctx.setLineDash([6, 4]);
+      ctx.beginPath(); ctx.ellipse(o.x, y, o.r + 9, o.r + 7, 0.3, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = '#8f8b82'; ctx.beginPath();
+      for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2, rr = (o.r + 4) * (i % 2 ? .82 : 1.05); ctx.lineTo(o.x + Math.cos(a) * rr * 1.15, y + Math.sin(a) * rr); }
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#0a0a0b'; ctx.beginPath(); ctx.ellipse(o.x, y, o.r + 1, o.r - 1, 0.3, 0, 7); ctx.fill();
+    } else if (o.kind === 'truck' || (o.kind === 'dbl' && o.truck)) drawCar(o.x, y, o.w, o.h, '#e9e6dc', 'truck');
+    else if (o.kind === 'blocked' || o.kind === 'dbl') drawCar(o.x, y, o.w, o.h, o.color, o.color === C.cab ? 'cab' : 'car');
+    else {
+      drawCar(o.x, y, o.w, o.h, o.color, o.color === C.cab ? 'cab' : 'car');
+      if (o.door && o.open > 0) { ctx.fillStyle = o.color; ctx.fillRect(98 - DOOR * o.open, y - 13, DOOR * o.open, 6); ctx.strokeStyle = '#ffae2b'; ctx.lineWidth = 1.5; ctx.strokeRect(98 - DOOR * o.open, y - 13, DOOR * o.open, 6); ctx.fillStyle = '#ff6a3d'; ctx.fillRect(98 - DOOR * o.open, y - 13, 4, 6); }
+    }
+  }
+  // hazard lights on anything stopped where it should not be
+  if (Math.floor(t / 350) % 2) for (const o of S.statics) {
+    if (!o.hazard) continue; const y = sy(o.wy); if (y < -60 || y > H + 60) continue;
+    ctx.fillStyle = '#ffae2b';
+    for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { ctx.beginPath(); ctx.arc(o.x + dx * (o.w / 2 - 2), y + dy * (o.h / 2 - 2), 2.6, 0, 7); ctx.fill(); }
+  }
+  // pedestrians
+  for (const p of S.peds) {
+    const y = sy(p.wy);
+    ctx.fillStyle = C.ped; ctx.beginPath(); ctx.arc(p.x, y + Math.sin(p.phase) * 1.2, 6, 0, 7); ctx.fill();
+    ctx.fillStyle = '#141416'; ctx.beginPath(); ctx.arc(p.x, y, 3, 0, 7); ctx.fill();
+  }
+  for (const c of S.traffic) { const y = sy(c.wy); if (y > -70 && y < H + 70) drawCar(c.x, y, c.w, c.h, c.color, c.kind); }
+  for (const c of S.cross) drawCar(c.x, sy(c.wy), c.h, c.w, c.color, c.color === C.cab ? 'cab' : 'car', c.dir);
+
+  // bike
+  if (!(S.inv > 0 && Math.floor(t / 90) % 2)) {
+    const lean = clamp(S.vx / 300, -1, 1) * 0.25;
+    ctx.save(); ctx.translate(S.x, PY); ctx.rotate(lean);
+    ctx.fillStyle = 'rgba(255,240,180,.08)'; ctx.beginPath(); ctx.moveTo(-3, -14); ctx.lineTo(-16, -70); ctx.lineTo(16, -70); ctx.lineTo(3, -14); ctx.fill();
+    ctx.fillStyle = '#141416'; rrect(-2, -14, 4, 28, 2); ctx.fill();
+    ctx.fillStyle = '#e9e6dc'; ctx.fillRect(-7, -8, 14, 2.5);
+    ctx.fillStyle = C.rider; rrect(-6, -5, 12, 12, 5); ctx.fill();
+    ctx.fillStyle = '#f5f3ee'; ctx.beginPath(); ctx.arc(0, -3, 4, 0, 7); ctx.fill();
+    ctx.restore();
+  }
+
+  // warnings for traffic approaching from behind
+  for (const c of S.traffic) {
+    const y = sy(c.wy) - c.h / 2;
+    if (y > H && y < H + 420) {
+      const k = 1 - (y - H) / 420, pulse = .6 + .4 * Math.sin(t / 80);
+      ctx.fillStyle = c.kind === 'bus' ? `rgba(120,170,255,${k * pulse})` : `rgba(245,191,26,${k * pulse})`;
+      ctx.beginPath(); ctx.moveTo(c.x, H - 34); ctx.lineTo(c.x - 12, H - 14); ctx.lineTo(c.x + 12, H - 14); ctx.fill();
+    }
+  }
+  if (S.crashFlash > 0) { ctx.fillStyle = `rgba(226,64,44,${S.crashFlash * .45})`; ctx.fillRect(0, 0, W, H); }
+}
+
+// ---------- loop ----------
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.033, (now - last) / 1000); last = now;
+  if (S.running) update(dt);
+  draw(now);
+  requestAnimationFrame(loop);
+}
+newGame(); updateLives();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
