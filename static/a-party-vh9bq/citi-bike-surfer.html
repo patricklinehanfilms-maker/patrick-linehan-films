@@ -29,6 +29,21 @@
   #overlay h1 { font-size:46px; line-height:.95; font-weight:800; letter-spacing:-.03em; margin:14px 0 12px; text-wrap:balance; }
   #overlay p { margin:0 0 10px; color:#cfcdc7; font-size:14px; line-height:1.5; max-width:34em; }
   #overlay .go { margin-top:10px; color:var(--cab); font-weight:700; letter-spacing:.1em; text-transform:uppercase; font-size:13px; }
+  #overlay { overflow-y:auto; }
+  #lb { margin:6px 0 4px; cursor:default; }
+  #lb h2 { margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--cab); }
+  #lbList { list-style:none; margin:0; padding:0; font-size:13px; font-variant-numeric:tabular-nums; }
+  #lbList li { display:grid; grid-template-columns:22px 1fr auto; gap:6px; padding:3px 0; border-bottom:1px solid rgba(255,255,255,.12); color:#e9e6dc; }
+  #lbList li .rk { color:#8f8b82; }
+  #lbList li .nm { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #lbList li.me { color:var(--cab); }
+  #lbList .empty { color:#8f8b82; border:0; display:block; }
+  #lbForm { display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 12px; cursor:default; }
+  #lbMsg { flex-basis:100%; margin:0; font-size:12px; color:#cfcdc7; }
+  #lbName { flex:1; min-width:0; padding:9px 10px; font:600 16px/1 "Archivo",Helvetica,sans-serif; background:#fff; color:#141416; border:2px solid #fff; border-radius:4px; }
+  #lbForm button { padding:9px 14px; font:700 12px/1 "Archivo",Helvetica,sans-serif; letter-spacing:.1em; text-transform:uppercase; background:var(--sign); color:#fff; border:2px solid #fff; border-radius:4px; cursor:pointer; }
+  #lbForm button:disabled { opacity:.5; cursor:default; }
+  #lbName:focus-visible, #lbForm button:focus-visible { outline:2px solid var(--cab); outline-offset:2px; }
   [hidden] { display:none !important; }
 </style>
 </head>
@@ -45,6 +60,15 @@
     <h1 id="ovTitle">Citi Bike Surfer</h1>
     <p id="ovText">Ride 7th Avenue from Central Park South down to 14th St. Cars and cabs come up fast from behind (watch for the arrows at the bottom), crosstown traffic cuts across at every street, parked car doors swing open across the bike lane, and people park wherever they want. It gets faster and busier the further downtown you go.</p>
     <p id="ovHelp">On a phone, tilt left and right to steer. On a computer, use the arrow keys. One crash and the ride is over.</p>
+    <form id="lbForm" hidden autocomplete="off">
+      <input id="lbName" name="name" maxlength="30" placeholder="First and last name" aria-label="Your full name" autocomplete="name" autocapitalize="words" spellcheck="false">
+      <button type="submit" id="lbPost">Post score</button>
+      <p id="lbMsg">Enter your full name to get on the board.</p>
+    </form>
+    <div id="lb" hidden>
+      <h2 id="lbTitle">Top riders</h2>
+      <ol id="lbList"></ol>
+    </div>
     <p class="go" id="ovGo">Tap to ride</p>
   </div>
 </div>
@@ -141,7 +165,7 @@ function genBlock(n) {
 
 // ---------- input ----------
 let keys = { l: 0, r: 0 }, tiltIn = null, motionOn = false, raw = null, zero = 0;
-addEventListener('keydown', e => { if (e.key === 'ArrowLeft' || e.key === 'a') keys.l = 1; if (e.key === 'ArrowRight' || e.key === 'd') keys.r = 1; if ((e.key === ' ' || e.key === 'Enter') && !overlay.hidden) startRide(); });
+addEventListener('keydown', e => { if (e.key === 'ArrowLeft' || e.key === 'a') keys.l = 1; if (e.key === 'ArrowRight' || e.key === 'd') keys.r = 1; if ((e.key === ' ' || e.key === 'Enter') && !overlay.hidden && !(document.activeElement && document.activeElement.id === 'lbName')) startRide(); });
 addEventListener('keyup', e => { if (e.key === 'ArrowLeft' || e.key === 'a') keys.l = 0; if (e.key === 'ArrowRight' || e.key === 'd') keys.r = 0; });
 addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
@@ -170,9 +194,11 @@ function startRide() {
   if (S.over) newGame();
   if (raw !== null) zero = raw;
   S.vx = 0;
-  S.running = true; overlay.hidden = true; last = performance.now();
+  S.running = true; overlay.hidden = true; last = performance.now(); S.t0 = Date.now();
+  $('lbForm').hidden = true; $('lb').hidden = true;
 }
-overlay.addEventListener('click', async () => {
+overlay.addEventListener('click', async (e) => {
+  if (e.target.closest('#lbForm, #lb')) return;
   await enableMotion();
   if (motionMsg) { $('ovHelp').textContent = motionMsg; motionMsg = ''; return; }
   startRide();
@@ -197,6 +223,7 @@ function crash(cause) {
     $('ovHelp').textContent = `Best: ${street(best)}.`;
     $('ovGo').textContent = 'Tap to ride again';
     overlay.hidden = false;
+    endRide(reached);
   }
 }
 function win() {
@@ -207,7 +234,61 @@ function win() {
   $('ovHelp').textContent = '';
   $('ovGo').textContent = 'Tap to ride again';
   overlay.hidden = false;
+  endRide(LAST);
 }
+// ---------- leaderboard ----------
+const LB_API = '/api/citibike-scores';
+let lbRun = null, lbMine = null;
+const cleanName = v => v.replace(/[^\p{L}\p{M} '.\-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 30);
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+function renderBoard(top, limit) {
+  const list = $('lbList');
+  if (!top || !top.length) { list.innerHTML = '<li class="empty">No scores yet. Be the first.</li>'; }
+  else list.innerHTML = top.slice(0, limit).map((r, i) =>
+    `<li class="${lbMine && r.at === lbMine.at && r.name === lbMine.name ? 'me' : ''}"><span class="rk">${i + 1}</span><span class="nm">${esc(r.name)}</span><span>${r.blocks >= LAST ? 'Made it to W 14 St' : esc(street(r.blocks))}</span></li>`).join('');
+  $('lb').hidden = false;
+}
+async function loadBoard(limit) {
+  try {
+    const r = await fetch(LB_API, { cache: 'no-store' });
+    if (!r.ok) throw 0;
+    renderBoard((await r.json()).top, limit);
+  } catch (e) { $('lb').hidden = true; }
+}
+function endRide(blocks) {
+  lbRun = { blocks, ms: Date.now() - (S.t0 || Date.now()) };
+  lbMine = null;
+  $('lbTitle').textContent = 'Top riders';
+  const form = $('lbForm');
+  form.hidden = blocks < 1;
+  $('lbPost').disabled = false; $('lbPost').textContent = 'Post score';
+  $('lbMsg').textContent = 'Enter your full name to get on the board.';
+  try { $('lbName').value = localStorage.getItem('citibike-name') || ''; } catch (e) {}
+  loadBoard(8);
+}
+$('lbForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = cleanName($('lbName').value);
+  if (!lbRun) return;
+  if (name.split(' ').length < 2) { $('lbMsg').textContent = 'First and last name, please.'; $('lbName').focus(); return; }
+  try { localStorage.setItem('citibike-name', name); } catch (err) {}
+  $('lbPost').disabled = true; $('lbPost').textContent = 'Posting';
+  try {
+    const r = await fetch(LB_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, blocks: lbRun.blocks, ms: lbRun.ms }) });
+    const data = await r.json();
+    if (!r.ok) throw 0;
+    lbMine = data.entry;
+    $('lbForm').hidden = true;
+    $('lbTitle').textContent = data.rank ? `You're #${data.rank}` : 'Top riders';
+    renderBoard(data.top, 8);
+    lbRun = null;
+  } catch (err) {
+    $('lbPost').disabled = false; $('lbPost').textContent = 'Try again';
+    $('lbMsg').textContent = 'Could not post that. Check your name and try again.';
+  }
+});
+loadBoard(5);
+
 function updateLives() {
 
 }
