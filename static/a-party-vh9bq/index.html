@@ -96,6 +96,10 @@
           <div style="padding: 26px 18px 34px; display: flex; flex-direction: column; gap: 18px">
             <div style="font-weight: 700; text-transform: uppercase; font-size: clamp(30px, 11vw, 46px); line-height: 0.96; letter-spacing: -0.02em">You're on<br>the list.</div>
             <div style="font-size: 13px; line-height: 1.6; max-width: 34em">Sept 24 &middot; 9 PM &middot; Bon Studios, 199 N 8th St, Unit 3, Brooklyn. Sexy formal. No gifts &mdash; bring a bottle.</div>
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <div style="font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #d8321a">House rules</div>
+              <div style="font-size: 15px; font-weight: 600; line-height: 1.5">Arrive on time<br>Stay the whole time<br>Don&rsquo;t make other plans</div>
+            </div>
             <a href="{{ calendarHref }}" download="a-party.ics" style="align-self: flex-start; padding: 13px 18px; border: 2px solid #201e1d; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #201e1d">Add to calendar</a>
           </div>
         </sc-if>
@@ -139,7 +143,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid #201e1d">
           <a href="{{ calendarUrl }}" target="_blank" rel="noopener" style="display: block; padding: 14px 14px 16px; border-right: 2px solid #201e1d; border-bottom: 2px solid #201e1d; color: #201e1d; --label: #d8321a; transition: background 0.18s, color 0.18s" style-hover="background: #d8321a; color: #fff; --label: #fff">
             <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--label); margin-bottom: 10px">Tap to add to calendar</div>
-            <div style="font-size: 13px; font-weight: 600; line-height: 1.4">Thursday 24 September<br>9 PM<br><span style="font-weight: 400">Arrive on time</span></div>
+            <div style="font-size: 13px; font-weight: 600; line-height: 1.4">Thursday 24 September<br>9 PM</div>
           </a>
           <a href="{{ mapsUrl }}" target="_blank" rel="noopener" style="display: block; padding: 14px 14px 16px; border-bottom: 2px solid #201e1d; color: #201e1d; --label: #d8321a; transition: background 0.18s, color 0.18s" style-hover="background: #d8321a; color: #fff; --label: #fff">
             <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--label); margin-bottom: 10px">Tap to see location</div>
@@ -149,10 +153,10 @@
             <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--label); margin-bottom: 10px">Tap to see dress code</div>
             <div style="font-size: 13px; font-weight: 600; line-height: 1.4">Sexy formal</div>
           </a>
-          <a href="{{ spotifyUrl }}" target="_blank" rel="noopener" style="display: block; padding: 14px 14px 16px; color: #201e1d; --label: #d8321a; transition: background 0.18s, color 0.18s" style-hover="background: #d8321a; color: #fff; --label: #fff">
-            <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--label); margin-bottom: 10px">Tap to join the queue</div>
-            <div style="font-size: 13px; font-weight: 600; line-height: 1.4">Group Spotify playlist</div>
-          </a>
+          <div style="display: block; padding: 14px 14px 16px; color: #201e1d">
+            <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #d8321a; margin-bottom: 10px">House rules</div>
+            <div style="font-size: 13px; font-weight: 600; line-height: 1.4">Arrive on time<br>Stay the whole time<br>Don&rsquo;t make other plans</div>
+          </div>
         </div>
       </div>
     </div>
