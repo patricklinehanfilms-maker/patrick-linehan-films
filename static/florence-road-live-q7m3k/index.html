@@ -190,10 +190,12 @@ footer img{width:84px}
 .stage{--vh:100vh;--w:max(100vw, calc(var(--vh) * 2 / 3));--h:calc(var(--w) * 1.5);position:absolute;width:var(--w);height:var(--h);left:clamp(calc(100vw - var(--w)), calc(50vw - var(--w) * .54), 0px);top:clamp(calc(var(--vh) - var(--h)), calc(var(--vh) / 2 - var(--h) * .41), 0px)}
 @supports (height:100dvh){.stage{--vh:100dvh}}
 .stage > img{width:100%;height:100%;display:block}
-.landing::before{content:"";position:absolute;inset:-60px;background:url(poster.jpg) center/cover no-repeat;filter:blur(30px) brightness(.4);display:none}
+.stage-desk{display:none}
+.stage-desk .poster-link{left:28.5%;top:37.6%;width:37.4%;height:34.2%}
+.stage-desk .poster-link .tag{top:auto;bottom:100%;left:-3px;right:-3px;font-size:clamp(11px,1vw,16px);padding:8px 10px;letter-spacing:.06em}
 @media (min-aspect-ratio:1/1){
-  .landing::before{display:block}
-  .stage{--w:calc(var(--vh) * 2 / 3);left:calc(50vw - var(--w) / 2);top:0;box-shadow:0 0 80px rgba(0,0,0,.6)}
+  .stage-mobile{display:none}
+  .stage-desk{display:block;--w:max(100vw, calc(var(--vh) * 16 / 9));--h:calc(var(--w) * 9 / 16);left:clamp(calc(100vw - var(--w)), calc(50vw - var(--w) * .47), 0px);top:clamp(calc(var(--vh) - var(--h)), calc(var(--vh) / 2 - var(--h) * .54), 0px)}
 }
 .poster-link{position:absolute;left:34%;top:29.3%;width:40%;height:23.6%;border:3px solid var(--red);border-radius:2px;display:block;text-decoration:none;box-shadow:0 0 18px 5px rgba(236,48,19,.9),0 0 50px 14px rgba(236,48,19,.55),inset 0 0 20px rgba(236,48,19,.4);animation:pulse 2.2s ease-in-out infinite;transition:background .2s}
 .poster-link:hover,.poster-link:focus-visible{background:rgba(236,48,19,.12);outline:none}
@@ -210,9 +212,13 @@ html.on-landing body{background:#0e0d0c}
 
 
 <section class="landing" id="landing">
-  <div class="stage">
+  <div class="stage stage-mobile">
     <img src="poster.jpg" alt="Florence Road tour posters wheatpasted on a green construction wall at night: September 28, New York, Bowery Ballroom">
     <a class="poster-link" href="#plan" id="poster-link" aria-label="Click to look at the capture plan"><span class="tag">Click to look at the capture plan<img src="arrow.png" alt=""></span></a>
+  </div>
+  <div class="stage stage-desk">
+    <img src="wall.jpg" alt="A row of Florence Road tour posters wheatpasted on a construction wall on a New York sidewalk: September 28, Bowery Ballroom">
+    <a class="poster-link" href="#plan" aria-label="Click to look at the capture plan"><span class="tag">Click to look at the capture plan<img src="arrow.png" alt=""></span></a>
   </div>
 </section>
 
