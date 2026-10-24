@@ -106,6 +106,7 @@ details{border-bottom:1px solid var(--line)}
 summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:clamp(56px,9vw,96px) 1fr auto;align-items:center;gap:clamp(12px,2.5vw,28px);padding:22px 4px}
 summary::-webkit-details-marker{display:none}
 summary .num{font-weight:900;font-size:clamp(52px,8vw,88px);line-height:.8;color:var(--red);font-variant-numeric:tabular-nums}
+@media (max-width:640px){summary{grid-template-columns:auto 1fr auto;gap:18px}summary .num{font-size:44px}}
 summary h3{font-size:clamp(28px,4.5vw,48px)}
 summary .sub{color:var(--muted);margin-top:8px}
 summary:hover h3{color:var(--red)}
