@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Patrick Linehan Films treatment for Mark Ambor, live at Power Station.">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Mark Ambor Live at Power Station">
+<meta property="og:description" content="Treatment by Patrick Linehan Films.">
+<meta property="og:url" content="https://patrickjlinehan.com/mark-ambor-live/">
+<meta property="og:image" content="https://patrickjlinehan.com/mark-ambor-live/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mark Ambor Live at Power Station">
+<meta name="twitter:image" content="https://patrickjlinehan.com/mark-ambor-live/og.jpg">
+<style>html,body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Mark Ambor Live at Power Station</title>
+</head>
+<body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: Patrick Linehan Films live-capture page. Red hero, look board, one accordion per song, team, ink footer. */
+:root{
+  --red:#ec3013;
+  --ink:#201e1d;
+  --paper:#f3f2f2;
+  --bg:#f3f2f2;
+  --surface:#ffffff;
+  --text:#201e1d;
+  --muted:#6d6867;
+  --line:#dcdad9;
+  --on-red:#f3f2f2;
+  --display:"Archivo",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){color-scheme:dark;--bg:#1a1817;--surface:#242120;--text:#f3f2f2;--muted:#a9a4a2;--line:#3a3634}
+}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#1a1817;--surface:#242120;--text:#f3f2f2;--muted:#a9a4a2;--line:#3a3634}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--display);font-weight:500;font-size:17px;line-height:1.55;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1040px;margin:0 auto;padding-block:16px 48px;display:flex;flex-direction:column;gap:56px}
+a{color:inherit;text-decoration-color:var(--red);text-underline-offset:3px;text-decoration-thickness:2px}
+a:hover{color:var(--red)}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em;font-size:12.5px;font-weight:500}
+h1,h2,h3{font-family:var(--display);font-weight:900;text-transform:uppercase;letter-spacing:-.025em;line-height:.92;margin:0;text-wrap:balance}
+h2{font-size:clamp(34px,5vw,52px)}
+p{margin:0;max-width:65ch}
+img{display:block;max-width:100%;height:auto}
+
+
+.hero{background:var(--red);color:var(--on-red);border-radius:4px;padding:clamp(22px,4vw,48px);display:grid;gap:28px}
+.hero .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.hero .brand{text-decoration:none;color:inherit;font-family:var(--mono);font-weight:600;letter-spacing:.22em;font-size:13px}
+.hero .mark{width:clamp(48px,7vw,84px);transition:transform .2s}
+.hero .mark:hover{transform:scale(1.06)}
+.hero h1{font-size:clamp(48px,11vw,132px);animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+.setlist{display:flex;flex-wrap:wrap;gap:8px}
+.setlist a{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border:1.5px solid var(--on-red);border-radius:99px;padding:7px 12px;color:var(--on-red)}
+.setlist a:hover{background:var(--on-red);color:var(--red)}
+.hero .meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;border-top:2px solid var(--on-red);padding-top:14px}
+@keyframes rise{from{transform:translateY(14px)}to{transform:none}}
+
+.refs{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.refs .mono{color:var(--muted);margin-right:6px}
+.chip{font-family:var(--mono);font-size:13px;font-weight:500;padding:7px 12px;border:1.5px solid var(--text);border-radius:99px;text-decoration:none;white-space:nowrap}
+.chip:hover{background:var(--text);color:var(--bg)}
+
+.overview{display:grid;gap:18px}
+.overview .lead{font-size:clamp(21px,2.6vw,28px);font-weight:700;line-height:1.3;max-width:34ch;text-wrap:balance}
+.rule{border-left:4px solid var(--red);padding-left:16px}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.section-head .mono{color:var(--muted)}
+
+/* look board */
+.look{display:grid;gap:22px;border-top:2px solid var(--text);padding-top:20px}
+.look-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:22px;align-items:start}
+.look-row h3{font-size:clamp(24px,3vw,32px)}
+.look-row p{color:var(--muted);margin-top:10px;font-size:16px}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+.shots figure{margin:0}
+.shots img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:3px;background:var(--line)}
+.shots figcaption{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:6px;letter-spacing:.04em}
+@media (max-width:760px){.look-row{grid-template-columns:1fr}}
+
+/* world */
+.world{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:22px;align-items:start;border-top:2px solid var(--text);padding-top:20px}
+.world figure{margin:0}
+.world img{width:100%;border-radius:3px;background:var(--line)}
+.world figcaption{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:6px;letter-spacing:.04em}
+.world-side{display:grid;gap:10px;align-content:start}
+.world-side p{color:var(--muted);font-size:16px;margin-top:6px}
+@media (max-width:760px){.world{grid-template-columns:1fr}}
+
+/* songs */
+.toggle-all{font-family:var(--mono);font-size:12.5px;text-transform:uppercase;letter-spacing:.12em;background:none;color:var(--text);border:1.5px solid var(--text);border-radius:99px;padding:8px 14px;cursor:pointer}
+.toggle-all:hover{background:var(--text);color:var(--bg)}
+.songs{display:flex;flex-direction:column;border-top:2px solid var(--text)}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:clamp(56px,9vw,96px) 1fr auto;align-items:center;gap:clamp(12px,2.5vw,28px);padding:22px 4px}
+summary::-webkit-details-marker{display:none}
+summary .num{font-weight:900;font-size:clamp(52px,8vw,88px);line-height:.8;color:var(--red);font-variant-numeric:tabular-nums}
+summary h3{font-size:clamp(28px,4.5vw,48px)}
+summary .sub{color:var(--muted);margin-top:8px}
+summary:hover h3{color:var(--red)}
+.plus{width:44px;height:44px;border:1.5px solid var(--text);border-radius:50%;position:relative;flex:none;transition:background .2s}
+.plus::before,.plus::after{content:"";position:absolute;left:50%;top:50%;width:16px;height:2px;background:var(--text);transform:translate(-50%,-50%);transition:transform .25s}
+.plus::after{transform:translate(-50%,-50%) rotate(90deg)}
+details[open] .plus{background:var(--red);border-color:var(--red)}
+details[open] .plus::before,details[open] .plus::after{background:var(--on-red)}
+details[open] .plus::after{transform:translate(-50%,-50%) rotate(0)}
+.body{display:grid;gap:22px;padding:4px 4px 34px calc(clamp(56px,9vw,96px) + clamp(12px,2.5vw,28px))}
+dl{display:grid;grid-template-columns:minmax(120px,170px) 1fr;margin:0;border-top:1px solid var(--line)}
+dt,dd{padding:11px 0;border-bottom:1px solid var(--line);margin:0}
+dt{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding-top:14px;padding-right:12px}
+dd.tbd{color:var(--muted)}
+.body .intro{font-size:19px;font-weight:700;line-height:1.4}
+@media (max-width:640px){.body{padding-left:4px}dl{grid-template-columns:1fr}dt{border-bottom:0;padding-bottom:0}.plus{width:38px;height:38px}}
+
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;border-top:2px solid var(--text);padding-top:18px}
+.person{background:var(--surface);border-radius:4px;padding:20px;display:grid;gap:10px;align-content:start}
+.person .name{font-weight:900;font-size:26px;text-transform:uppercase;letter-spacing:-.02em;line-height:1}
+.person .role{color:var(--muted)}
+.person.tbd .name{color:var(--muted)}
+.person .links{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:13px}
+
+footer{background:var(--ink);color:var(--paper);border-radius:4px;padding:clamp(22px,4vw,44px);display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+footer .big{font-weight:900;font-size:clamp(40px,7vw,80px);text-transform:uppercase;letter-spacing:-.03em;line-height:.9}
+footer .big span{color:var(--red)}
+footer .contact{font-family:var(--mono);font-size:13px;color:#c9c6c5;margin-top:18px;display:flex;flex-wrap:wrap;gap:4px 16px}
+footer img{width:84px}
+/* landing */
+.landing{position:relative;height:100vh;height:100dvh;overflow:hidden;background:#0b0a09;margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));margin-block:calc(-1 * env(safe-area-inset-top,0px)) calc(-1 * env(safe-area-inset-bottom,0px))}
+.stage{--vh:100vh;--h:var(--vh);--w:calc(var(--vh) * 2 / 3);position:absolute;top:0;width:var(--w);height:var(--h);left:calc(50vw - var(--w) / 2)}
+@supports (height:100dvh){.stage{--vh:100dvh}}
+@media (max-aspect-ratio:2/3){.stage{left:clamp(calc(100vw - var(--w)), calc(50vw - var(--w) * .53), 0px)}}
+.stage > img{width:100%;height:100%;display:block}
+.stage-desk{display:none}
+.stage-desk .poster-link{left:28.4%;top:34.1%;width:37.3%;height:28.7%}
+.stage-desk .poster-link .tag{left:-3px;right:-3px;font-size:clamp(11px,1vw,15px)}
+@media (min-aspect-ratio:1/1){
+  .stage-mobile{display:none}
+  .stage-desk{display:block;--w:max(100vw, calc(var(--vh) * 1.5));--h:calc(var(--w) / 1.5);left:clamp(calc(100vw - var(--w)), calc(50vw - var(--w) * .47), 0px);top:clamp(calc(var(--vh) - var(--h)), calc(var(--vh) / 2 - var(--h) * .485), 0px)}
+}
+.poster-link{position:absolute;left:30.2%;top:13.4%;width:45%;height:55.2%;border:3px solid var(--red);border-radius:2px;display:block;text-decoration:none;animation:pulse 2.2s ease-in-out infinite;transition:background .2s}
+.poster-link:hover,.poster-link:focus-visible{background:rgba(236,48,19,.12);outline:none}
+.poster-link .tag{box-shadow:0 0 22px 4px rgba(236,48,19,.7);position:absolute;left:-3px;right:-3px;bottom:100%;background:var(--red);color:#f3f2f2;font-family:var(--mono);font-weight:600;font-size:clamp(10px,1.6vh,14px);letter-spacing:.08em;line-height:1.3;text-transform:uppercase;padding:7px 9px;text-align:center}
+.poster-link .tag img{display:inline-block;width:10px;height:auto;vertical-align:-1px;margin-left:8px;filter:brightness(0) invert(1);transform:rotate(180deg)}
+@keyframes pulse{0%,100%{box-shadow:0 0 10px 2px rgba(236,48,19,.75),0 0 28px 6px rgba(236,48,19,.45),inset 0 0 14px rgba(236,48,19,.35)}50%{box-shadow:0 0 18px 5px rgba(236,48,19,.95),0 0 60px 18px rgba(236,48,19,.6),inset 0 0 26px rgba(236,48,19,.5)}}
+html.on-landing body{background:#0b0a09}
+.back{font-family:var(--mono);font-size:12.5px;text-transform:uppercase;letter-spacing:.12em;text-decoration:none;align-self:flex-start}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<section class="landing" id="landing">
+  <div class="stage stage-mobile">
+    <img src="wall.jpg" alt="Mark Ambor tour posters wheatpasted on a green construction wall at night: An Evening on East Houston">
+    <a class="poster-link" href="#plan" aria-label="Click to look at the treatment"><span class="tag">Click to look at the treatment<img src="arrow.png" alt=""></span></a>
+  </div>
+  <div class="stage stage-desk">
+    <img src="wall-desk.jpg" alt="A long row of Mark Ambor tour posters wheatpasted along a New York sidewalk wall by day">
+    <a class="poster-link" href="#plan" aria-label="Click to look at the treatment"><span class="tag">Click to look at the treatment<img src="arrow.png" alt=""></span></a>
+  </div>
+</section>
+
+<main id="plan" hidden>
+<div class="wrap">
+<a class="back" href="#top">&#8592; Poster</a>
+
+<header class="hero">
+  <div class="top">
+    <a class="brand" href="https://patrickjlinehan.com" target="_blank" rel="noopener">PATRICK LINEHAN FILMS</a>
+    <a href="https://patrickjlinehan.com" target="_blank" rel="noopener" aria-label="patrickjlinehan.com"><img class="mark" src="mark-white.png" alt="Patrick Linehan Films running mark"></a>
+  </div>
+  <h1>Mark Ambor<br>Live</h1>
+  <nav class="setlist" aria-label="Songs">
+    <a href="#song-1" data-open="song-1">01 Everyone's Invited</a>
+    <a href="#song-2" data-open="song-2">02 Tomorrow</a>
+    <a href="#song-3" data-open="song-3">03 Crumbs</a>
+  </nav>
+  <div class="meta mono"><span>Live at Power Station</span><span>3 songs · 1 camera</span><a href="https://patrickjlinehan.com" target="_blank" rel="noopener" style="text-decoration:none">patrickjlinehan.com</a></div>
+</header>
+
+<nav class="refs" aria-label="Video references">
+  <span class="mono">Video refs</span>
+  <a class="chip" href="https://www.youtube.com/watch?v=iLW_0p67ITE" target="_blank" rel="noopener">ROLE MODEL, Frances (Live Session)</a>
+  <a class="chip" href="https://www.youtube.com/watch?v=Phh3oVCtzBg" target="_blank" rel="noopener">Geese, Taxes</a>
+  <a class="chip" href="https://www.youtube.com/watch?v=6HbrymTIbyg" target="_blank" rel="noopener">Bleachers, Modern Girl</a>
+  <a class="chip" href="https://www.youtube.com/watch?v=ujjf3nnIUCQ" target="_blank" rel="noopener">Olivia Dean and Leon Bridges, The Hardest Part</a>
+  <a class="chip" href="https://www.youtube.com/watch?v=TZl0MHwgn8c" target="_blank" rel="noopener">Clairo, Amoeba (Electric Lady)</a>
+  <a class="chip" href="https://www.youtube.com/watch?v=2YSJGBZXR70" target="_blank" rel="noopener">Hovvdy, Forever</a>
+</nav>
+
+<section class="overview">
+  <p class="mono" style="color:var(--muted)">Overview</p>
+  <p class="lead">Mark Ambor plays three songs live at Power Station: Everyone's Invited, Tomorrow and Crumbs.</p>
+  <p class="rule"><strong>Production design:</strong> homey, built from the art we already have for the small run of live shows. A flag backdrop, a chair, carpets and lamps.</p>
+  <p class="rule"><strong>Lighting:</strong> warm, soft top light coming from above. Lamps and other practicals add small splashes of light around the room. We never see the film lights, only the practicals.</p>
+  <p class="rule"><strong>One camera</strong> on an Easyrig for a smooth handheld feel. No crowd.</p>
+  <p>Everyone's Invited is standing and active. Tomorrow and Crumbs are seated. In all three, Mark is part of the circle with the band.</p>
+</section>
+
+<section>
+  <div class="section-head"><h2>Mark's world</h2><span class="mono">Artist assets</span></div>
+  <div class="world">
+    <figure class="poster"><img src="tour-poster.jpg" alt="Everyone's Invited artwork: Mark lying on a wood floor with an acoustic guitar, over a typed tour flyer for An Evening on East Houston" loading="lazy"><figcaption>An Evening on East Houston · 2026 Europe and UK solo acoustic tour</figcaption></figure>
+    <div class="world-side">
+      <figure><img src="mark-piano-wall.jpg" alt="Mark sitting on a piano bench in a cream sweater, framed photos, a flag and a guitar on the wall behind" loading="lazy"><figcaption>Upright piano, framed photos, flag, guitar on the wall</figcaption></figure>
+      <p>Lived-in apartment: upright piano, acoustic guitars, framed photos, flags and rugs. Cream sweater, olive cargos.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head"><h2>The look</h2><span class="mono">Reference stills</span></div>
+  <div class="look">
+
+    <div class="look-row">
+      <div><h3>The room</h3><p>A warm, lived-in room with Mark and the band in a loose circle. Framed pictures, rugs, practical lamps.</p></div>
+      <div class="shots">
+        <figure><img src="frances-0m05s.jpg" alt="Singer in a 00 jersey on a yellow chair, guitarist in the foreground, warm wood-paneled studio" loading="lazy"><figcaption>ROLE MODEL, Frances · 0:05</figcaption></figure>
+        <figure><img src="hovvdy-twoshot.jpg" alt="Two-shot of a keys player in a red cap and a guitarist singing, bookshelf and framed poster behind" loading="lazy"><figcaption>Hovvdy, Forever · two-shot</figcaption></figure>
+        <figure><img src="frances-2m27s.jpg" alt="Guitarist in a denim jacket and headphones playing a sunburst Les Paul, orange lamp and rug behind" loading="lazy"><figcaption>ROLE MODEL, Frances · 2:27</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="look-row">
+      <div><h3>Close on Mark</h3><p>Tight on the face at the mic. Backlight through the hair, haze, flares.</p></div>
+      <div class="shots">
+        <figure><img src="teal.jpg" alt="Close up of a singer at the mic, backlit hair glowing against a teal background, film grain" loading="lazy"><figcaption>Backlit close up, teal</figcaption></figure>
+        <figure><img src="flare.jpg" alt="Silhouette of a singer leaning into the mic, guitar headstock in the foreground, warm backlight and flare" loading="lazy"><figcaption>Silhouette, haze and flare</figcaption></figure>
+        <figure><img src="frances-0m30s.jpg" alt="Singer with eyes shut, singing into a white mic" loading="lazy"><figcaption>Frances · 0:30</figcaption></figure>
+        <figure><img src="clairo-35.jpg" alt="Clairo singing in profile at a vintage mic, seen through a wooden booth window" loading="lazy"><figcaption>Clairo, Amoeba · 0:35</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="look-row">
+      <div><h3>The band</h3><p>Over the shoulder through the players. No crowd: just Mark and the band in the room.</p></div>
+      <div class="shots">
+        <figure><img src="bar.jpg" alt="Band playing in a crowded bar under string lights, singer laughing at the mic, hands raised" loading="lazy"><figcaption>String lights and warm practicals</figcaption></figure>
+        <figure><img src="clairo-guitarist.jpg" alt="Guitarist seated with a black hollow body, fringed lamp glowing against a leopard print screen behind" loading="lazy"><figcaption>Clairo, Amoeba · guitarist</figcaption></figure>
+        <figure><img src="frances-guitar.jpg" alt="Close on a pale blue Telecaster being played, the singer in a 00 jersey seated behind" loading="lazy"><figcaption>ROLE MODEL, Frances · guitar close up</figcaption></figure>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>The songs</h2>
+    <button class="toggle-all" id="toggle-all" type="button">Expand all</button>
+  </div>
+  <div class="songs">
+
+    <details id="song-1">
+      <summary>
+        <span class="num" aria-hidden="true">01</span>
+        <span><h3>Everyone's Invited</h3><div class="sub mono">Standing · Animated · Active camera</div></span>
+        <span class="plus" aria-hidden="true"></span>
+      </summary>
+      <div class="body">
+        <p class="intro">Everyone's Invited is the up one. Mark stands and moves around the room.</p>
+        <dl>
+          <dt>Intro</dt><dd>Open close on the guitar. On the "hey," when the drums kick in, whip over to Mark.</dd>
+          <dt>Mark</dt><dd>Standing, animated, moving around a little.</dd>
+          <dt>Band</dt><dd>In the circle with Mark, with room for him to move.</dd>
+          <dt>Camera</dt><dd>More active. Follows Mark as he moves.</dd>
+          <dt>Dropout, 1:55</dt><dd>The band drops out and it's just vocals and claps. Tight on Mark. Mark or the band can clap.</dd>
+          <dt>Notes</dt><dd>This one should feel the most like a party of the three.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details id="song-2">
+      <summary>
+        <span class="num" aria-hidden="true">02</span>
+        <span><h3>Tomorrow</h3><div class="sub mono">Seated · In the circle with the band · Roaming camera</div></span>
+        <span class="plus" aria-hidden="true"></span>
+      </summary>
+      <div class="body">
+        <p class="intro">Tomorrow is a seated performance. Mark sits in the circle with the band.</p>
+        <dl>
+          <dt>Intro</dt><dd>Just Mark and his guitar under a single spotlight. The rest of the room stays dark.</dd>
+          <dt>Lighting cue</dt><dd>When the drums kick in, around 0:30, more lights come up and the whole room gets brighter. That's when we see the band.</dd>
+          <dt>Guitar solo</dt><dd>Close up on the guitar.</dd>
+          <dt>Ending</dt><dd>Back to the spotlight look. Just Mark, with the room dimmer around him.</dd>
+          <dt>Mark</dt><dd>Seated.</dd>
+          <dt>Band</dt><dd>In the circle with Mark, close together.</dd>
+          <dt>Camera</dt><dd>Moves around the circle on the Easyrig, picking up one shots and two shots of the band.</dd>
+          <dt>Notes</dt><dd>A more intimate moment. Tighter shots, longer lens.</dd>
+        </dl>
+      </div>
+    </details>
+
+    <details id="song-3">
+      <summary>
+        <span class="num" aria-hidden="true">03</span>
+        <span><h3>Crumbs</h3><div class="sub mono">Seated · In the circle with the band · Wider camera</div></span>
+        <span class="plus" aria-hidden="true"></span>
+      </summary>
+      <div class="body">
+        <p class="intro">Crumbs is seated like Tomorrow, with Mark in the circle with the band.</p>
+        <dl>
+          <dt>Mark</dt><dd>Seated.</dd>
+          <dt>Band</dt><dd>In the circle with Mark, close together.</dd>
+          <dt>Camera</dt><dd>Stays more on the outside of the circle, capturing the whole scene a little wider.</dd>
+          <dt>Notes</dt><dd>Wider than Tomorrow. We see the whole circle more often.</dd>
+        </dl>
+      </div>
+    </details>
+
+  </div>
+</section>
+
+<section>
+  <div class="section-head"><h2>The team</h2></div>
+  <div class="team">
+    <div class="person"><div class="name">Patrick Linehan</div><div class="role">Director / Editor</div>
+      <div class="links"><a href="https://www.instagram.com/patrickjlinehan/" target="_blank" rel="noopener">@patrickjlinehan</a><a href="https://patrickjlinehan.com" target="_blank" rel="noopener">patrickjlinehan.com</a></div></div>
+    <div class="person"><div class="name">Zach Wood</div><div class="role">Producer</div></div>
+    <div class="person tbd"><div class="name">TBD</div><div class="role">Director of Photography</div></div>
+    <div class="person tbd"><div class="name">TBD</div><div class="role">Gaffer</div></div>
+    <div class="person tbd"><div class="name">TBD</div><div class="role">Assistant Camera</div></div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div class="contact" style="margin-top:0"><span>PATRICK LINEHAN FILMS</span><span>patrick.linehan.films@gmail.com</span><span>@patrickjlinehan</span></div>
+  </div>
+  <img src="mark-red.png" alt="Patrick Linehan Films mark">
+</footer>
+
+</div>
+</main>
+
+<script>
+(function(){
+  var all=[].slice.call(document.querySelectorAll('.songs details'));
+  var btn=document.getElementById('toggle-all');
+  function sync(){btn.textContent=all.every(function(d){return d.open})?'Collapse all':'Expand all';}
+  btn.addEventListener('click',function(){var open=!all.every(function(d){return d.open});all.forEach(function(d){d.open=open});sync();});
+  all.forEach(function(d){d.addEventListener('toggle',sync)});
+  function openId(id){var d=document.getElementById(id);if(d&&d.tagName==='DETAILS'){d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'});}}
+  document.querySelectorAll('[data-open]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();openId(a.getAttribute('data-open'));});});
+  var landing=document.getElementById('landing'),plan=document.getElementById('plan');
+  function route(){var h=location.hash.slice(1);var show=!!h&&h!=='top';landing.hidden=show;plan.hidden=!show;document.documentElement.classList.toggle('on-landing',!show);
+    if(show&&h!=='plan'){openId(h);}else{window.scrollTo(0,0);}}
+  window.addEventListener('hashchange',route);route();
+})();
+</script>
+
+</body>
+</html>
