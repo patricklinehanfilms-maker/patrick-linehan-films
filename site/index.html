@@ -114,7 +114,7 @@
 
           <div data-about style="{{ aboutGridStyle }}">
             <div style="{{ aboutPicStyle }}">
-              <img src="assets/about-portrait-sm.png" alt="Patrick Linehan on set" loading="lazy" decoding="async" style="{{ aboutImgStyle }}">
+              <img src="assets/about-portrait-onset.jpg" alt="Patrick Linehan on set" loading="lazy" decoding="async" style="{{ aboutImgStyle }}">
             </div>
             <div style="{{ aboutPadStyle }}">
               <div style="fontFamily: 'IBM Plex Mono', monospace; fontSize: 13px; letterSpacing: 0.16em; textTransform: uppercase; marginBottom: 24px;">About</div>
@@ -500,7 +500,7 @@ function buildData(ids) {
     // ov.thumb: a project asset path, or a YouTube frame grab — '1.jpg' | '2.jpg' | '3.jpg'
     const t = ov.thumb ? (/^https?:|^assets\//.test(ov.thumb) ? A(ov.thumb) : 'https://i.ytimg.com/vi/' + id + '/' + ov.thumb) : null;
     return {
-      id: id, title: '', kind: '', artist: ov.artist || '', year: '', clip: ov.clip ? A(ov.clip) : null, pos: ov.pos || 'center',
+      id: id, title: '', kind: ov.kind || '', artist: ov.artist || '', year: '', clip: ov.clip ? A(ov.clip) : null, pos: ov.pos || 'center',
       slug: ov.slug || id, date: ov.date || '',
       media: t || 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg',
       // YouTube frame grabs are only 480x360 — too soft for the case-study hero, so
@@ -1432,9 +1432,9 @@ class Component extends DCLogic {
       tileMediaStyle: { position: 'relative', height: '190px', overflow: 'hidden' },
       tileMetaStyle: { display: 'flex', flexDirection: 'column', gap: '8px', padding: '14px 16px 16px', flex: 1 },
       tileTitleStyle: { fontSize: '22px', fontWeight: 800, letterSpacing: '-0.015em', textTransform: 'uppercase', lineHeight: 1.05, overflowWrap: 'anywhere', margin: 0 },
-      aboutGridStyle: { display: 'grid', gridTemplateColumns: '420px minmax(0, 1fr)', borderBottom: '2px solid ' + INK },
+      aboutGridStyle: { display: 'grid', gridTemplateColumns: '480px minmax(0, 1fr)', borderBottom: '2px solid ' + INK },
       aboutPicStyle: { borderRight: '2px solid ' + INK },
-      aboutImgStyle: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
+      aboutImgStyle: { width: '100%', height: '100%', objectFit: 'cover', objectPosition: '40% 50%', display: 'block' },
       aboutPadStyle: { padding: '54px 40px' },
       aboutTitleStyle: { fontSize: '30px', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '22px', maxWidth: '24ch' },
       aboutBodyStyle: { fontSize: '18px', lineHeight: 1.55, maxWidth: '60ch', marginBottom: '34px' },
